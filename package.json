@@ -2,7 +2,7 @@
   "name": "cap4720-final-project",
   "version": "1.0.0",
   "scripts": {
-    "dev": "webpack serve --mode='development'",
+    "dev": "webpack serve --mode=development",
     "format": "prettier --write './src/**/*.js'"
   },
   "dependencies": {
