@@ -1,0 +1,17 @@
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+.eslintcache
+.env
+
+/coverage
+/dist
+/local
+/node_modules
+/test/output
+/build
+
+.DS_Store
+.idea
+.vscode
