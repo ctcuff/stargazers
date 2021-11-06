@@ -1,9 +1,11 @@
 import * as twgl from 'twgl.js';
 import vs from './shaders/shader.vert';
 import fs from './shaders/shader.frag';
+import Model from './model';
+import { gl } from './constants';
 
-const canvas = document.querySelector('canvas');
-const gl = canvas.getContext('webgl2');
+// const canvas = document.querySelector('canvas');
+// const gl = canvas.getContext('webgl2');
 const programInfo = twgl.createProgramInfo(gl, [vs, fs], error =>
   console.log(error)
 );
@@ -11,15 +13,15 @@ const programInfo = twgl.createProgramInfo(gl, [vs, fs], error =>
 // object containing what keys are down for a animation frame
 const keyDown = {};
 
-document.querySelector('body').addEventListener('keydown', (e) => {
+document.querySelector('body').addEventListener('keydown', e => {
   keyDown[e.code] = true;
 });
 
-document.querySelector('body').addEventListener('keyup', (e) => {
+document.querySelector('body').addEventListener('keyup', e => {
   keyDown[e.code] = false;
 });
 
-// init gl stuff here, like back face culling and the depth test
+// // init gl stuff here, like back face culling and the depth test
 gl.enable(gl.DEPTH_TEST);
 gl.clearColor(0.5, 0.2, 0.7, 1.0);
 
@@ -51,10 +53,19 @@ function frame(curentMilis) {
 }
 
 function update(deltaTime) {
-  console.log(keyDown);
+  // console.log(keyDown);
 }
 
 function render(deltaTime) {
   gl.useProgram(programInfo.program);
   // twgl.drawBufferInfo or what ever the call is i dont remember
 }
+
+async function loadModel() {
+  const cow = new Model();
+  await cow.load(require('./models/raymanModel.obj'));
+  console.log(cow.vertexAttributes);
+}
+
+
+loadModel()
