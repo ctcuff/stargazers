@@ -1,3 +1,4 @@
+import './style/index.css';
 import * as twgl from 'twgl.js';
 import vs from './shaders/shader.vert';
 import fs from './shaders/shader.frag';
@@ -11,11 +12,11 @@ const programInfo = twgl.createProgramInfo(gl, [vs, fs], error =>
 // object containing what keys are down for a animation frame
 const keyDown = {};
 
-document.querySelector('body').addEventListener('keydown', (e) => {
+document.querySelector('body').addEventListener('keydown', e => {
   keyDown[e.code] = true;
 });
 
-document.querySelector('body').addEventListener('keyup', (e) => {
+document.querySelector('body').addEventListener('keyup', e => {
   keyDown[e.code] = false;
 });
 
