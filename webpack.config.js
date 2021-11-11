@@ -35,6 +35,10 @@ module.exports = {
         use: 'babel-loader'
       },
       {
+        test: /\.(css|scss)$/,
+        use: ['style-loader', 'css-loader']
+      },
+      {
         // Using asset/resource will emit a separate file and export the
         // url. If you want svg to be imported inline, separate svg into a
         // new rule and use asset/inline for (data URI) or asset/source (for code).

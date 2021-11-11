@@ -1,3 +1,4 @@
+import './style/index.css';
 import * as twgl from 'twgl.js';
 import vs from './shaders/shader.vert';
 import fs from './shaders/shader.frag';
