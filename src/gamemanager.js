@@ -10,12 +10,13 @@ class GameManager{
     }
 
     async addModels(models){
-        models.forEach(async url => {
+        for (const url of models)
+        {
             const m = new Model();
             await m.load(url);
             console.log(m);
             this.modelList.push(m);
-        });
+        }
     }
     /**
      * @typedef {import('./game-object').default} GameObject

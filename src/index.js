@@ -12,8 +12,6 @@ import GameManager from './gamemanager';
 const m4 = twgl.m4;
 
 const main = async () => {
-  // const canvas = document.querySelector('canvas');
-  // const gl = canvas.getContext('webgl2');
   const programInfo = twgl.createProgramInfo(gl, [vs, fs], error =>
     console.log(error)
   );
@@ -36,10 +34,6 @@ const main = async () => {
   // track when the last frame rendered
   let lastFrameMilis = 0;
 
-  //const rayman = new Model();
-
-  //await rayman.load(require('./models/raymanModel.obj'));
-
   const manager = new GameManager();
   
   const modelRefs = [require('./models/raymanModel.obj'), require('./models/cow.obj')]
@@ -49,10 +43,11 @@ const main = async () => {
 
   const myRayman = new GameObject(manager.modelList[0], new Physics());
 
+
   manager.addObject(myRayman);
 
-  //const modelExtents = manager.modelList[0].getModelExtent();
-  const modelExtents = {center: [0,0,0]}
+
+  const modelExtents = manager.modelList[0].getModelExtent();
 
   // camera begin
   const eye = m4.transformPoint(
@@ -100,20 +95,11 @@ const main = async () => {
   }
 
   function update(deltaTime) {
-    // console.log(keyDown);
-    // myRayman.addRotation({ y: deltaTime * 60 });
-    // myRayman.update(deltaTime);
-
     manager.sceneObjects.forEach(sceneObject => sceneObject.update(deltaTime));
   }
 
   function render(deltaTime) {
-    //model.addRotation({ y: deltaTime * 60 });
-
-    //model.render(programInfo, uniforms);
-    //myRayman.render(programInfo, uniforms);
     manager.sceneObjects.forEach(sceneObject => sceneObject.render(programInfo, uniforms));
-
   }
 
   window.addEventListener('resize', () => {
