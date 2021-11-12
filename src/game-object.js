@@ -1,5 +1,5 @@
 import { m4 } from 'twgl.js';
-import { Vector3 } from 'three'
+import { Vector3 } from 'three';
 import { deg2rad } from './utils/math';
 
 /**
@@ -8,39 +8,32 @@ import { deg2rad } from './utils/math';
 class GameObject {
   /**
    * @typedef {import('./model').default} Model
-   * @param {Model} model 
+   * @param {Model} model
    * @typedef {import('./physics').default} Physics
-   * @param {Physics} physics 
+   * @param {Physics} physics
    */
   constructor(model, physics) {
     this.model = model;
     this.physics = physics;
-    this.setRotation = this.setRotation.bind(this);
-    this.addRotation = this.addRotation.bind(this);
-    this.render = this.render.bind(this);
-    this.computeModelMatrix = this.computeModelMatrix.bind(this);
-    this.update = this.update.bind(this);
 
     this.uniforms = {
       modelMatrix: m4.identity()
     };
 
-
-    // transform properties
+    // Transform properties
     this.scale = 1;
     this.rotation = new Vector3();
-    this.position = new Vector3();    
+    this.position = new Vector3();
   }
 
-  update(deltaTime)
-  {
-    //physics update
+  update(deltaTime) {
+    // Physics update
     this.position.add(this.physics.velocity.clone().multiplyScalar(deltaTime));
 
-    this.computeModelMatrix()
+    this.computeModelMatrix();
   }
 
-  render(programInfo, uniforms){
+  render(programInfo, uniforms) {
     this.model.render(programInfo, {
       ...uniforms,
       ...this.uniforms
@@ -53,7 +46,7 @@ class GameObject {
     m4.rotateX(modelMatrix, deg2rad(this.rotation.x), modelMatrix);
     m4.rotateY(modelMatrix, deg2rad(this.rotation.y), modelMatrix);
     m4.rotateZ(modelMatrix, deg2rad(this.rotation.z), modelMatrix);
-    m4.scale(modelMatrix, [this.scale,this.scale,this.scale], modelMatrix);
+    m4.scale(modelMatrix, [this.scale, this.scale, this.scale], modelMatrix);
 
     this.uniforms.modelMatrix = modelMatrix;
   }
@@ -80,7 +73,6 @@ class GameObject {
       z: this.rotation.z + (z ?? 0)
     };
   }
-
 }
 
 export default GameObject;

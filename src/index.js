@@ -3,11 +3,12 @@ import * as twgl from 'twgl.js';
 import vs from './shaders/shader.vert';
 import fs from './shaders/shader.frag';
 import Model from './model';
-import GameObject from './game-object'
-import Physics from './physics'
+import GameObject from './game-object';
+import Physics from './physics';
 import { gl } from './constants';
 import { Vector3 } from 'three';
 import GameManager from './gamemanager';
+import { deg2rad } from './utils/math';
 
 const m4 = twgl.m4;
 
@@ -60,7 +61,7 @@ const main = async () => {
   const cameraMatrix = m4.lookAt(eye, modelExtents.center, [0, 1, 0]);
   const viewMatrix = m4.inverse(cameraMatrix);
   const projectionMatrix = m4.perspective(
-    (75 * Math.PI) / 180,
+    deg2rad(75),
     window.innerWidth / window.innerHeight,
     0.1,
     5000
@@ -103,7 +104,7 @@ const main = async () => {
 
   window.addEventListener('resize', () => {
     uniforms.projectionMatrix = m4.perspective(
-      (75 * Math.PI) / 180,
+      deg2rad(75),
       window.innerWidth / window.innerHeight,
       0.1,
       5000

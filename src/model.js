@@ -90,18 +90,12 @@ const m4 = {
 
 class Model {
   constructor() {
-    this.onModelLoaded = this.onModelLoaded.bind(this);
-    this.createSC = this.createSC.bind(this);
-    this.createSCs = this.createSCs.bind(this);
-    this.getModelExtent = this.getModelExtent.bind(this);
-
     this.modelSCs = [];
 
     /**
-     * Same as sceneBufferInfoArray
+     * Same as sceneBufferInfoArray from the professor's observable
      */
     this.vertexAttributes = [];
-
   }
 
   load(modelURL) {
@@ -113,7 +107,10 @@ class Model {
           resolve();
         },
         () => {},
-        err => console.log(err)
+        err => {
+          console.log(err);
+          reject(err);
+        }
       );
     });
   }
