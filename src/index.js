@@ -42,10 +42,10 @@ const main = async () => {
   await manager.addModels(modelRefs);
 
   const myRayman = new GameObject(manager.modelList[0], new Physics());
-
-
   manager.addObject(myRayman);
 
+  const myCow = new GameObject(manager.modelList[1], new Physics());
+  manager.addObject(myCow);
 
   const modelExtents = manager.modelList[0].getModelExtent();
 
