@@ -35,7 +35,7 @@ class GameObject {
   update(deltaTime)
   {
     //physics update
-    //this.position.add(this.physics.velocity.clone().multiplyScalar(deltaTime));
+    this.position.add(this.physics.velocity.clone().multiplyScalar(deltaTime));
 
     this.computeModelMatrix()
   }
@@ -48,22 +48,12 @@ class GameObject {
   }
 
   computeModelMatrix() {
-    const scalingMatrix = m4.scaling([this.scale, this.scale, this.scale]);
-    const translationMatrix = m4.translation([
-      this.position.x,
-      this.position.y,
-      this.position.z
-    ]);
-
-    const xRotationMatrix = m4.rotationX(deg2rad(this.rotation.x));
-    const yRotationMatrix = m4.rotationY(deg2rad(this.rotation.y));
-    const zRotationMatrix = m4.rotationZ(deg2rad(this.rotation.z));
-
-    let modelMatrix = m4.multiply(scalingMatrix, zRotationMatrix);
-
-    modelMatrix = m4.multiply(modelMatrix, yRotationMatrix);
-    modelMatrix = m4.multiply(modelMatrix, xRotationMatrix);
-    modelMatrix = m4.multiply(modelMatrix, translationMatrix);
+    let modelMatrix = m4.identity();
+    m4.translate(modelMatrix, this.position.toArray(), modelMatrix);
+    m4.rotateX(modelMatrix, deg2rad(this.rotation.x), modelMatrix);
+    m4.rotateY(modelMatrix, deg2rad(this.rotation.y), modelMatrix);
+    m4.rotateZ(modelMatrix, deg2rad(this.rotation.z), modelMatrix);
+    m4.scale(modelMatrix, [this.scale,this.scale,this.scale], modelMatrix);
 
     this.uniforms.modelMatrix = modelMatrix;
   }
