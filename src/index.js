@@ -6,6 +6,8 @@ import Model from './model';
 import GameObject from './game-object';
 import Physics from './physics';
 import { gl } from './constants';
+import { Vector3 } from 'three';
+import GameManager from './gamemanager';
 import { deg2rad } from './utils/math';
 
 const m4 = twgl.m4;
@@ -33,22 +35,32 @@ const main = async () => {
   // track when the last frame rendered
   let lastFrameMilis = 0;
 
-  const rayman = new Model();
-  await rayman.load(require('./models/raymanModel.obj'));
+  const manager = new GameManager();
 
-  const myRayman = new GameObject(rayman, new Physics());
+  const modelRefs = [
+    require('./models/raymanModel.obj'),
+    require('./models/cow.obj')
+  ];
 
-  const modelExtents = rayman.getModelExtent();
+  await manager.addModels(modelRefs);
 
+  const myRayman = new GameObject(manager.modelList[0], new Physics());
+  const myCow = new GameObject(manager.modelList[1], new Physics());
+
+  manager.addObjects([myRayman, myCow]);
+
+  const raymanModelExtents = manager.modelList[0].getModelExtent();
+
+  // camera begin
   const eye = m4.transformPoint(
     m4.multiply(
-      m4.translation(modelExtents.center),
+      m4.translation(raymanModelExtents.center),
       m4.multiply(m4.rotationY(0), m4.rotationX(0))
     ),
-    [0, 0, modelExtents.dia]
+    [0, 0, raymanModelExtents.dia]
   );
 
-  const cameraMatrix = m4.lookAt(eye, modelExtents.center, [0, 1, 0]);
+  const cameraMatrix = m4.lookAt(eye, raymanModelExtents.center, [0, 1, 0]);
   const viewMatrix = m4.inverse(cameraMatrix);
   const projectionMatrix = m4.perspective(
     deg2rad(75),
@@ -61,6 +73,7 @@ const main = async () => {
     viewMatrix,
     projectionMatrix
   };
+  // camera end
 
   // create looper function
   function frame(curentMilis) {
@@ -84,12 +97,13 @@ const main = async () => {
   }
 
   function update(deltaTime) {
-    myRayman.addRotation({ y: deltaTime * 60 });
-    myRayman.update(deltaTime);
+    manager.sceneObjects.forEach(sceneObject => sceneObject.update(deltaTime));
   }
 
   function render(deltaTime) {
-    myRayman.render(programInfo, uniforms);
+    manager.sceneObjects.forEach(sceneObject =>
+      sceneObject.render(programInfo, uniforms)
+    );
   }
 
   window.addEventListener('resize', () => {

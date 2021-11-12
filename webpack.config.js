@@ -1,5 +1,5 @@
-const path = require('path')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 /** @type {import('webpack').Configuration} */
 module.exports = {
@@ -42,8 +42,8 @@ module.exports = {
         // Using asset/resource will emit a separate file and export the
         // url. If you want svg to be imported inline, separate svg into a
         // new rule and use asset/inline for (data URI) or asset/source (for code).
-        test: /\.(obj|gltf)/,
-        type: 'asset/resource'
+        test: /\.(obj)/,
+        type: 'asset/inline'
       },
       {
         // Using asset/source will allow these file types to be imported as text.
@@ -58,4 +58,4 @@ module.exports = {
     // extension is found.
     extensions: ['.js']
   }
-}
+};
