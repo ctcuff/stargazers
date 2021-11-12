@@ -6,7 +6,6 @@ class GameManager{
         this.modelList = []
         this.sceneObjects = []
         this.addModels = this.addModels.bind(this);
-
     }
 
     async addModels(models){
@@ -14,10 +13,11 @@ class GameManager{
         {
             const m = new Model();
             await m.load(url);
-            console.log(m);
             this.modelList.push(m);
         }
     }
+
+    
     /**
      * @typedef {import('./game-object').default} GameObject
      * @param {GameObject} gameobject
