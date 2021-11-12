@@ -7,6 +7,7 @@ import GameObject from './game-object'
 import Physics from './physics'
 import { gl } from './constants';
 import { Vector3 } from 'three';
+import GameManager from './gamemanager';
 
 const m4 = twgl.m4;
 
@@ -35,13 +36,25 @@ const main = async () => {
   // track when the last frame rendered
   let lastFrameMilis = 0;
 
-  const rayman = new Model();
-  await rayman.load(require('./models/raymanModel.obj'));
+  //const rayman = new Model();
 
-  const myRayman = new GameObject(rayman, new Physics());
+  //await rayman.load(require('./models/raymanModel.obj'));
 
-  const modelExtents = rayman.getModelExtent();
+  const manager = new GameManager();
+  
+  const modelRefs = [require('./models/raymanModel.obj'), require('./models/cow.obj')]
+  
+  await manager.addModels(modelRefs);
+  console.log(manager.modelList);
 
+  const myRayman = new GameObject(manager.modelList[0], new Physics());
+
+  manager.addObject(myRayman);
+
+  //const modelExtents = manager.modelList[0].getModelExtent();
+  const modelExtents = {center: [0,0,0]}
+
+  // camera begin
   const eye = m4.transformPoint(
     m4.multiply(
       m4.translation(modelExtents.center),
@@ -63,6 +76,7 @@ const main = async () => {
     viewMatrix,
     projectionMatrix
   };
+  // camera end
 
   // create looper function
   function frame(curentMilis) {
@@ -87,15 +101,19 @@ const main = async () => {
 
   function update(deltaTime) {
     // console.log(keyDown);
-    myRayman.addRotation({ y: deltaTime * 60 });
-    myRayman.update(deltaTime);
+    // myRayman.addRotation({ y: deltaTime * 60 });
+    // myRayman.update(deltaTime);
+
+    manager.sceneObjects.forEach(sceneObject => sceneObject.update(deltaTime));
   }
 
   function render(deltaTime) {
     //model.addRotation({ y: deltaTime * 60 });
 
     //model.render(programInfo, uniforms);
-    myRayman.render(programInfo, uniforms);
+    //myRayman.render(programInfo, uniforms);
+    manager.sceneObjects.forEach(sceneObject => sceneObject.render(programInfo, uniforms));
+
   }
 
   window.addEventListener('resize', () => {
