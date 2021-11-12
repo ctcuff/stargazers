@@ -3,7 +3,10 @@ import * as twgl from 'twgl.js';
 import vs from './shaders/shader.vert';
 import fs from './shaders/shader.frag';
 import Model from './model';
+import GameObject from './game-object'
+import Physics from './physics'
 import { gl } from './constants';
+import { Vector3 } from 'three';
 
 const m4 = twgl.m4;
 
@@ -32,10 +35,12 @@ const main = async () => {
   // track when the last frame rendered
   let lastFrameMilis = 0;
 
-  const model = new Model();
-  await model.load(require('./models/raymanModel.obj'));
+  const rayman = new Model();
+  await rayman.load(require('./models/raymanModel.obj'));
 
-  const modelExtents = model.getModelExtent();
+  const myRayman = new GameObject(rayman, new Physics());
+
+  const modelExtents = rayman.getModelExtent();
 
   const eye = m4.transformPoint(
     m4.multiply(
@@ -82,12 +87,15 @@ const main = async () => {
 
   function update(deltaTime) {
     // console.log(keyDown);
+    myRayman.addRotation({ y: deltaTime * 60 });
+    myRayman.update(deltaTime);
   }
 
   function render(deltaTime) {
-    model.addRotation({ y: deltaTime * 60 });
+    //model.addRotation({ y: deltaTime * 60 });
 
-    model.render(programInfo, uniforms);
+    //model.render(programInfo, uniforms);
+    myRayman.render(programInfo, uniforms);
   }
 
   window.addEventListener('resize', () => {

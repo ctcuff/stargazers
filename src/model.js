@@ -2,7 +2,6 @@ import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import * as twgl from 'twgl.js';
 import { gl } from './constants';
 import * as d3 from 'd3';
-import { deg2rad } from './util';
 
 const loader = new OBJLoader();
 const vec3 = twgl.v3;
@@ -95,8 +94,6 @@ class Model {
     this.createSC = this.createSC.bind(this);
     this.createSCs = this.createSCs.bind(this);
     this.getModelExtent = this.getModelExtent.bind(this);
-    this.computeModelMatrix = this.computeModelMatrix.bind(this);
-    this.setRotation = this.setRotation.bind(this);
 
     this.modelSCs = [];
 
@@ -105,67 +102,6 @@ class Model {
      */
     this.vertexAttributes = [];
 
-    this.scale = 1;
-    this.rotation = {
-      x: 0,
-      y: 0,
-      z: 0
-    };
-    this.position = {
-      x: 0,
-      y: 0,
-      z: 0
-    };
-
-    this.uniforms = {
-      modelMatrix: m4.identity()
-    };
-  }
-
-  /**
-   *
-   * @param {{ x: number, y: number, z: number }} rotation
-   */
-  setRotation(rotation) {
-    this.rotation = {
-      ...this.rotation,
-      ...rotation
-    };
-    this.computeModelMatrix();
-  }
-
-  /**
-   *
-   * @param {{ x: number, y: number, z: number }} rotation
-   */
-  addRotation({ x, y, z }) {
-    this.rotation = {
-      x: this.rotation.x + (x ?? 0),
-      y: this.rotation.y + (y ?? 0),
-      z: this.rotation.z + (z ?? 0)
-    };
-    this.computeModelMatrix();
-  }
-
-  computeModelMatrix() {
-    const scalingMatrix = m4.scaling([this.scale, this.scale, this.scale]);
-    const translationMatrix = m4.translation([
-      this.position.x,
-      this.position.y,
-      this.position.z
-    ]);
-
-    const xRotationMatrix = m4.rotationX(deg2rad(this.rotation.x));
-    const yRotationMatrix = m4.rotationY(deg2rad(this.rotation.y));
-    const zRotationMatrix = m4.rotationZ(deg2rad(this.rotation.z));
-
-    let modelMatrix = m4.multiply(scalingMatrix, zRotationMatrix);
-
-    modelMatrix = m4.multiply(modelMatrix, yRotationMatrix);
-    modelMatrix = m4.multiply(modelMatrix, xRotationMatrix);
-    modelMatrix = m4.multiply(modelMatrix, translationMatrix);
-
-    this.uniforms.modelMatrix = modelMatrix;
   }
 
   load(modelURL) {
@@ -184,7 +120,6 @@ class Model {
 
   onModelLoaded(loadedObject) {
     this.modelSCs = this.createSCs(loadedObject);
-    this.computeModelMatrix();
 
     const va = this.modelSCs.map(d => ({
       position: { numComponents: 3, data: d.sc.positions },
