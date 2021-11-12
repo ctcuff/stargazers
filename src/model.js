@@ -1,10 +1,12 @@
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import * as twgl from 'twgl.js';
 import { gl } from './constants';
+import * as d3 from 'd3';
+import { deg2rad } from './util';
 
 const loader = new OBJLoader();
 const vec3 = twgl.v3;
-const mat4 = {
+const m4 = {
   ...twgl.m4,
   create: () =>
     new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]),
@@ -92,9 +94,78 @@ class Model {
     this.onModelLoaded = this.onModelLoaded.bind(this);
     this.createSC = this.createSC.bind(this);
     this.createSCs = this.createSCs.bind(this);
+    this.getModelExtent = this.getModelExtent.bind(this);
+    this.computeModelMatrix = this.computeModelMatrix.bind(this);
+    this.setRotation = this.setRotation.bind(this);
 
-    this.model = null;
+    this.modelSCs = [];
+
+    /**
+     * Same as sceneBufferInfoArray
+     */
     this.vertexAttributes = [];
+
+    this.scale = 1;
+    this.rotation = {
+      x: 0,
+      y: 0,
+      z: 0
+    };
+    this.position = {
+      x: 0,
+      y: 0,
+      z: 0
+    };
+
+    this.uniforms = {
+      modelMatrix: m4.identity()
+    };
+  }
+
+  /**
+   *
+   * @param {{ x: number, y: number, z: number }} rotation
+   */
+  setRotation(rotation) {
+    this.rotation = {
+      ...this.rotation,
+      ...rotation
+    };
+    this.computeModelMatrix();
+  }
+
+  /**
+   *
+   * @param {{ x: number, y: number, z: number }} rotation
+   */
+  addRotation({ x, y, z }) {
+    this.rotation = {
+      x: this.rotation.x + (x ?? 0),
+      y: this.rotation.y + (y ?? 0),
+      z: this.rotation.z + (z ?? 0)
+    };
+    this.computeModelMatrix();
+  }
+
+  computeModelMatrix() {
+    const scalingMatrix = m4.scaling([this.scale, this.scale, this.scale]);
+    const translationMatrix = m4.translation([
+      this.position.x,
+      this.position.y,
+      this.position.z
+    ]);
+
+    const xRotationMatrix = m4.rotationX(deg2rad(this.rotation.x));
+    const yRotationMatrix = m4.rotationY(deg2rad(this.rotation.y));
+    const zRotationMatrix = m4.rotationZ(deg2rad(this.rotation.z));
+
+    let modelMatrix = m4.multiply(scalingMatrix, zRotationMatrix);
+
+    modelMatrix = m4.multiply(modelMatrix, yRotationMatrix);
+    modelMatrix = m4.multiply(modelMatrix, xRotationMatrix);
+    modelMatrix = m4.multiply(modelMatrix, translationMatrix);
+
+    this.uniforms.modelMatrix = modelMatrix;
   }
 
   load(modelURL) {
@@ -112,11 +183,10 @@ class Model {
   }
 
   onModelLoaded(loadedObject) {
-    this.model = loadedObject;
+    this.modelSCs = this.createSCs(loadedObject);
+    this.computeModelMatrix();
 
-    const modelObj = this.createSCs(loadedObject);
-
-    const va = modelObj.map(d => ({
+    const va = this.modelSCs.map(d => ({
       position: { numComponents: 3, data: d.sc.positions },
       normal: { numComponents: 3, data: d.sc.normals },
       uv: { numComponents: 2, data: d.sc.uvs }
@@ -125,6 +195,20 @@ class Model {
     this.vertexAttributes = va.map(attribute =>
       twgl.createBufferInfoFromArrays(gl, attribute)
     );
+  }
+
+  render(programInfo, uniforms) {
+    gl.useProgram(programInfo.program);
+
+    twgl.setUniforms(programInfo, {
+      ...uniforms,
+      ...this.uniforms
+    });
+
+    this.vertexAttributes.forEach(vertexAttribute => {
+      twgl.setBuffersAndAttributes(gl, programInfo, vertexAttribute);
+      twgl.drawBufferInfo(gl, vertexAttribute);
+    });
   }
 
   createSCs(obj) {
@@ -152,9 +236,9 @@ class Model {
           ? [node.scale.x, node.scale.y, node.scale.z]
           : [1, 1, 1];
 
-      sc.modelMatrix = mat4.multiply(
+      sc.modelMatrix = m4.multiply(
         M,
-        mat4.fromRotationTranslationScale(quaternion, translation, scale)
+        m4.fromRotationTranslationScale(quaternion, translation, scale)
       );
 
       if (node.geometry || node.attributes) {
@@ -168,13 +252,12 @@ class Model {
         ) {
           const groups = node.geometry.groups;
           const localScs = d3.range(0, groups.length, 1).map(i => {
-
             return this.createSC(attributes, {
               start: groups[i].start,
               count: groups[i].count
             });
           });
-          
+
           localScs.forEach((d, i) => {
             scs.push({ name: sc.name, sc: d, modelMatrix: sc.modelMatrix });
           });
@@ -186,8 +269,8 @@ class Model {
       if (node.children) node.children.forEach(d => getNode(d, sc.modelMatrix));
     };
 
-    if (obj.scene) getNode(obj.scene, mat4.create());
-    else getNode(obj, mat4.create());
+    if (obj.scene) getNode(obj.scene, m4.create());
+    else getNode(obj, m4.create());
     return scs;
   }
 
@@ -235,6 +318,43 @@ class Model {
       positions,
       normals,
       uvs
+    };
+  }
+
+  getModelExtent() {
+    const extents = this.modelSCs.map(d => {
+      const xExtent = d3.extent(d.sc.positions.filter((_, i) => i % 3 === 0));
+      const yExtent = d3.extent(d.sc.positions.filter((_, i) => i % 3 === 1));
+      const zExtent = d3.extent(d.sc.positions.filter((_, i) => i % 3 === 2));
+      return {
+        min: [xExtent[0], yExtent[0], zExtent[0]],
+        max: [xExtent[1], yExtent[1], zExtent[1]]
+      };
+    });
+
+    const transformedExtents = extents.map((extent, i) => {
+      return this.modelSCs[i].modelMatrix
+        ? {
+            min: m4.transformPoint(this.modelSCs[i].modelMatrix, extent.min),
+            max: m4.transformPoint(this.modelSCs[i].modelMatrix, extent.max)
+          }
+        : extent;
+    });
+    const xMin = d3.min(transformedExtents, d => d.min[0]);
+    const xMax = d3.max(transformedExtents, d => d.max[0]);
+    const yMin = d3.min(transformedExtents, d => d.min[1]);
+    const yMax = d3.max(transformedExtents, d => d.max[1]);
+    const zMin = d3.min(transformedExtents, d => d.min[2]);
+    const zMax = d3.max(transformedExtents, d => d.max[2]);
+    const min = [xMin, yMin, zMin],
+      max = [xMax, yMax, zMax];
+    const center = vec3.divScalar(vec3.add(min, max), 2); // center of AABB
+    const dia = vec3.length(vec3.subtract(max, min)); // Diagonal length of the AABB
+    return {
+      min,
+      max,
+      center,
+      dia
     };
   }
 }
