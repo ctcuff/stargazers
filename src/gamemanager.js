@@ -17,7 +17,6 @@ class GameManager{
         }
     }
 
-    
     /**
      * @typedef {import('./game-object').default} GameObject
      * @param {GameObject} gameobject
