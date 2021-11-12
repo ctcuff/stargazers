@@ -2,9 +2,9 @@
   "name": "cap4720-final-project",
   "version": "1.0.0",
   "scripts": {
-    "build": "webpack --config webpack.config.js --mode='production'",
+    "build": "webpack --config webpack.config.js --mode=production",
     "dev": "webpack serve --mode=development",
-    "format": "prettier --write './src/**/*.js'"
+    "format": "prettier --write ./src/**/*.js"
   },
   "dependencies": {
     "d3": "^7.1.1",
