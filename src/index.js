@@ -39,7 +39,6 @@ const main = async () => {
   const modelRefs = [require('./models/raymanModel.obj'), require('./models/cow.obj')]
   
   await manager.addModels(modelRefs);
-  console.log(manager.modelList);
 
   const myRayman = new GameObject(manager.modelList[0], new Physics());
 
