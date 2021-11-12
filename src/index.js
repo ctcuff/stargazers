@@ -36,29 +36,31 @@ const main = async () => {
   let lastFrameMilis = 0;
 
   const manager = new GameManager();
-  
-  const modelRefs = [require('./models/raymanModel.obj'), require('./models/cow.obj')]
-  
+
+  const modelRefs = [
+    require('./models/raymanModel.obj'),
+    require('./models/cow.obj')
+  ];
+
   await manager.addModels(modelRefs);
 
   const myRayman = new GameObject(manager.modelList[0], new Physics());
-  manager.addObject(myRayman);
-
   const myCow = new GameObject(manager.modelList[1], new Physics());
-  manager.addObject(myCow);
 
-  const modelExtents = manager.modelList[0].getModelExtent();
+  manager.addObjects([myRayman, myCow]);
+
+  const raymanModelExtents = manager.modelList[0].getModelExtent();
 
   // camera begin
   const eye = m4.transformPoint(
     m4.multiply(
-      m4.translation(modelExtents.center),
+      m4.translation(raymanModelExtents.center),
       m4.multiply(m4.rotationY(0), m4.rotationX(0))
     ),
-    [0, 0, modelExtents.dia]
+    [0, 0, raymanModelExtents.dia]
   );
 
-  const cameraMatrix = m4.lookAt(eye, modelExtents.center, [0, 1, 0]);
+  const cameraMatrix = m4.lookAt(eye, raymanModelExtents.center, [0, 1, 0]);
   const viewMatrix = m4.inverse(cameraMatrix);
   const projectionMatrix = m4.perspective(
     deg2rad(75),
@@ -99,7 +101,9 @@ const main = async () => {
   }
 
   function render(deltaTime) {
-    manager.sceneObjects.forEach(sceneObject => sceneObject.render(programInfo, uniforms));
+    manager.sceneObjects.forEach(sceneObject =>
+      sceneObject.render(programInfo, uniforms)
+    );
   }
 
   window.addEventListener('resize', () => {
