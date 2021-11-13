@@ -50,7 +50,7 @@ const main = async () => {
   // The following three lines can be used for debugging.
   // const myRayman = new GameObject(manager.modelList[0], new Physics());
   // const myCow = new GameObject(manager.modelList[1], new Physics());
-  // renderModels = [myRayman, myCow];
+  // initialModels = [myRayman, myCow];
 
   initialModels.push(new GameObject(manager.modelList[0], new Physics())); // Rayman
   initialModels.push(new GameObject(manager.modelList[1], new Physics())); // Cow
