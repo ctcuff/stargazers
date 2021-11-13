@@ -13,6 +13,14 @@ canvas {
   left: 0;
 }
 
+#overlay {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.3);
+  color: red;
+  left: 10px;
+  top: 10px;
+}
+
 canvas:focus {
   outline: none
 }
