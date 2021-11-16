@@ -7,7 +7,7 @@ import GameObject from './game-object';
 import Physics from './physics';
 import { gl } from './constants';
 import { Vector3 } from 'three';
-import GameManager from './gamemanager';
+import manager from './gamemanager';
 import { deg2rad } from './utils/math';
 
 const m4 = twgl.m4;
@@ -34,8 +34,6 @@ const main = async () => {
 
   // track when the last frame rendered
   let lastFrameMilis = 0;
-
-  const manager = new GameManager();
 
   const modelRefs = [
     require('./models/raymanModel.obj'),
