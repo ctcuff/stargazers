@@ -33,4 +33,8 @@ class GameManager {
   }
 }
 
-export default GameManager;
+const manager = new GameManager();
+
+export default manager;
+
+export {GameManager};
