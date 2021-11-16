@@ -28,9 +28,12 @@ const main = async () => {
     keyDown[e.code] = false;
   });
 
-  // // init gl stuff here, like back face culling and the depth test
+  // init gl stuff here, like back face culling and the depth test
   gl.enable(gl.DEPTH_TEST);
   gl.clearColor(0.5, 0.2, 0.7, 1.0);
+
+  // the handle to the current requested animation frame, set later
+  let rafHandle = 0;
 
   // track when the last frame rendered
   let lastFrameMilis = 0;
@@ -119,7 +122,7 @@ const main = async () => {
   twgl.resizeCanvasToDisplaySize(gl.canvas);
 
   // start the render loop by requesting an animation frame for the frame function
-  let rafHandle = requestAnimationFrame(frame);
+  rafHandle = requestAnimationFrame(frame);
 };
 
 main();
