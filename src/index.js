@@ -33,7 +33,7 @@ const main = async () => {
   gl.clearColor(0.5, 0.2, 0.7, 1.0);
 
   // the handle to the current requested animation frame, set later
-  let rafHandle = 0;
+  let rafHandle = undefined;
 
   // track when the last frame rendered
   let lastFrameMilis = 0;
