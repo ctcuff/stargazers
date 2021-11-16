@@ -2,13 +2,12 @@ import './style/index.css';
 import * as twgl from 'twgl.js';
 import vs from './shaders/shader.vert';
 import fs from './shaders/shader.frag';
-import Model from './model';
 import GameObject from './game-object';
 import Physics from './physics';
 import { gl } from './constants';
-import { Vector3 } from 'three';
 import GameManager from './gamemanager';
 import { deg2rad } from './utils/math';
+import Input from './input';
 
 const m4 = twgl.m4;
 
@@ -16,17 +15,6 @@ const main = async () => {
   const programInfo = twgl.createProgramInfo(gl, [vs, fs], error =>
     console.log(error)
   );
-
-  // object containing what keys are down for a animation frame
-  const keyDown = {};
-
-  document.body.addEventListener('keydown', e => {
-    keyDown[e.code] = true;
-  });
-
-  document.body.addEventListener('keyup', e => {
-    keyDown[e.code] = false;
-  });
 
   // // init gl stuff here, like back face culling and the depth test
   gl.enable(gl.DEPTH_TEST);
@@ -98,6 +86,12 @@ const main = async () => {
 
   function update(deltaTime) {
     manager.sceneObjects.forEach(sceneObject => sceneObject.update(deltaTime));
+    
+    if (Input.keysDown.ArrowRight) {
+      myRayman.addRotation({ y: deltaTime * 120 })
+    } else if (Input.keysDown.ArrowLeft) {
+      myRayman.addRotation({ y: -deltaTime * 120 })
+    }
   }
 
   function render(deltaTime) {
