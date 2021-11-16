@@ -24,6 +24,16 @@ class TextManager2D
     {
         this.centerFieldNode.nodeValue = text;
     }
+
+    disableCenterText()
+    {
+        this.centerField.style.visibility = "hidden";
+    }
+
+    enableCenterText()
+    {
+        this.centerField.style.visibility = "visible";
+    }
 }
 
 export default TextManager2D;

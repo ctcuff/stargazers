@@ -10,6 +10,7 @@ import { Vector3 } from 'three';
 import GameManager from './gamemanager';
 import TextManager2D from './textmanager2d';
 import { deg2rad } from './utils/math';
+import { text } from 'd3-fetch';
 
 const m4 = twgl.m4;
 
@@ -107,6 +108,11 @@ const main = async () => {
     let debugVal = (lastFrameMs / 1000).toFixed(0)
     textManager.updateScore(debugVal);
     textManager.updateCenterText(debugVal);
+
+    if (debugVal % 5 == 0) // Every five seconds, make the center text disappear. Proof of concept
+      textManager.disableCenterText();
+    else
+      textManager.enableCenterText();
   }
 
   function update(deltaTime) {
