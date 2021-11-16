@@ -10,9 +10,9 @@ class TextManager2D
         this.scoreNode = document.createTextNode("");
         this.scoreField.appendChild(this.scoreNode);
 
-        // this.centerField = document.querySelector("#center-text");
-        // this.centerFieldNode = document.createTextNode("");
-        // this.centerField.appendChild(this.centerFieldNode);
+        this.centerField = document.querySelector("#center-text");
+        this.centerFieldNode = document.createTextNode("");
+        this.centerField.appendChild(this.centerFieldNode);
     }
 
     updateScore(text)
@@ -20,9 +20,9 @@ class TextManager2D
         this.scoreNode.nodeValue = text;
     }
 
-    displayCenterText(text)
+    updateCenterText(text)
     {
-
+        this.centerFieldNode.nodeValue = text;
     }
 }
 

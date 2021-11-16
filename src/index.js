@@ -104,8 +104,9 @@ const main = async () => {
     // Update the last frame ms
     lastFrameMs = currentMs;
 
-    // Update the score. To limit throughput, we could instead call this every n updates or use a specific amount of significant figures.
-    textManager.updateScore(lastFrameMs);
+    let debugVal = (lastFrameMs / 1000).toFixed(0)
+    textManager.updateScore(debugVal);
+    textManager.updateCenterText(debugVal);
   }
 
   function update(deltaTime) {
