@@ -46,30 +46,41 @@ const main = async () => {
   const myRayman = new GameObject(manager.modelList[0], new Physics());
   const myCow = new GameObject(manager.modelList[1], new Physics());
 
+  // helper for ints in range
   function getRandomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
+    return Math.floor(Math.random() * (max - min) + min);
   }
 
+  // helper for -1 - 1
   function getRandomDir() {
     return Math.random() * 2 - 1;
   }
 
   let cows = [];
 
+  // loop to generate 3200 cows
   for (let i = 0; i < 3200; i++) {
+    // pick a random x y z inside (-160, -160, 0) to (160, 160, -800)
     let x = getRandomInt(-160, 160);
     let y = getRandomInt(-160, 160);
     let z = getRandomInt(0, -800);
+    
+    // normalize a random vel vector
     const vel = new Vector3(getRandomDir(), getRandomDir(), getRandomDir());
     vel.normalize();
+
+    // cow
     const cow = new GameObject(manager.modelList[1], new Physics(vel));
+    
+    // 1/4 of the time, add a random rotation
     if (Math.random() >= 0.25) {
       const rot = new Vector3(getRandomDir(), getRandomDir(), getRandomDir());
       rot.multiplyScalar(Math.random() * 8);
       cow.physics.angularVelocity = rot;
     }
+
     cow.position = new Vector3(x, y, z);
     cow.scale = Math.random() + 0.5;
     cows.push(cow);
@@ -118,21 +129,27 @@ const main = async () => {
   }
 
   function update(deltaTime) {
+    // update z pos of camera
     eye[2] -= 20 * deltaTime;
+
     manager.sceneObjects.forEach(sceneObject => sceneObject.update(deltaTime));
   }
 
   function render(deltaTime) {
+    // update the camera for this frame
     cameraMatrix = m4.lookAt(eye, raymanModelExtents.center, [0, 1, 0]);
     viewMatrix = m4.identity();
     m4.rotateX(viewMatrix, 0, viewMatrix);
     m4.rotateY(viewMatrix, 0, viewMatrix);
     m4.translate(viewMatrix, twgl.v3.negate(eye), viewMatrix);
     
+    // hack
     const uniforms = {
       viewMatrix,
       projectionMatrix
     };
+
+    
     manager.sceneObjects.forEach(sceneObject => sceneObject.render(programInfo, uniforms));
   }
 
