@@ -1,6 +1,5 @@
 import Model from './model';
 
-const manager = new GameManager();
 
 class GameManager {
   constructor() {
@@ -39,5 +38,7 @@ class GameManager {
     gameobjects.forEach(gameobject => this.addObject(gameobject));
   }
 }
+
+const manager = new GameManager();
 
 export {manager as default, GameManager};
