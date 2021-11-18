@@ -29,7 +29,7 @@ class GameObject {
   update(deltaTime) {
     // Physics update
     this.position.add(this.physics.velocity.clone().multiplyScalar(deltaTime));
-
+    this.rotation.add(this.physics.angularVelocity.clone().multiplyScalar(deltaTime));
     this.computeModelMatrix();
   }
 
@@ -71,6 +71,29 @@ class GameObject {
       x: this.rotation.x + (x ?? 0),
       y: this.rotation.y + (y ?? 0),
       z: this.rotation.z + (z ?? 0)
+    };
+  }
+
+  /**
+   * @param {{ x: number, y: number, z: number }} position
+   */
+  // uses rest operator to allow optional arguments
+  setPosition(position) {
+    this.position = {
+      ...this.position,
+      ...position
+    };
+  }
+
+  /**
+   *
+   * @param {{ x: number, y: number, z: number }} position
+   */
+  addPosition({ x, y, z }) {
+    this.position = {
+      x: this.position.x + (x ?? 0),
+      y: this.position.y + (y ?? 0),
+      z: this.position.z + (z ?? 0)
     };
   }
 }
