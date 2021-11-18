@@ -13,9 +13,7 @@ import { deg2rad } from './utils/math';
 const m4 = twgl.m4;
 
 const main = async () => {
-  const programInfo = twgl.createProgramInfo(gl, [vs, fs], error =>
-    console.log(error)
-  );
+  const programInfo = twgl.createProgramInfo(gl, [vs, fs], error => console.log(error));
 
   // object containing what keys are down for a animation frame
   const keyDown = {};
@@ -38,10 +36,7 @@ const main = async () => {
   // track when the last frame rendered
   let lastFrameMilis = 0;
 
-  const modelRefs = [
-    require('./models/raymanModel.obj'),
-    require('./models/cow.obj')
-  ];
+  const modelRefs = [require('./models/raymanModel.obj'), require('./models/cow.obj')];
 
   await manager.addModels(modelRefs);
 
@@ -50,25 +45,20 @@ const main = async () => {
 
   manager.addObjects([myRayman, myCow]);
 
+  myCow.physics.angularVelocity = new Vector3(10, 10, 10);
+
   const raymanModelExtents = manager.modelList[0].getModelExtent();
 
   // camera begin
-  const eye = m4.transformPoint(
-    m4.multiply(
-      m4.translation(raymanModelExtents.center),
-      m4.multiply(m4.rotationY(0), m4.rotationX(0))
-    ),
-    [0, 0, raymanModelExtents.dia]
-  );
+  const eye = m4.transformPoint(m4.multiply(m4.translation(raymanModelExtents.center), m4.multiply(m4.rotationY(0), m4.rotationX(0))), [
+    0,
+    0,
+    raymanModelExtents.dia
+  ]);
 
   const cameraMatrix = m4.lookAt(eye, raymanModelExtents.center, [0, 1, 0]);
   const viewMatrix = m4.inverse(cameraMatrix);
-  const projectionMatrix = m4.perspective(
-    deg2rad(75),
-    window.innerWidth / window.innerHeight,
-    0.1,
-    5000
-  );
+  const projectionMatrix = m4.perspective(deg2rad(75), window.innerWidth / window.innerHeight, 0.1, 5000);
 
   const uniforms = {
     viewMatrix,
@@ -102,18 +92,11 @@ const main = async () => {
   }
 
   function render(deltaTime) {
-    manager.sceneObjects.forEach(sceneObject =>
-      sceneObject.render(programInfo, uniforms)
-    );
+    manager.sceneObjects.forEach(sceneObject => sceneObject.render(programInfo, uniforms));
   }
 
   window.addEventListener('resize', () => {
-    uniforms.projectionMatrix = m4.perspective(
-      deg2rad(75),
-      window.innerWidth / window.innerHeight,
-      0.1,
-      5000
-    );
+    uniforms.projectionMatrix = m4.perspective(deg2rad(75), window.innerWidth / window.innerHeight, 0.1, 5000);
   });
 
   gl.viewport(0, 0, window.innerWidth, window.innerHeight);
