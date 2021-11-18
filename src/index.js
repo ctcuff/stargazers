@@ -7,7 +7,7 @@ import GameObject from './game-object';
 import Physics from './physics';
 import { gl } from './constants';
 import { Vector3 } from 'three';
-import GameManager from './gamemanager';
+import manager from './gamemanager';
 import { deg2rad } from './utils/math';
 
 const m4 = twgl.m4;
@@ -26,14 +26,15 @@ const main = async () => {
     keyDown[e.code] = false;
   });
 
-  // // init gl stuff here, like back face culling and the depth test
+  // init gl stuff here, like back face culling and the depth test
   gl.enable(gl.DEPTH_TEST);
   gl.clearColor(0.5, 0.2, 0.7, 1.0);
 
+  // the handle to the current requested animation frame, set later
+  let rafHandle = undefined;
+
   // track when the last frame rendered
   let lastFrameMilis = 0;
-
-  const manager = new GameManager();
 
   const modelRefs = [require('./models/raymanModel.obj'), require('./models/cow.obj')];
 
@@ -102,7 +103,7 @@ const main = async () => {
   twgl.resizeCanvasToDisplaySize(gl.canvas);
 
   // start the render loop by requesting an animation frame for the frame function
-  let rafHandle = requestAnimationFrame(frame);
+  rafHandle = requestAnimationFrame(frame);
 };
 
 main();
