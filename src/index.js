@@ -5,7 +5,7 @@ import fs from './shaders/shader.frag';
 import GameObject from './game-object';
 import Physics from './physics';
 import { gl } from './constants';
-import GameManager from './gamemanager';
+import manager from './gamemanager';
 import { deg2rad } from './utils/math';
 import Input from './input';
 
@@ -20,10 +20,11 @@ const main = async () => {
   gl.enable(gl.DEPTH_TEST);
   gl.clearColor(0.5, 0.2, 0.7, 1.0);
 
+  // the handle to the current requested animation frame, set later
+  let rafHandle = undefined;
+
   // track when the last frame rendered
   let lastFrameMilis = 0;
-
-  const manager = new GameManager();
 
   const modelRefs = [
     require('./models/raymanModel.obj'),
@@ -115,7 +116,7 @@ const main = async () => {
   twgl.resizeCanvasToDisplaySize(gl.canvas);
 
   // start the render loop by requesting an animation frame for the frame function
-  let rafHandle = requestAnimationFrame(frame);
+  rafHandle = requestAnimationFrame(frame);
 };
 
 main();
