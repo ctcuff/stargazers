@@ -86,11 +86,13 @@ const main = async () => {
 
   function update(deltaTime) {
     manager.sceneObjects.forEach(sceneObject => sceneObject.update(deltaTime));
-    
+
+    const modifier = Input.keysDown.Shift ? 10 : 1;
+
     if (Input.keysDown.ArrowRight) {
-      myRayman.addRotation({ y: deltaTime * 120 })
+      myRayman.addRotation({ y: deltaTime * (120 * modifier) });
     } else if (Input.keysDown.ArrowLeft) {
-      myRayman.addRotation({ y: -deltaTime * 120 })
+      myRayman.addRotation({ y: -deltaTime * (120 * modifier) });
     }
   }
 

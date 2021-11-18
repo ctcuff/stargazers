@@ -6,11 +6,11 @@ const Input = {
 };
 
 document.body.addEventListener('keydown', event => {
-  Input.keysDown[event.code] = true;
+  Input.keysDown[event.key] = true;
 });
 
 document.body.addEventListener('keyup', event => {
-  Input.keysDown[event.code] = false;
+  Input.keysDown[event.key] = false;
 });
 
 export default Input;
