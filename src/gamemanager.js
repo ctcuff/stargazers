@@ -1,5 +1,6 @@
 import Model from './model';
 
+
 class GameManager {
   constructor() {
     this.modelList = [];
@@ -33,4 +34,6 @@ class GameManager {
   }
 }
 
-export default GameManager;
+const manager = new GameManager();
+
+export {manager as default, GameManager};

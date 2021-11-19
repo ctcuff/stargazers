@@ -1,9 +1,10 @@
 import { Vector3 } from 'three';
 
 class Physics {
-  constructor(velocity, colliderRadius) {
-    this.velocity = velocity ?? new Vector3();
-    this.colliderRadius = colliderRadius ?? 1;
+  constructor(velocity = new Vector3(), angularVelocity = new Vector3(), colliderRadius = 1) {
+    this.velocity = velocity;
+    this.angularVelocity = angularVelocity;
+    this.colliderRadius = colliderRadius;
   }
 }
 
