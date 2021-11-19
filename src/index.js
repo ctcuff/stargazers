@@ -36,18 +36,36 @@ const main = async () => {
   // track when the last frame rendered
   let lastFrameMilis = 0;
 
-  const modelRefs = [require('./models/raymanModel.obj'), require('./models/cow.obj')];
+  const modelRefs = [
+    require('./models/raymanModel.obj'), 
+    require('./models/cow.obj'), 
+    require('./models/asteroid0.obj'),
+    require('./models/asteroid1.obj'),
+    require('./models/starwars.obj'),
+    require('./models/ufo.obj')
+  ];
 
   await manager.addModels(modelRefs);
 
   const myRayman = new GameObject(manager.modelList[0], new Physics());
   const myCow = new GameObject(manager.modelList[1], new Physics());
+  const myAsteroid0 = new GameObject(manager.modelList[2], new Physics());
+  const myAsteroid1 = new GameObject(manager.modelList[3], new Physics());
+  const starwars = new GameObject(manager.modelList[4], new Physics());
+  const ufo = new GameObject(manager.modelList[5], new Physics());
 
-  manager.addObjects([myRayman, myCow]);
+
+  // manager.addObjects([myRayman, myCow]);
+  // manager.addObjects([myAsteroid0]);
+  // manager.addObjects([myAsteroid1]);
+  // manager.addObjects([starwars]);
+  manager.addObjects([ufo]);
+
+  ufo.physics.angularVelocity = new Vector3(5, 5, 5);
 
   myCow.physics.angularVelocity = new Vector3(10, 10, 10);
 
-  const raymanModelExtents = manager.modelList[0].getModelExtent();
+  const raymanModelExtents = manager.modelList[5].getModelExtent();
 
   // camera begin
   const eye = m4.transformPoint(m4.multiply(m4.translation(raymanModelExtents.center), m4.multiply(m4.rotationY(0), m4.rotationX(0))), [
