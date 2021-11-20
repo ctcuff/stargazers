@@ -37,44 +37,51 @@ const main = async () => {
   let lastFrameMilis = 0;
 
   const modelRefs = [
+    require('./models/ufo.obj'),
+    require('./models/asteroid1.obj'),
     require('./models/raymanModel.obj'), 
     require('./models/cow.obj'), 
     require('./models/asteroid0.obj'),
-    require('./models/asteroid1.obj'),
     require('./models/starwars.obj'),
-    require('./models/ufo.obj')
   ];
 
   await manager.addModels(modelRefs);
 
-  const myRayman = new GameObject(manager.modelList[0], new Physics());
-  const myCow = new GameObject(manager.modelList[1], new Physics());
-  const myAsteroid0 = new GameObject(manager.modelList[2], new Physics());
-  const myAsteroid1 = new GameObject(manager.modelList[3], new Physics());
-  const starwars = new GameObject(manager.modelList[4], new Physics());
-  const ufo = new GameObject(manager.modelList[5], new Physics());
+  // Create physics objects
+  // Physics(Velocity, angularVelocity, colliderRadius)
+  let asteroidPhysics = new Physics(
+    new Vector3(0, 0, -30), 
+    new Vector3(0, 0, 0), 
+    0
+  );
+  let ufoPhysics = new Physics(
+    new Vector3(0, 0, 0), 
+    new Vector3(0, -200, 0), 
+    0
+  );
+  
+  // Declare models to be used
+  const ufo = new GameObject(manager.modelList[0], ufoPhysics);
+  const myAsteroid1 = new GameObject(manager.modelList[1], asteroidPhysics);
+  
+  // Add models to canvas
+  manager.addObject(myAsteroid1);
+  manager.addObject(ufo);
+  
+  /** mainModel should be the main model of the scene */
+  const mainModel = manager.modelList[0].getModelExtent();
 
-
-  // manager.addObjects([myRayman, myCow]);
-  // manager.addObjects([myAsteroid0]);
-  manager.addObjects([myAsteroid1]);
-  // manager.addObjects([starwars]);
-  // manager.addObjects([ufo]);
-
-  myAsteroid1.physics.angularVelocity = new Vector3(0, 30, 0);
-
-  myCow.physics.angularVelocity = new Vector3(10, 10, 10);
-
-  const raymanModelExtents = manager.modelList[3].getModelExtent();
+  // Offset camera
+  let cameraStartingPos = new Vector3(mainModel.dia * 0, mainModel.dia * 0.7, mainModel.dia * 0.1);
 
   // camera begin
-  const eye = m4.transformPoint(m4.multiply(m4.translation(raymanModelExtents.center), m4.multiply(m4.rotationY(0), m4.rotationX(0))), [
-    0,
-    0,
-    raymanModelExtents.dia
+  const eye = m4.transformPoint(m4.multiply(m4.translation(mainModel.center), m4.multiply(m4.rotationY(0), m4.rotationX(0))), [
+    cameraStartingPos.x,
+    cameraStartingPos.y,
+    cameraStartingPos.z + mainModel.dia
   ]);
 
-  const cameraMatrix = m4.lookAt(eye, raymanModelExtents.center, [0, 1, 0]);
+  const cameraMatrix = m4.lookAt(eye, mainModel.center, [0, 1, 0]);
   const viewMatrix = m4.inverse(cameraMatrix);
   const projectionMatrix = m4.perspective(deg2rad(75), window.innerWidth / window.innerHeight, 0.1, 5000);
 
