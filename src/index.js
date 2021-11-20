@@ -8,6 +8,7 @@ import Physics from './physics';
 import { gl } from './constants';
 import { Vector3 } from 'three';
 import manager from './gamemanager';
+import TextManager2D from './textmanager2d'
 import { deg2rad } from './utils/math';
 
 const m4 = twgl.m4;
@@ -35,6 +36,9 @@ const main = async () => {
 
   // track when the last frame rendered
   let lastFrameMilis = 0;
+
+  // initialize text manager
+  const textManager = new TextManager2D()
 
   const modelRefs = [require('./models/raymanModel.obj'), require('./models/cow.obj')];
 
