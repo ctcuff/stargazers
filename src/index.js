@@ -7,8 +7,10 @@ import GameObject from './game-object';
 import Physics from './physics';
 import { gl } from './constants';
 import { Vector3 } from 'three';
+import TextManager2D from './textmanager2d';
 import manager from './gamemanager';
 import { deg2rad } from './utils/math';
+import { text } from 'd3-fetch';
 
 const m4 = twgl.m4;
 
@@ -38,17 +40,33 @@ const main = async () => {
 
   const modelRefs = [require('./models/raymanModel.obj'), require('./models/cow.obj')];
 
+  // Initialize WebGL back face culling and depth test.
+  gl.enable(gl.DEPTH_TEST);
+  gl.clearColor(0.5, 0.2, 0.7, 1.0);
+
+  const manager = new GameManager();
+  const textManager = new TextManager2D();
+
+  // Add the models to the game manager.
   await manager.addModels(modelRefs);
 
-  const myRayman = new GameObject(manager.modelList[0], new Physics());
-  const myCow = new GameObject(manager.modelList[1], new Physics());
+  // initialModels will hold all of the objects we'd like to initially put on the screen. We will then push it to the GameManager.
+  const initialModels = []
 
-  manager.addObjects([myRayman, myCow]);
+  // The following three lines can be used for debugging.
+  // const myRayman = new GameObject(manager.modelList[0], new Physics());
+  // const myCow = new GameObject(manager.modelList[1], new Physics());
+  // initialModels = [myRayman, myCow];
 
+//   initialModels.push(new GameObject(manager.modelList[0], new Physics())); // Rayman
+//   initialModels.push(new GameObject(manager.modelList[1], new Physics())); // Cow
+//   manager.addObjects(initialModels);
   myCow.physics.angularVelocity = new Vector3(10, 10, 10);
 
   const raymanModelExtents = manager.modelList[0].getModelExtent();
 
+  const raymanModelExtents = manager.modelList[0].getModelExtent();
+  
   // camera begin
   const eye = m4.transformPoint(m4.multiply(m4.translation(raymanModelExtents.center), m4.multiply(m4.rotationY(0), m4.rotationX(0))), [
     0,
@@ -66,25 +84,36 @@ const main = async () => {
   };
   // camera end
 
-  // create looper function
-  function frame(curentMilis) {
-    // calculate the change in time in seconds since the last frame
-    let deltaTime = (curentMilis - lastFrameMilis) / 1000;
+  let lastFrameMs = 0;
 
-    // update things here
+  // Game loop
+  function frame(currentMs) {
+    // Time passed between frames.
+    let deltaTime = (currentMs - lastFrameMs) / 1000;
+
+    // Update things. Calculate physics, positions, etc... 
     update(deltaTime);
 
-    // clear the previous frame
+    // CLear the previous frame.
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    // do the render
+    // Display the things we've just updated. Simply used to render the objects to the screen.
     render(deltaTime);
 
-    // request the next frame
+    // Request the next frame
     rafHandle = requestAnimationFrame(frame);
 
-    // update the last frame milis
-    lastFrameMilis = curentMilis;
+    // Update the last frame ms
+    lastFrameMs = currentMs;
+
+    let debugVal = (lastFrameMs / 1000).toFixed(0)
+    textManager.updateScore(debugVal);
+    textManager.updateCenterText(debugVal);
+
+    if (debugVal % 5 == 0) // Every five seconds, make the center text disappear. Proof of concept
+      textManager.disableCenterText();
+    else
+      textManager.enableCenterText();
   }
 
   function update(deltaTime) {
