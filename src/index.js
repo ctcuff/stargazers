@@ -57,15 +57,15 @@ const main = async () => {
 
   // manager.addObjects([myRayman, myCow]);
   // manager.addObjects([myAsteroid0]);
-  // manager.addObjects([myAsteroid1]);
+  manager.addObjects([myAsteroid1]);
   // manager.addObjects([starwars]);
-  manager.addObjects([ufo]);
+  // manager.addObjects([ufo]);
 
-  ufo.physics.angularVelocity = new Vector3(5, 5, 5);
+  myAsteroid1.physics.angularVelocity = new Vector3(0, 30, 0);
 
   myCow.physics.angularVelocity = new Vector3(10, 10, 10);
 
-  const raymanModelExtents = manager.modelList[5].getModelExtent();
+  const raymanModelExtents = manager.modelList[3].getModelExtent();
 
   // camera begin
   const eye = m4.transformPoint(m4.multiply(m4.translation(raymanModelExtents.center), m4.multiply(m4.rotationY(0), m4.rotationX(0))), [
