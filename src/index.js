@@ -36,18 +36,21 @@ const main = async () => {
   // track when the last frame rendered
   let lastFrameMilis = 0;
 
-  const modelRefs = [require('./models/raymanModel.obj'), require('./models/cow.obj')];
+  const modelRefs = [
+    { model: require('./models/raymanModel.obj'), name: 'rayman' },
+    { model: require('./models/cow.obj'), name: 'cow' }
+  ];
 
   await manager.addModels(modelRefs);
 
-  const myRayman = new GameObject(manager.modelList[0], new Physics());
-  const myCow = new GameObject(manager.modelList[1], new Physics());
+  const myRayman = new GameObject(manager.modelList.rayman, new Physics());
+  const myCow = new GameObject(manager.modelList.cow, new Physics());
 
   manager.addObjects([myRayman, myCow]);
 
   myCow.physics.angularVelocity = new Vector3(10, 10, 10);
 
-  const raymanModelExtents = manager.modelList[0].getModelExtent();
+  const raymanModelExtents = manager.modelList.rayman.getModelExtent();
 
   // camera begin
   const eye = m4.transformPoint(m4.multiply(m4.translation(raymanModelExtents.center), m4.multiply(m4.rotationY(0), m4.rotationX(0))), [

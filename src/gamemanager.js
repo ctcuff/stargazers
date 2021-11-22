@@ -8,10 +8,11 @@ class GameManager {
   }
 
   async addModels(models) {
-    for (const url of models) {
+    for (const model of models) {
+      const url = model.model;
       const m = new Model();
       await m.load(url);
-      this.modelList.push(m);
+      this.modelList[model.name] = m;
     }
   }
 
