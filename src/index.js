@@ -62,9 +62,9 @@ const main = async () => {
 
   // loop to generate 3200 cows
   for (let i = 0; i < 3200; i++) {
-    // pick a random x y z inside (-160, -160, 0) to (160, 160, -800)
-    let x = getRandomInt(-160, 160);
-    let y = getRandomInt(-160, 160);
+    // pick a random x y z inside (-200, -200, 0) to (200, 200, -800)
+    let x = getRandomInt(-200, 200);
+    let y = getRandomInt(-200, 200);
     let z = getRandomInt(0, -800);
     
     // normalize a random vel vector
@@ -103,7 +103,7 @@ const main = async () => {
 
   let cameraMatrix = m4.lookAt(eye, raymanModelExtents.center, [0, 1, 0]);
   let viewMatrix = m4.inverse(cameraMatrix);
-  const projectionMatrix = m4.perspective(deg2rad(75), window.innerWidth / window.innerHeight, 0.1, 5000);
+  const projectionMatrix = m4.perspective(deg2rad(75), window.innerWidth / window.innerHeight, 0.1, 1000);
 
   // camera end
 
