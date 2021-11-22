@@ -1,3 +1,4 @@
+import { Vector3 } from 'three';
 import { m4 } from 'twgl.js';
 import { deg2rad } from './utils/math';
 
@@ -13,10 +14,10 @@ class Camera {
     this.aspect = aspect;
     this.near = near;
     this.far = far;
-    this.position = [0, 0, 0];
-    this.lookAtTarget = [0, 0, 0];
+    this.position = new Vector3(0, 0, 1);
+    this.lookAtTarget = new Vector3(0, 0, 0);
 
-    this.cameraMatrix = m4.lookAt(this.position, this.lookAtTarget, [0, 1, 0]);
+    this.cameraMatrix = m4.lookAt(this.position.toArray(), this.lookAtTarget.toArray(), [0, 1, 0]);
     this.viewMatrix = m4.inverse(this.cameraMatrix);
     this.projectionMatrix = m4.perspective(deg2rad(fov), aspect, near, far);
 
@@ -26,14 +27,10 @@ class Camera {
   }
 
   /**
-   * @param {{ x: number, y: number, z: number }} target
+   * @param {{ x: number, y: number, z: number }} lookAt
    */
-  lookAt({ x, y, z }) {
-    this.lookAtTarget = [
-      x ?? this.lookAtTarget[0], 
-      y ?? this.lookAtTarget[1], 
-      z ?? this.lookAtTarget[2]
-    ];
+  lookAt(lookAt) {
+    this.lookAtTarget.set(lookAt.x, lookAt.y, lookAt.z);
     this.updateViewMatrix();
   }
 
@@ -48,18 +45,14 @@ class Camera {
   /**
    * @param {{ x: number, y: number, z: number }} position
    */
-  setPosition({ x, y, z }) {
-    this.position = [
-      x ?? this.position[0], 
-      y ?? this.position[1],
-      z ?? this.position[2]
-    ];
+  setPosition(position) {
+    this.position.set(position.x, position.y, position.z);
 
     this.updateViewMatrix();
   }
 
   updateViewMatrix() {
-    this.cameraMatrix = m4.lookAt(this.position, this.lookAtTarget, [0, 1, 0]);
+    this.cameraMatrix = m4.lookAt(this.position.toArray(), this.lookAtTarget.toArray(), [0, 1, 0]);
     this.viewMatrix = m4.inverse(this.cameraMatrix);
   }
 

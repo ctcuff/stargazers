@@ -56,9 +56,9 @@ const main = async () => {
   const mainModel = manager.modelList.ufo.getModelExtent();
 
   camera.lookAt({
-    x: raymanModelExtents.center.x,
-    y: raymanModelExtents.center.y,
-    z: raymanModelExtents.center.z
+    x: 0,
+    y: 0,
+    z: 0
   });
 
   camera.setPosition({
