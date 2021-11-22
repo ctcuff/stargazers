@@ -53,15 +53,15 @@ const main = async () => {
   let ufoPhysics = new Physics(new Vector3(0, 0, 0), new Vector3(0, -200, 0), 0);
 
   // Declare models to be used
-  const ufo = new GameObject(manager.modelList[0], ufoPhysics);
-  const myAsteroid1 = new GameObject(manager.modelList[1], asteroidPhysics);
+  const ufo = new GameObject(manager.modelList.ufo, ufoPhysics);
+  const myAsteroid1 = new GameObject(manager.modelList.asteroid0, asteroidPhysics);
 
   // Add models to canvas
   manager.addObject(myAsteroid1);
   manager.addObject(ufo);
 
   /** mainModel should be the main model of the scene */
-  const mainModel = manager.modelList[0].getModelExtent();
+  const mainModel = manager.modelList.ufo.getModelExtent();
 
   // Offset camera
   let cameraStartingPos = new Vector3(mainModel.dia * 0, mainModel.dia * 0.7, mainModel.dia * 0.1);
