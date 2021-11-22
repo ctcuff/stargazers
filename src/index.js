@@ -9,6 +9,7 @@ import { gl } from './constants';
 import { Vector3 } from 'three';
 import manager from './gamemanager';
 import { deg2rad } from './utils/math';
+import Cow from './utils/cow';
 
 const m4 = twgl.m4;
 
@@ -56,43 +57,13 @@ const main = async () => {
   const ufo = new GameObject(manager.modelList.ufo, ufoPhysics);
   const myAsteroid1 = new GameObject(manager.modelList.asteroid0, asteroidPhysics);
 
-  // helper for ints in range
-  function getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min) + min);
-  }
-
-  // helper for -1 - 1
-  function getRandomDir() {
-    return Math.random() * 2 - 1;
-  }
-
   let cows = [];
 
   // loop to generate 3200 cows
   for (let i = 0; i < 3200; i++) {
-    // pick a random x y z inside (-200, -200, 0) to (200, 200, -800)
-    let x = getRandomInt(-200, 200);
-    let y = getRandomInt(-200, 200);
-    let z = getRandomInt(0, -800);
-    
-    // normalize a random vel vector
-    const vel = new Vector3(getRandomDir(), getRandomDir(), getRandomDir());
-    vel.normalize();
-
     // cow
-    const cow = new GameObject(manager.modelList[1], new Physics(vel));
+    const cow = new Cow();
     
-    // 1/4 of the time, add a random rotation
-    if (Math.random() >= 0.25) {
-      const rot = new Vector3(getRandomDir(), getRandomDir(), getRandomDir());
-      rot.multiplyScalar(Math.random() * 8);
-      cow.physics.angularVelocity = rot;
-    }
-
-    cow.position = new Vector3(x, y, z);
-    cow.scale = Math.random() + 0.5;
     cows.push(cow);
   }
 
