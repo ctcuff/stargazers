@@ -2,32 +2,24 @@ import './style/index.css';
 import * as twgl from 'twgl.js';
 import vs from './shaders/shader.vert';
 import fs from './shaders/shader.frag';
-import Model from './model';
 import GameObject from './game-object';
 import Physics from './physics';
 import { gl } from './constants';
-import { Vector3 } from 'three';
 import manager from './gamemanager';
+<<<<<<< HEAD
 import { deg2rad } from './utils/math';
 import Cow from './utils/cow';
 
 const m4 = twgl.m4;
+=======
+import Camera from './camera';
+import { Vector3 } from 'three';
+>>>>>>> master
 
 const main = async () => {
   const programInfo = twgl.createProgramInfo(gl, [vs, fs], error => console.log(error));
 
-  // object containing what keys are down for a animation frame
-  const keyDown = {};
-
-  document.body.addEventListener('keydown', e => {
-    keyDown[e.code] = true;
-  });
-
-  document.body.addEventListener('keyup', e => {
-    keyDown[e.code] = false;
-  });
-
-  // init gl stuff here, like back face culling and the depth test
+  // // init gl stuff here, like back face culling and the depth test
   gl.enable(gl.DEPTH_TEST);
   gl.clearColor(0.5, 0.2, 0.7, 1.0);
 
@@ -66,10 +58,12 @@ const main = async () => {
     
     cows.push(cow);
   }
-
   manager.addObjects([...cows]);
 
-  // manager.addObjects([myRayman, myCow]);
+
+  const raymanModelExtents = manager.modelList.rayman.getModelExtent();
+
+  const camera = new Camera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
   // Add models to canvas
   manager.addObject(myAsteroid1);
   manager.addObject(ufo);
@@ -77,6 +71,7 @@ const main = async () => {
   /** mainModel should be the main model of the scene */
   const mainModel = manager.modelList.ufo.getModelExtent();
 
+<<<<<<< HEAD
   // Offset camera
   let cameraStartingPos = new Vector3();
 
@@ -92,6 +87,19 @@ const main = async () => {
   const projectionMatrix = m4.perspective(deg2rad(75), window.innerWidth / window.innerHeight, 0.1, 5000);
 
   // camera end
+=======
+  camera.lookAt({
+    x: 0,
+    y: 0,
+    z: 0
+  });
+
+  camera.setPosition({
+    x: mainModel.dia * 0, 
+    y: mainModel.dia * 0.7,
+    z: mainModel.dia
+  });
+>>>>>>> master
 
   // create looper function
   function frame(curentMilis) {
@@ -122,6 +130,7 @@ const main = async () => {
   }
 
   function render(deltaTime) {
+<<<<<<< HEAD
     // update the camera for this frame
     cameraMatrix = m4.lookAt(eye, raymanModelExtents.center, [0, 1, 0]);
     viewMatrix = m4.identity();
@@ -137,11 +146,12 @@ const main = async () => {
 
     
     manager.sceneObjects.forEach(sceneObject => sceneObject.render(programInfo, uniforms));
+=======
+    manager.sceneObjects.forEach(sceneObject =>
+      sceneObject.render(programInfo, camera.getUniforms())
+    );
+>>>>>>> master
   }
-
-  window.addEventListener('resize', () => {
-    uniforms.projectionMatrix = m4.perspective(deg2rad(75), window.innerWidth / window.innerHeight, 0.1, 5000);
-  });
 
   gl.viewport(0, 0, window.innerWidth, window.innerHeight);
   twgl.resizeCanvasToDisplaySize(gl.canvas);
