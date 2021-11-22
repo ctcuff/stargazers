@@ -61,7 +61,7 @@ const main = async () => {
   camera.setPosition({
     x: mainModel.dia * 0, 
     y: mainModel.dia * 0.7,
-    z: raymanModelExtents.dia
+    z: mainModel.dia
   });
 
   // create looper function
