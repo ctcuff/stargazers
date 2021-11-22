@@ -62,7 +62,7 @@ const main = async () => {
   });
 
   camera.setPosition({
-    x: mainModel.dia * 0, 
+    x: mainModel.dia * 0,
     y: mainModel.dia * 0.7,
     z: mainModel.dia
   });
@@ -91,12 +91,20 @@ const main = async () => {
   function update(deltaTime) {
     manager.sceneObjects.forEach(sceneObject => sceneObject.update(deltaTime));
 
-    const modifier = Input.keysDown.Shift ? 10 : 1;
+    const modifier = Input.keysDown.Shift ? 5 : 1;
 
     if (Input.keysDown.ArrowRight) {
-      camera.setPosition({ x: 1 })
-    } else if (Input.keysDown.ArrowLeft) {
-      myRayman.addRotation({ y: -deltaTime * (120 * modifier) });
+      camera.setPosition({
+        ...camera.position,
+        x: camera.position.x + 1 * modifier
+      });
+    }
+
+    if (Input.keysDown.ArrowLeft) {
+      camera.setPosition({
+        ...camera.position,
+        x: camera.position.x - 1 * modifier
+      });
     }
   }
 
