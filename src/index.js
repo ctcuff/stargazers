@@ -37,37 +37,29 @@ const main = async () => {
   let lastFrameMilis = 0;
 
   const modelRefs = [
-    require('./models/ufo.obj'),
-    require('./models/asteroid1.obj'),
-    require('./models/raymanModel.obj'), 
-    require('./models/cow.obj'), 
-    require('./models/asteroid0.obj'),
-    require('./models/starwars.obj'),
+    { model: require('./models/ufo.obj'), name: 'ufo' },
+    { model: require('./models/starwars.obj'), name: 'starwars' },
+    { model: require('./models/asteroid0.obj'), name: 'asteroid0' },
+    { model: require('./models/asteroid1.obj'), name: 'asteroid1' },
+    { model: require('./models/raymanModel.obj'), name: 'rayman' },
+    { model: require('./models/cow.obj'), name: 'cow' }
   ];
 
   await manager.addModels(modelRefs);
 
   // Create physics objects
   // Physics(Velocity, angularVelocity, colliderRadius)
-  let asteroidPhysics = new Physics(
-    new Vector3(0, 0, -30), 
-    new Vector3(0, 0, 0), 
-    0
-  );
-  let ufoPhysics = new Physics(
-    new Vector3(0, 0, 0), 
-    new Vector3(0, -200, 0), 
-    0
-  );
-  
+  let asteroidPhysics = new Physics(new Vector3(0, 0, -30), new Vector3(0, 0, 0), 0);
+  let ufoPhysics = new Physics(new Vector3(0, 0, 0), new Vector3(0, -200, 0), 0);
+
   // Declare models to be used
   const ufo = new GameObject(manager.modelList[0], ufoPhysics);
   const myAsteroid1 = new GameObject(manager.modelList[1], asteroidPhysics);
-  
+
   // Add models to canvas
   manager.addObject(myAsteroid1);
   manager.addObject(ufo);
-  
+
   /** mainModel should be the main model of the scene */
   const mainModel = manager.modelList[0].getModelExtent();
 
