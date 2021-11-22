@@ -7,13 +7,13 @@ import { Vector3 } from "three";
 class Cow extends GameObject {
   constructor() {
     super(manager.modelList.cow, new Physics());
-    this.initWithRandom(true);
+    this.initWithRandom(false);
   }
 
   update(deltaTime) {
     // check here for out of bounds, update position
     if (manager.ufo.position.z < this.position.z - 99.7135610685365) {
-      this.initWithRandom(false);
+      this.initWithRandom(true);
     }
 
     // you want to call this btw
@@ -24,10 +24,10 @@ class Cow extends GameObject {
     // pick a random x y z inside (-200, -200, 0) to (200, 200, -800)
     let x = getRandomInt(-200, 200);
     let y = getRandomInt(-200, 200);
-    let z = getRandomInt(0, -1000);
+    let z = getRandomInt(0, -1200);
 
-    if (!updateFlag) {
-      z = -getRandomInt(manager.ufo.position.z + 1000, manager.ufo.position.z + 1200);
+    if (updateFlag) {
+      z = getRandomInt(manager.ufo.position.z - 1000, manager.ufo.position.z - 1200);
     }
 
     this.position = new Vector3(x, y, z);

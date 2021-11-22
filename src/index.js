@@ -37,15 +37,16 @@ const main = async () => {
   // Create physics objects
   // Physics(Velocity, angularVelocity, colliderRadius)
   let asteroidPhysics = new Physics(new Vector3(0, 0, 0), new Vector3(0, 0, 0), 0);
-  let ufoPhysics = new Physics(new Vector3(0, 0, -30), new Vector3(0, -200, 0), 0);
+  let ufoPhysics = new Physics(new Vector3(0, 0, -60), new Vector3(0, -200, 0), 0);
 
   // Declare models to be used
   const ufo = new GameObject(manager.modelList.ufo, ufoPhysics);
-  manager.ufo = ufo;
   const myAsteroid1 = new GameObject(manager.modelList.asteroid0, asteroidPhysics);
 
-  let cows = [];
+  // this is a hack, this allows me to have access to the ufo in all the cows
+  manager.ufo = ufo;
 
+  let cows = [];
   // loop to generate 3200 cows
   for (let i = 0; i < 3200; i++) {
     // cow
@@ -53,19 +54,19 @@ const main = async () => {
     
     cows.push(cow);
   }
-  manager.addObjects([...cows]);
+  manager.addObjects(cows);
 
   const raymanModelExtents = manager.modelList.rayman.getModelExtent();
 
+  // create camera
   const camera = new Camera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
   // Add models to canvas
   manager.addObject(myAsteroid1);
   manager.addObject(ufo);
-
   
-  /** mainModel should be the main model of the scene */
+  // mainModel should be the main model of the scene 
   const mainModel = manager.modelList.ufo.getModelExtent();
-  console.log(mainModel.dia);
   
   camera.lookAt({
     x: 0,
