@@ -37,14 +37,24 @@ const main = async () => {
   let lastFrameMilis = 0;
 
   const modelRefs = [
-    require('./models/raymanModel.obj'),
-    require('./models/cow.obj')
+    { model: require('./models/ufo.obj'), name: 'ufo' },
+    { model: require('./models/starwars.obj'), name: 'starwars' },
+    { model: require('./models/asteroid0.obj'), name: 'asteroid0' },
+    { model: require('./models/asteroid1.obj'), name: 'asteroid1' },
+    { model: require('./models/raymanModel.obj'), name: 'rayman' },
+    { model: require('./models/cow.obj'), name: 'cow' }
   ];
 
   await manager.addModels(modelRefs);
 
-  const myRayman = new GameObject(manager.modelList[0], new Physics());
-  const myCow = new GameObject(manager.modelList[1], new Physics());
+  // Create physics objects
+  // Physics(Velocity, angularVelocity, colliderRadius)
+  let asteroidPhysics = new Physics(new Vector3(0, 0, -30), new Vector3(0, 0, 0), 0);
+  let ufoPhysics = new Physics(new Vector3(0, 0, 0), new Vector3(0, -200, 0), 0);
+
+  // Declare models to be used
+  const ufo = new GameObject(manager.modelList.ufo, ufoPhysics);
+  const myAsteroid1 = new GameObject(manager.modelList.asteroid0, asteroidPhysics);
 
   // helper for ints in range
   function getRandomInt(min, max) {
@@ -89,21 +99,26 @@ const main = async () => {
   manager.addObjects([...cows]);
 
   // manager.addObjects([myRayman, myCow]);
+  // Add models to canvas
+  manager.addObject(myAsteroid1);
+  manager.addObject(ufo);
 
-  myCow.physics.angularVelocity = new Vector3(10, 10, 10);
+  /** mainModel should be the main model of the scene */
+  const mainModel = manager.modelList.ufo.getModelExtent();
 
-  const raymanModelExtents = manager.modelList[0].getModelExtent();
+  // Offset camera
+  let cameraStartingPos = new Vector3();
 
   // camera begin
-  let eye = m4.transformPoint(m4.multiply(m4.translation(raymanModelExtents.center), m4.multiply(m4.rotationY(0), m4.rotationX(0))), [
-    0,
-    0,
-    raymanModelExtents.dia
+  const eye = m4.transformPoint(m4.multiply(m4.translation(mainModel.center), m4.multiply(m4.rotationY(0), m4.rotationX(0))), [
+    cameraStartingPos.x,
+    cameraStartingPos.y,
+    cameraStartingPos.z + mainModel.dia
   ]);
 
-  let cameraMatrix = m4.lookAt(eye, raymanModelExtents.center, [0, 1, 0]);
-  let viewMatrix = m4.inverse(cameraMatrix);
-  const projectionMatrix = m4.perspective(deg2rad(75), window.innerWidth / window.innerHeight, 0.1, 1000);
+  const cameraMatrix = m4.lookAt(eye, mainModel.center, [0, 1, 0]);
+  const viewMatrix = m4.inverse(cameraMatrix);
+  const projectionMatrix = m4.perspective(deg2rad(75), window.innerWidth / window.innerHeight, 0.1, 5000);
 
   // camera end
 
