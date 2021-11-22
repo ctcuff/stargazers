@@ -6,8 +6,8 @@ import GameObject from './game-object';
 import Physics from './physics';
 import { gl } from './constants';
 import manager from './gamemanager';
-import { deg2rad } from './utils/math';
 import Input from './input';
+import Camera from './camera';
 import { Vector3 } from 'three';
 
 const m4 = twgl.m4;
@@ -45,6 +45,9 @@ const main = async () => {
   const ufo = new GameObject(manager.modelList.ufo, ufoPhysics);
   const myAsteroid1 = new GameObject(manager.modelList.asteroid0, asteroidPhysics);
 
+  const raymanModelExtents = manager.modelList.rayman.getModelExtent();
+
+  const camera = new Camera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
   // Add models to canvas
   manager.addObject(myAsteroid1);
   manager.addObject(ufo);
@@ -52,25 +55,17 @@ const main = async () => {
   /** mainModel should be the main model of the scene */
   const mainModel = manager.modelList.ufo.getModelExtent();
 
-  // Offset camera
-  let cameraStartingPos = new Vector3(mainModel.dia * 0, mainModel.dia * 0.7, mainModel.dia * 0.1);
+  camera.lookAt({
+    x: raymanModelExtents.center.x,
+    y: raymanModelExtents.center.y,
+    z: raymanModelExtents.center.z
+  });
 
-  // camera begin
-  const eye = m4.transformPoint(m4.multiply(m4.translation(mainModel.center), m4.multiply(m4.rotationY(0), m4.rotationX(0))), [
-    cameraStartingPos.x,
-    cameraStartingPos.y,
-    cameraStartingPos.z + mainModel.dia
-  ]);
-
-  const cameraMatrix = m4.lookAt(eye, mainModel.center, [0, 1, 0]);
-  const viewMatrix = m4.inverse(cameraMatrix);
-  const projectionMatrix = m4.perspective(deg2rad(75), window.innerWidth / window.innerHeight, 0.1, 5000);
-
-  const uniforms = {
-    viewMatrix,
-    projectionMatrix
-  };
-  // camera end
+  camera.setPosition({
+    x: mainModel.dia * 0, 
+    y: mainModel.dia * 0.7,
+    z: mainModel.dia
+  });
 
   // create looper function
   function frame(curentMilis) {
@@ -99,19 +94,17 @@ const main = async () => {
     const modifier = Input.keysDown.Shift ? 10 : 1;
 
     if (Input.keysDown.ArrowRight) {
-      myRayman.addRotation({ y: deltaTime * (120 * modifier) });
+      camera.setPosition({ x: 1 })
     } else if (Input.keysDown.ArrowLeft) {
       myRayman.addRotation({ y: -deltaTime * (120 * modifier) });
     }
   }
 
   function render(deltaTime) {
-    manager.sceneObjects.forEach(sceneObject => sceneObject.render(programInfo, uniforms));
+    manager.sceneObjects.forEach(sceneObject =>
+      sceneObject.render(programInfo, camera.getUniforms())
+    );
   }
-
-  window.addEventListener('resize', () => {
-    uniforms.projectionMatrix = m4.perspective(deg2rad(75), window.innerWidth / window.innerHeight, 0.1, 5000);
-  });
 
   gl.viewport(0, 0, window.innerWidth, window.innerHeight);
   twgl.resizeCanvasToDisplaySize(gl.canvas);
