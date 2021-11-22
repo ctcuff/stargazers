@@ -7,17 +7,13 @@ class GameManager {
     this.sceneObjects = [];
   }
 
-  /**
-   * @param {string[]} modelURLs
-   */
-  async addModels(modelURLs) {
-    // Load all models at once and resolve after they've all finished loading
-    const promises = modelURLs.map(url => {
-      const model = new Model();
-      return model.load(url).then(() => this.modelList.push(model));
-    });
-
-    await Promise.all(promises);
+  async addModels(models) {
+    for (const model of models) {
+      const url = model.model;
+      const m = new Model();
+      await m.load(url);
+      this.modelList[model.name] = m;
+    }
   }
 
   /**
