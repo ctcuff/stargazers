@@ -96,6 +96,15 @@ class GameObject {
       z: this.position.z + (z ?? 0)
     };
   }
+
+  /**
+   * @typedef {import('./game-object').default} GameObject
+   * @param {GameObject} gameobject
+   * Add a already created gameobject to the manager
+   */
+  doesCollide(gameobject) {
+    return this.position.distanceTo(gameobject.position) <= this.physics.colliderRadius + gameobject.colliderRadius;
+  }
 }
 
 export default GameObject;
