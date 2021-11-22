@@ -7,6 +7,7 @@ import Physics from './physics';
 import { gl } from './constants';
 import manager from './gamemanager';
 import Camera from './camera';
+import { Vector3 } from 'three';
 
 const main = async () => {
   const programInfo = twgl.createProgramInfo(gl, [vs, fs], error => console.log(error));
@@ -21,21 +22,38 @@ const main = async () => {
   // track when the last frame rendered
   let lastFrameMilis = 0;
 
-  const modelRefs = [require('./models/raymanModel.obj'), require('./models/cow.obj')];
+  const modelRefs = [
+    { model: require('./models/ufo.obj'), name: 'ufo' },
+    { model: require('./models/starwars.obj'), name: 'starwars' },
+    { model: require('./models/asteroid0.obj'), name: 'asteroid0' },
+    { model: require('./models/asteroid1.obj'), name: 'asteroid1' },
+    { model: require('./models/raymanModel.obj'), name: 'rayman' },
+    { model: require('./models/cow.obj'), name: 'cow' }
+  ];
 
   await manager.addModels(modelRefs);
 
-  const myRayman = new GameObject(manager.modelList[0], new Physics());
-  const myCow = new GameObject(manager.modelList[1], new Physics());
+  // Create physics objects
+  // Physics(Velocity, angularVelocity, colliderRadius)
+  let asteroidPhysics = new Physics(new Vector3(0, 0, -30), new Vector3(0, 0, 0), 0);
+  let ufoPhysics = new Physics(new Vector3(0, 0, 0), new Vector3(0, -200, 0), 0);
 
-  manager.addObjects([myRayman, myCow]);
+  // Declare models to be used
+  const ufo = new GameObject(manager.modelList.ufo, ufoPhysics);
+  const myAsteroid1 = new GameObject(manager.modelList.asteroid0, asteroidPhysics);
 
-  const raymanModelExtents = manager.modelList[0].getModelExtent();
+  const raymanModelExtents = manager.modelList.rayman.getModelExtent();
 
   const camera = new Camera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  // Add models to canvas
+  manager.addObject(myAsteroid1);
+  manager.addObject(ufo);
+
+  /** mainModel should be the main model of the scene */
+  const mainModel = manager.modelList.ufo.getModelExtent();
 
   camera.lookAt(...raymanModelExtents.center);
-  camera.setPosition(0, 8, raymanModelExtents.dia);
+  camera.setPosition(mainModel.dia * 0, mainModel.dia * 0.7, raymanModelExtents.dia);
 
   // create looper function
   function frame(curentMilis) {
