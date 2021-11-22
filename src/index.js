@@ -42,8 +42,6 @@ const main = async () => {
   const ufo = new GameObject(manager.modelList.ufo, ufoPhysics);
   const myAsteroid1 = new GameObject(manager.modelList.asteroid0, asteroidPhysics);
 
-  const raymanModelExtents = manager.modelList.rayman.getModelExtent();
-
   const camera = new Camera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
   // Add models to canvas
   manager.addObject(myAsteroid1);
@@ -59,7 +57,7 @@ const main = async () => {
   });
 
   camera.setPosition({
-    x: mainModel.dia * 0, 
+    x: mainModel.dia * 0,
     y: mainModel.dia * 0.7,
     z: mainModel.dia
   });
@@ -90,9 +88,7 @@ const main = async () => {
   }
 
   function render(deltaTime) {
-    manager.sceneObjects.forEach(sceneObject =>
-      sceneObject.render(programInfo, camera.getUniforms())
-    );
+    manager.sceneObjects.forEach(sceneObject => sceneObject.render(programInfo, camera.getUniforms()));
   }
 
   gl.viewport(0, 0, window.innerWidth, window.innerHeight);
