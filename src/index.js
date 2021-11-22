@@ -52,8 +52,17 @@ const main = async () => {
   /** mainModel should be the main model of the scene */
   const mainModel = manager.modelList.ufo.getModelExtent();
 
-  camera.lookAt(...raymanModelExtents.center);
-  camera.setPosition(mainModel.dia * 0, mainModel.dia * 0.7, raymanModelExtents.dia);
+  camera.lookAt({
+    x: raymanModelExtents.center.x,
+    y: raymanModelExtents.center.y,
+    z: raymanModelExtents.center.z
+  });
+
+  camera.setPosition({
+    x: mainModel.dia * 0, 
+    y: mainModel.dia * 0.7,
+    z: raymanModelExtents.dia
+  });
 
   // create looper function
   function frame(curentMilis) {
