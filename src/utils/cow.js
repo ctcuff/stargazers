@@ -1,15 +1,34 @@
 import GameObject from "../game-object";
 import manager from "../gamemanager";
 import Physics from "../physics";
-import { getRandomDir, getRandomInt } from './math'
+import { getRandomDir, getRandomInt } from './math';
+import { Vector3 } from "three";
 
 class Cow extends GameObject {
   constructor() {
     super(manager.modelList.cow, new Physics());
+    this.initWithRandom(true);
+  }
+
+  update(deltaTime) {
+    // check here for out of bounds, update position
+    if (manager.ufo.position.z < this.position.z - 99.7135610685365) {
+      this.initWithRandom(false);
+    }
+
+    // you want to call this btw
+    super.update(deltaTime);
+  }
+
+  initWithRandom(updateFlag) {
     // pick a random x y z inside (-200, -200, 0) to (200, 200, -800)
     let x = getRandomInt(-200, 200);
     let y = getRandomInt(-200, 200);
-    let z = getRandomInt(0, -800);
+    let z = getRandomInt(0, -1000);
+
+    if (!updateFlag) {
+      z = -getRandomInt(manager.ufo.position.z + 1000, manager.ufo.position.z + 1200);
+    }
 
     this.position = new Vector3(x, y, z);
 
@@ -27,13 +46,6 @@ class Cow extends GameObject {
     }
 
     this.scale = Math.random() + 0.5;
-  }
-
-  update(deltaTime) {
-    // check here for out of bounds, update position
-
-    // you want to call this btw
-    super.update(deltaTime);
   }
 }
 

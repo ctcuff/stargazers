@@ -6,15 +6,9 @@ import GameObject from './game-object';
 import Physics from './physics';
 import { gl } from './constants';
 import manager from './gamemanager';
-<<<<<<< HEAD
-import { deg2rad } from './utils/math';
 import Cow from './utils/cow';
-
-const m4 = twgl.m4;
-=======
 import Camera from './camera';
 import { Vector3 } from 'three';
->>>>>>> master
 
 const main = async () => {
   const programInfo = twgl.createProgramInfo(gl, [vs, fs], error => console.log(error));
@@ -42,11 +36,12 @@ const main = async () => {
 
   // Create physics objects
   // Physics(Velocity, angularVelocity, colliderRadius)
-  let asteroidPhysics = new Physics(new Vector3(0, 0, -30), new Vector3(0, 0, 0), 0);
-  let ufoPhysics = new Physics(new Vector3(0, 0, 0), new Vector3(0, -200, 0), 0);
+  let asteroidPhysics = new Physics(new Vector3(0, 0, 0), new Vector3(0, 0, 0), 0);
+  let ufoPhysics = new Physics(new Vector3(0, 0, -30), new Vector3(0, -200, 0), 0);
 
   // Declare models to be used
   const ufo = new GameObject(manager.modelList.ufo, ufoPhysics);
+  manager.ufo = ufo;
   const myAsteroid1 = new GameObject(manager.modelList.asteroid0, asteroidPhysics);
 
   let cows = [];
@@ -60,7 +55,6 @@ const main = async () => {
   }
   manager.addObjects([...cows]);
 
-
   const raymanModelExtents = manager.modelList.rayman.getModelExtent();
 
   const camera = new Camera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -68,26 +62,11 @@ const main = async () => {
   manager.addObject(myAsteroid1);
   manager.addObject(ufo);
 
+  
   /** mainModel should be the main model of the scene */
   const mainModel = manager.modelList.ufo.getModelExtent();
-
-<<<<<<< HEAD
-  // Offset camera
-  let cameraStartingPos = new Vector3();
-
-  // camera begin
-  const eye = m4.transformPoint(m4.multiply(m4.translation(mainModel.center), m4.multiply(m4.rotationY(0), m4.rotationX(0))), [
-    cameraStartingPos.x,
-    cameraStartingPos.y,
-    cameraStartingPos.z + mainModel.dia
-  ]);
-
-  const cameraMatrix = m4.lookAt(eye, mainModel.center, [0, 1, 0]);
-  const viewMatrix = m4.inverse(cameraMatrix);
-  const projectionMatrix = m4.perspective(deg2rad(75), window.innerWidth / window.innerHeight, 0.1, 5000);
-
-  // camera end
-=======
+  console.log(mainModel.dia);
+  
   camera.lookAt({
     x: 0,
     y: 0,
@@ -99,7 +78,6 @@ const main = async () => {
     y: mainModel.dia * 0.7,
     z: mainModel.dia
   });
->>>>>>> master
 
   // create looper function
   function frame(curentMilis) {
@@ -123,34 +101,17 @@ const main = async () => {
   }
 
   function update(deltaTime) {
-    // update z pos of camera
-    eye[2] -= 20 * deltaTime;
-
     manager.sceneObjects.forEach(sceneObject => sceneObject.update(deltaTime));
+
+    let offset = new Vector3(0, mainModel.dia * 0.5, mainModel.dia);
+    camera.setPosition(ufo.position.clone().add(offset));
+    camera.lookAt(ufo.position);
   }
 
   function render(deltaTime) {
-<<<<<<< HEAD
-    // update the camera for this frame
-    cameraMatrix = m4.lookAt(eye, raymanModelExtents.center, [0, 1, 0]);
-    viewMatrix = m4.identity();
-    m4.rotateX(viewMatrix, 0, viewMatrix);
-    m4.rotateY(viewMatrix, 0, viewMatrix);
-    m4.translate(viewMatrix, twgl.v3.negate(eye), viewMatrix);
-    
-    // hack
-    const uniforms = {
-      viewMatrix,
-      projectionMatrix
-    };
-
-    
-    manager.sceneObjects.forEach(sceneObject => sceneObject.render(programInfo, uniforms));
-=======
     manager.sceneObjects.forEach(sceneObject =>
       sceneObject.render(programInfo, camera.getUniforms())
     );
->>>>>>> master
   }
 
   gl.viewport(0, 0, window.innerWidth, window.innerHeight);
