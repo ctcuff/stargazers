@@ -67,6 +67,11 @@ const main = async () => {
     // calculate the change in time in seconds since the last frame
     let deltaTime = (curentMilis - lastFrameMilis) / 1000;
 
+    // check if the canvas needs to be resized, if so, things need to be recreated here
+    if (wasResized) {
+      // re create frame buffers (TODO) here so that they have the proper settings
+    }
+
     // update things here
     update(deltaTime);
 
@@ -95,9 +100,20 @@ const main = async () => {
     );
   }
 
-  // this is going to get changed next commit
-  gl.viewport(0, 0, window.innerWidth, window.innerHeight);
+  // track if the window was resized and adjust the canvas and viewport to match
+  let wasResized = false;
+  window.addEventListener('resize', () => {
+    // even though this is an event listener, due to the nature of the javascript event loop, 
+    // this will not cause weird timing issues with our rendering because we cant be rendering and processing this at the same time
+    // it just inst possible
+    twgl.resizeCanvasToDisplaySize(gl.canvas);
+    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+    wasResized = true;
+  });
+
+  // this will make init the canvas width and height and the viewport
   twgl.resizeCanvasToDisplaySize(gl.canvas);
+  gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
   // start the render loop by requesting an animation frame for the frame function
   rafHandle = requestAnimationFrame(frame);
