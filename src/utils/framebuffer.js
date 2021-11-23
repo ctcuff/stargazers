@@ -33,7 +33,7 @@ function createColorTexture(width, height) {
  * @returns the WebGL buffer id of the color buffer
  */
 function createMultiSampleColorBuffer(width, height) {
-  const buf = gl.createBuffer();
+  const buf = gl.createRenderbuffer();
   gl.bindRenderbuffer(gl.RENDERBUFFER,  buf);
   gl.renderbufferStorageMultisample(gl.RENDERBUFFER, samples, gl.RGBA8, width, height);
   return buf;
