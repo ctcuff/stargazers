@@ -60,7 +60,7 @@ const main = async () => {
   manager.addObjects(astArray);
 
   // create camera
-  const camera = new Camera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  const camera = new Camera(75, window.innerWidth / window.innerHeight, 1, 2000);
 
   // Add models to canvas
   manager.addObject(myAsteroid1);

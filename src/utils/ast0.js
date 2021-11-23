@@ -22,8 +22,8 @@ class Ast0 extends GameObject {
   }
 
   initWithRandom(updateFlag) {
-    let x = getRandomInt(-400, 400);
-    let y = getRandomInt(-400, 400);
+    let x = getRandomInt(-1000, 1000);
+    let y = getRandomInt(-400, 200);
     let z = getRandomInt(-100, -2000);
 
     if (updateFlag) {

@@ -22,9 +22,8 @@ class Ast1 extends GameObject {
   }
 
   initWithRandom(updateFlag) {
-    // pick a random x y z inside (-200, -200, 0) to (200, 200, -800)
-    let x = getRandomInt(-400, 400);
-    let y = getRandomInt(-400, 400);
+    let x = getRandomInt(-1000, 1000);
+    let y = getRandomInt(-400, 200);
     let z = getRandomInt(-100, -2000);
 
     if (updateFlag) {
