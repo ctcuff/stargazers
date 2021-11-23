@@ -53,10 +53,15 @@ const main = async () => {
   // this is a hack, this allows me to have access to the ufo in all the cows
   manager.ufo = ufo;
   
+  // Spawn the first set of asteroids
   
-  let arrOfObjects = spawnArr(100);
+  let n = 100;
+  manager.level = 1;
+  let arrOfObjects = spawnArr(manager.level * 100);
   manager.addObjects(arrOfObjects);
-  
+  // for(let i = 0; i < n * 2; i++)
+    // manager.sceneObjects.pop();                   
+
   // create camera
   const camera = new Camera(75, window.innerWidth / window.innerHeight, 1, 2000);
   
