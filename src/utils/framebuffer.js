@@ -110,7 +110,7 @@ class FrameBuffer {
         for (let i = 0; i < opts.targets.length; i++) {
           let buf = createMultiSampleColorBuffer(width, height);
           // attach result to frame buffer
-          gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + i, gl.RENDERBUFFER, buf, 0);
+          gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + i, gl.RENDERBUFFER, buf);
 
           // save it
           this.colorAttachments.push(buf);
@@ -143,13 +143,13 @@ class FrameBuffer {
     } else {
       this.depthBuf = createDepthBuffer(width, height, opts.multiSample);
       // attach result to frame buffer
-      gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, )
+      gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, this.depthBuf);
     }
 
     // unbind anything that may have been bound during the process of creating the frame buffer
-    gl.bindTexture(gl.TEXTURE_2D, 0);
-    gl.bindRenderbuffer(gl.RENDERBUFFER, 0);
-    gl.bindFramebuffer(gl.FRAMEBUFFER, 0);
+    gl.bindTexture(gl.TEXTURE_2D, null);
+    gl.bindRenderbuffer(gl.RENDERBUFFER, null);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
   }
 
   /**
@@ -172,7 +172,7 @@ class FrameBuffer {
    */
   unbind() {
     // unbind this frame buffer and reset the view port to the canvas size
-    gl.bindFramebuffer(gl.FRAMEBUFFER, 0);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
   }
 }
