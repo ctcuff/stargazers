@@ -10,6 +10,9 @@ import Ast1 from './utils/ast1';
 import Ast0 from './utils/ast0';
 import Camera from './camera';
 import { Vector3 } from 'three';
+import { spawnArr, resetLevel } from './utils/objects';
+import { UFO_START_SPEED, UFO_START_ROT } from './utils/constants';
+
 
 const main = async () => {
   const programInfo = twgl.createProgramInfo(gl, [vs, fs], error => console.log(error));
@@ -38,7 +41,7 @@ const main = async () => {
   // Create physics objects
   // Physics(Velocity, angularVelocity, colliderRadius)
   let asteroidPhysics = new Physics(new Vector3(0, 0, 0), new Vector3(0, 0, 0), 0);
-  let ufoPhysics = new Physics(new Vector3(0, 0, -60), new Vector3(0, -200, 0), 0);
+  let ufoPhysics = new Physics(new Vector3(0, 0, UFO_START_SPEED), new Vector3(0, UFO_START_ROT, 0), 0);
 
   // Declare models to be used
   const ufo = new GameObject(manager.modelList.ufo, ufoPhysics);
@@ -46,22 +49,17 @@ const main = async () => {
   
   // Half the ship to fit the size of the asteroids
   ufo.scale = ufo.scale / 2;
-
+  
   // this is a hack, this allows me to have access to the ufo in all the cows
   manager.ufo = ufo;
-
-  let astArray = [];
-  for (let i = 0; i < 800; i++) {
-    let newAst0 = new Ast0();
-    astArray.push(newAst0);
-    let newAst1 = new Ast1();
-    astArray.push(newAst1);
-  }
-  manager.addObjects(astArray);
-
+  
+  
+  let arrOfObjects = spawnArr(100);
+  manager.addObjects(arrOfObjects);
+  
   // create camera
   const camera = new Camera(75, window.innerWidth / window.innerHeight, 1, 2000);
-
+  
   // Add models to canvas
   manager.addObject(myAsteroid1);
   manager.addObject(ufo);
@@ -74,18 +72,18 @@ const main = async () => {
     y: 0,
     z: 0
   });
-
+  
   camera.setPosition({
     x: mainModel.dia * 0, 
     y: mainModel.dia * 0.7,
     z: mainModel.dia
   });
-
+  
   // create looper function
   function frame(curentMilis) {
     // calculate the change in time in seconds since the last frame
     let deltaTime = (curentMilis - lastFrameMilis) / 1000;
-
+    
     // update things here
     update(deltaTime);
 
