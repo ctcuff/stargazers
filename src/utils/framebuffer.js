@@ -110,7 +110,7 @@ class FrameBuffer {
         for (let i = 0; i < opts.targets.length; i++) {
           let buf = createMultiSampleColorBuffer(width, height);
           // attach result to frame buffer
-          gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.RENDERBUFFER, color, 0);
+          gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + i, gl.RENDERBUFFER, buf, 0);
 
           // save it
           this.colorAttachments.push(buf);
