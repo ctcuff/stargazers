@@ -6,7 +6,8 @@ import GameObject from './game-object';
 import Physics from './physics';
 import { gl } from './constants';
 import manager from './gamemanager';
-import Cow from './utils/cow';
+import Ast1 from './utils/ast1';
+import Ast0 from './utils/ast0';
 import Camera from './camera';
 import { Vector3 } from 'three';
 
@@ -15,7 +16,7 @@ const main = async () => {
 
   // // init gl stuff here, like back face culling and the depth test
   gl.enable(gl.DEPTH_TEST);
-  gl.clearColor(0.5, 0.2, 0.7, 1.0);
+  gl.clearColor(0, 0, 0, 1.0);
 
   // the handle to the current requested animation frame, set later
   let rafHandle = undefined;
@@ -41,22 +42,22 @@ const main = async () => {
 
   // Declare models to be used
   const ufo = new GameObject(manager.modelList.ufo, ufoPhysics);
-  const myAsteroid1 = new GameObject(manager.modelList.asteroid0, asteroidPhysics);
+  const myAsteroid1 = new GameObject(manager.modelList.asteroid1, asteroidPhysics);
+  
+  // Half the ship to fit the size of the asteroids
+  ufo.scale = ufo.scale / 2;
 
   // this is a hack, this allows me to have access to the ufo in all the cows
   manager.ufo = ufo;
 
-  let cows = [];
-  // loop to generate 3200 cows
-  for (let i = 0; i < 3200; i++) {
-    // cow
-    const cow = new Cow();
-    
-    cows.push(cow);
+  let astArray = [];
+  for (let i = 0; i < 800; i++) {
+    let newAst0 = new Ast0();
+    astArray.push(newAst0);
+    let newAst1 = new Ast1();
+    astArray.push(newAst1);
   }
-  manager.addObjects(cows);
-
-  const raymanModelExtents = manager.modelList.rayman.getModelExtent();
+  manager.addObjects(astArray);
 
   // create camera
   const camera = new Camera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
