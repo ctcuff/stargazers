@@ -18,7 +18,7 @@ import { gl, multiSampleSamples as samples } from '../constants';
 function createColorTexture(width, height) {
   const tex = gl.createTexture();
   gl.bindTexture(gl.TEXTURE_2D, tex);
-  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8I, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8UI, width, height, 0, gl.RGBA_INTEGER, gl.UNSIGNED_BYTE, null);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
@@ -116,7 +116,7 @@ class FrameBuffer {
           this.colorAttachments.push(buf);
         }
       } else {
-        let color = createColorTexture();
+        let color = createColorTexture(width, height);
         // attach result to frame buffer
         gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, color, 0);
         // save color
@@ -144,6 +144,11 @@ class FrameBuffer {
       this.depthBuf = createDepthBuffer(width, height, opts.multiSample);
       // attach result to frame buffer
       gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, this.depthBuf);
+    }
+
+    // do a quick error check
+    if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) != gl.FRAMEBUFFER_COMPLETE) {
+      console.error(`Incomplete frame buffer w=${width}, h=${height}, & o=${JSON.stringify(opts)}`);
     }
 
     // unbind anything that may have been bound during the process of creating the frame buffer
