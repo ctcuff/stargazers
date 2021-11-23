@@ -30,7 +30,14 @@ class Camera {
    * @param {{ x: number, y: number, z: number }} lookAt
    */
   lookAt(lookAt) {
-    this.lookAtTarget.set(lookAt.x, lookAt.y, lookAt.z);
+    const { x, y, z } = this.lookAtTarget
+
+    this.lookAtTarget.set(
+      lookAt.x ?? x,
+      lookAt.y ?? y,
+      lookAt.z ?? z
+    );
+
     this.updateViewMatrix();
   }
 
@@ -46,7 +53,13 @@ class Camera {
    * @param {{ x: number, y: number, z: number }} position
    */
   setPosition(position) {
-    this.position.set(position.x, position.y, position.z);
+    const { x, y, z } = this.position
+    
+    this.position.set(
+      position.x ?? x,
+      position.y ?? y,
+      position.z ?? z
+    );
 
     this.updateViewMatrix();
   }
