@@ -16,6 +16,21 @@ const main = async () => {
   gl.enable(gl.DEPTH_TEST);
   gl.clearColor(0.5, 0.2, 0.7, 1.0);
 
+  // track if the window was resized and adjust the canvas and viewport to match
+  let wasResized = false;
+  window.addEventListener('resize', () => {
+    // even though this is an event listener, due to the nature of the javascript event loop, 
+    // this will not cause weird timing issues with our rendering because we cant be rendering and processing this at the same time
+    // it just inst possible
+    twgl.resizeCanvasToDisplaySize(gl.canvas);
+    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+    wasResized = true;
+  });
+
+  // this will make init the canvas width and height and the viewport
+  twgl.resizeCanvasToDisplaySize(gl.canvas);
+  gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
   // the handle to the current requested animation frame, set later
   let rafHandle = undefined;
 
@@ -99,21 +114,6 @@ const main = async () => {
       sceneObject.render(programInfo, camera.getUniforms())
     );
   }
-
-  // track if the window was resized and adjust the canvas and viewport to match
-  let wasResized = false;
-  window.addEventListener('resize', () => {
-    // even though this is an event listener, due to the nature of the javascript event loop, 
-    // this will not cause weird timing issues with our rendering because we cant be rendering and processing this at the same time
-    // it just inst possible
-    twgl.resizeCanvasToDisplaySize(gl.canvas);
-    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-    wasResized = true;
-  });
-
-  // this will make init the canvas width and height and the viewport
-  twgl.resizeCanvasToDisplaySize(gl.canvas);
-  gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
   // start the render loop by requesting an animation frame for the frame function
   rafHandle = requestAnimationFrame(frame);
