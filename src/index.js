@@ -6,8 +6,11 @@ import GameObject from './game-object';
 import Physics from './physics';
 import { gl } from './constants';
 import manager from './gamemanager';
+import Input from './input';
 import Camera from './camera';
 import { Vector3 } from 'three';
+
+const m4 = twgl.m4;
 
 const main = async () => {
   const programInfo = twgl.createProgramInfo(gl, [vs, fs], error => console.log(error));
@@ -57,7 +60,7 @@ const main = async () => {
     z: 0
   });
   camera.setPosition({
-    x: mainModel.dia * 0, 
+    x: mainModel.dia * 0,
     y: mainModel.dia * 0.7,
     z: mainModel.dia
   });
@@ -91,6 +94,22 @@ const main = async () => {
   // update function, responsible for updating all objects and things that need to be updated since last frame
   function update(deltaTime) {
     manager.sceneObjects.forEach(sceneObject => sceneObject.update(deltaTime));
+
+    const modifier = Input.keysDown.Shift ? 5 : 1;
+
+    if (Input.keysDown.ArrowRight) {
+      camera.setPosition({
+        ...camera.position,
+        x: camera.position.x + 1 * modifier
+      });
+    }
+
+    if (Input.keysDown.ArrowLeft) {
+      camera.setPosition({
+        ...camera.position,
+        x: camera.position.x - 1 * modifier
+      });
+    }
   }
 
   // render function, responsible for all rendering, including shadows (TODO), model rendering, and post processing (TODO)
