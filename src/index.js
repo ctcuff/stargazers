@@ -39,15 +39,18 @@ const main = async () => {
   // Create physics objects
   // Physics(Velocity, angularVelocity, colliderRadius)
   let asteroidPhysics = new Physics(new Vector3(0, 0, -30), new Vector3(0, 0, 0), 0);
-  let ufoPhysics = new Physics(new Vector3(0, 0, 0), new Vector3(0, -200, 0), 0);
-
+  let ufoPhysics = new Physics(new Vector3(0, 0, -30), new Vector3(0, -200, 0), 0);
+  
   // Declare models to be used
   const ufo = new GameObject(manager.modelList.ufo, ufoPhysics);
   const myAsteroid1 = new GameObject(manager.modelList.asteroid0, asteroidPhysics);
-
+  
   // Add testing models to canvas
-  manager.addObject(myAsteroid1);
   manager.addObject(ufo);
+  manager.addObject(myAsteroid1);
+
+  const SHIP_SPEED = 10;
+  const UFO_REF = manager.sceneObjects[0];
   
   // mainModel should be the 'main' model of the scene
   const mainModel = manager.modelList.ufo.getModelExtent();
@@ -97,22 +100,29 @@ const main = async () => {
 
     const modifier = Input.keysDown.Shift ? 5 : 1;
 
-    if (Input.keysDown.ArrowRight) {
-      camera.setPosition({
-        ...camera.position,
-        x: camera.position.x + 1 * modifier
-      });
+    if (Input.keysDown.ArrowRight || Input.keysDown.d || Input.keysDown.e) {
+      UFO_REF.position.add(new Vector3(SHIP_SPEED * modifier, 0, 0)) ;
+    }
+    if (Input.keysDown.ArrowLeft || Input.keysDown.a || Input.keysDown.q) {
+      UFO_REF.position.add(new Vector3(-SHIP_SPEED * modifier, 0, 0));
+    }
+    if (Input.keysDown.ArrowUp || Input.keysDown.w || Input.keysDown.e || Input.keysDown.q) {
+      UFO_REF.position.add(new Vector3(0, SHIP_SPEED * modifier, 0));
+    }
+    if (Input.keysDown.ArrowDown || Input.keysDown.s) {
+      UFO_REF.position.add(new Vector3(0, -SHIP_SPEED * modifier, 0));
     }
 
-    if (Input.keysDown.ArrowLeft) {
-      camera.setPosition({
-        ...camera.position,
-        x: camera.position.x - 1 * modifier
-      });
+    // Added o and p for debugging purposes, not needed for actual gameplay
+    if (Input.keysDown.o) {
+      manager.sceneObjects[0].physics.velocity.add(new Vector3(0, 0, -10));
+    }
+    if (Input.keysDown.p) {
+      manager.sceneObjects[0].physics.velocity.add(new Vector3(0, 0, 10));
     }
   }
 
-  // render function, responsible for all rendering, including shadows (TODO), model rendering, and post processing (TODO)
+  // render function, responsible for alloh true rendering, including shadows (TODO), model rendering, and post processing (TODO)
   function render(deltaTime) {
     manager.sceneObjects.forEach(sceneObject =>
       sceneObject.render(programInfo, camera.getUniforms())
