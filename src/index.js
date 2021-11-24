@@ -10,7 +10,7 @@ import Input from './input';
 import Camera from './camera';
 import { Vector3 } from 'three';
 import { spawnArr } from './utils/objects';
-import { UFO_START_SPEED, UFO_START_ROT } from './utils/constants';
+import { UFO_START_SPEED, UFO_START_ROT, SHIP_SPEED } from './utils/constants';
 
 
 const m4 = twgl.m4;
@@ -62,10 +62,6 @@ const main = async () => {
   manager.addObject(myAsteroid1);
   manager.addObject(ufo);
   
-  // Ship constants
-  const SHIP_SPEED = 10;
-  const UFO_REF = manager.sceneObjects[0];
-  
   // mainModel should be the 'main' model of the scene 
   const mainModel = manager.modelList.ufo.getModelExtent();
 
@@ -112,30 +108,38 @@ const main = async () => {
 
   // update function, responsible for updating all objects and things that need to be updated since last frame
   function update(deltaTime) {
-    manager.sceneObjects.forEach(sceneObject => sceneObject.update(deltaTime));
-
+    
     const modifier = Input.keysDown.Shift ? 5 : 1;
-
+    
     if (Input.keysDown.ArrowRight || Input.keysDown.d || Input.keysDown.e) {
-      UFO_REF.position.add(new Vector3(SHIP_SPEED * modifier, 0, 0)) ;
+      ufo.position.add(new Vector3(SHIP_SPEED * modifier, 0, 0)) ;
     }
     if (Input.keysDown.ArrowLeft || Input.keysDown.a || Input.keysDown.q) {
-      UFO_REF.position.add(new Vector3(-SHIP_SPEED * modifier, 0, 0));
+      ufo.position.add(new Vector3(-SHIP_SPEED * modifier, 0, 0));
     }
     if (Input.keysDown.ArrowUp || Input.keysDown.w || Input.keysDown.e || Input.keysDown.q) {
-      UFO_REF.position.add(new Vector3(0, SHIP_SPEED * modifier, 0));
+      ufo.position.add(new Vector3(0, SHIP_SPEED * modifier, 0));
     }
     if (Input.keysDown.ArrowDown || Input.keysDown.s) {
-      UFO_REF.position.add(new Vector3(0, -SHIP_SPEED * modifier, 0));
+      ufo.position.add(new Vector3(0, -SHIP_SPEED * modifier, 0));
     }
-
+    
     // Added o and p for debugging purposes, not needed for actual gameplay
     if (Input.keysDown.o) {
-      manager.sceneObjects[0].physics.velocity.add(new Vector3(0, 0, -10));
+      ufo.physics.velocity.add(new Vector3(0, 0, -10));
+      ufo.physics.angularVelocity.add(new Vector3(0, -10, 0));
     }
     if (Input.keysDown.p) {
-      manager.sceneObjects[0].physics.velocity.add(new Vector3(0, 0, 10));
+      ufo.physics.velocity.add(new Vector3(0, 0, 10));
+      ufo.physics.angularVelocity.add(new Vector3(0, 10, 0));
     }
+    if (Input.keysDown.r) {
+      ufo.physics.velocity = new Vector3(0, 0, UFO_START_SPEED);
+      ufo.physics.angularVelocity = new Vector3(0, UFO_START_ROT, 0);
+    }
+
+    manager.sceneObjects.forEach(sceneObject => sceneObject.update(deltaTime));
+
     let offset = new Vector3(0, mainModel.dia * 0.5, mainModel.dia);
     camera.setPosition(ufo.position.clone().add(offset));
     camera.lookAt(ufo.position);
