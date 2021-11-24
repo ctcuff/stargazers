@@ -6,11 +6,9 @@ import GameObject from './game-object';
 import Physics from './physics';
 import { gl } from './constants';
 import manager from './gamemanager';
-import Ast1 from './utils/ast1';
-import Ast0 from './utils/ast0';
 import Camera from './camera';
 import { Vector3 } from 'three';
-import { spawnArr, resetLevel } from './utils/objects';
+import { spawnArr } from './utils/objects';
 import { UFO_START_SPEED, UFO_START_ROT } from './utils/constants';
 
 
@@ -54,13 +52,8 @@ const main = async () => {
   manager.ufo = ufo;
   
   // Spawn the first set of asteroids
-  
-  let n = 100;
-  manager.level = 1;
-  let arrOfObjects = spawnArr(manager.level * 100);
-  manager.addObjects(arrOfObjects);
-  // for(let i = 0; i < n * 2; i++)
-    // manager.sceneObjects.pop();                   
+  let arrOfObjects = spawnArr(200);
+  manager.addObjects(arrOfObjects);                 
 
   // create camera
   const camera = new Camera(75, window.innerWidth / window.innerHeight, 1, 2000);

@@ -12,8 +12,4 @@ const spawnArr = (numObjects = 100) => {
     return ret;
 }
 
-const resetLevel = () => {
-    
-}
-
-export { spawnArr, resetLevel };
+export { spawnArr };
