@@ -10,6 +10,7 @@ const Z_LOW = -100;
 const Z_HIGH = -2000;
 const SHIP_SPEED_X = 5;
 const SHIP_SPEED_Y = 3;
+const BOUNDING_BOX_SCALAR = 1.5;
 export { 
     UFO_DIA, 
     X_LOW, 
@@ -22,4 +23,5 @@ export {
     UFO_START_ROT,
     SHIP_SPEED_X,
     SHIP_SPEED_Y,
+    BOUNDING_BOX_SCALAR,
 };

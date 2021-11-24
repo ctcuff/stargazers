@@ -10,7 +10,7 @@ import Input from './input';
 import Camera from './camera';
 import { Vector3 } from 'three';
 import { spawnArr } from './utils/objects';
-import { UFO_START_SPEED, UFO_START_ROT, SHIP_SPEED_X, SHIP_SPEED_Y, X_HIGH, X_LOW, Y_HIGH, Y_LOW } from './utils/constants';
+import { UFO_START_SPEED, UFO_START_ROT, SHIP_SPEED_X, SHIP_SPEED_Y, X_LOW, X_HIGH, Y_LOW, Y_HIGH, BOUNDING_BOX_SCALAR } from './utils/constants';
 
 
 const m4 = twgl.m4;
@@ -55,7 +55,7 @@ const main = async () => {
   manager.ufo = ufo;
   
   // Spawn the first set of asteroids
-  let arrOfObjects = spawnArr(300);
+  let arrOfObjects = spawnArr(200);
   manager.addObjects(arrOfObjects);                 
   
   // Add testing models to canvas
@@ -109,37 +109,48 @@ const main = async () => {
   // update function, responsible for updating all objects and things that need to be updated since last frame
   function update(deltaTime) {
     
-    const modifier = Input.keysDown.Shift ? 5 : 1;
-    
-    if ((ufo.position.x < X_HIGH / 2) && (Input.keysDown.ArrowRight || Input.keysDown.d || Input.keysDown.e)) {
-      ufo.position.add(new Vector3(SHIP_SPEED_X * modifier, 0, 0)) ;
+    // Key mapping:
+    // Right movement
+    if ((Input.keysDown.ArrowRight || Input.keysDown.d || Input.keysDown.D || Input.keysDown.e)
+      && (ufo.position.x < X_HIGH / BOUNDING_BOX_SCALAR)) {
+      ufo.position.add(new Vector3(SHIP_SPEED_X, 0, 0)) ;
     }
-    if ((ufo.position.x > X_LOW / 2) && (Input.keysDown.ArrowLeft || Input.keysDown.a || Input.keysDown.q)) {
-      ufo.position.add(new Vector3(-SHIP_SPEED_X * modifier, 0, 0));
+    // Left movement
+    if ((Input.keysDown.ArrowLeft || Input.keysDown.a || Input.keysDown.q)
+      && (ufo.position.x > X_LOW / BOUNDING_BOX_SCALAR)) {
+      ufo.position.add(new Vector3(-SHIP_SPEED_X, 0, 0));
     }
-    if ((ufo.position.y < Y_HIGH / 2) && (Input.keysDown.ArrowUp || Input.keysDown.w || Input.keysDown.e || Input.keysDown.q)) {
-      ufo.position.add(new Vector3(0, SHIP_SPEED_Y * modifier, 0));
+    // Up movement
+    if ((Input.keysDown.ArrowUp || Input.keysDown.w || Input.keysDown.e || Input.keysDown.q)
+      && (ufo.position.y < Y_HIGH / BOUNDING_BOX_SCALAR)) {
+      ufo.position.add(new Vector3(0, SHIP_SPEED_Y, 0));
     }
-    if ((ufo.position.y > Y_LOW / 2) && (Input.keysDown.ArrowDown || Input.keysDown.s)) {
-      ufo.position.add(new Vector3(0, -SHIP_SPEED_Y * modifier, 0));
+    // Down movement
+    if ((Input.keysDown.ArrowDown || Input.keysDown.s)
+      && (ufo.position.y > Y_LOW / BOUNDING_BOX_SCALAR)) {
+      ufo.position.add(new Vector3(0, -SHIP_SPEED_Y, 0));
     }
-    
-    // Added o and p for debugging purposes, not needed for actual gameplay
-    if (Input.keysDown.o) {
+    // Added o, p and r for debugging purposes, not needed for actual gameplay
+    // Speed up the ship and it's rotation
+    if (Input.keysDown.o) { 
       ufo.physics.velocity.add(new Vector3(0, 0, -10));
       ufo.physics.angularVelocity.add(new Vector3(0, -10, 0));
     }
-    if (Input.keysDown.p) {
+    // Slow down the ship and it's rotation
+    if (Input.keysDown.p) { 
       ufo.physics.velocity.add(new Vector3(0, 0, 10));
       ufo.physics.angularVelocity.add(new Vector3(0, 10, 0));
     }
-    if (Input.keysDown.r) {
+    // Reset the ship to it's starting speed
+    if (Input.keysDown.r) { 
       ufo.physics.velocity = new Vector3(0, 0, UFO_START_SPEED);
       ufo.physics.angularVelocity = new Vector3(0, UFO_START_ROT, 0);
     }
 
+    // Update the position of each object
     manager.sceneObjects.forEach(sceneObject => sceneObject.update(deltaTime));
 
+    // Fix the camera so it's positioned behind the ship each frame
     let offset = new Vector3(0, mainModel.dia * 0.5, mainModel.dia);
     camera.setPosition(ufo.position.clone().add(offset));
     camera.lookAt(ufo.position);
