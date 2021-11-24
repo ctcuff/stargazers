@@ -1,10 +1,9 @@
-import GameObject from "../game-object";
-import manager from "../gamemanager";
-import Physics from "../physics";
+import GameObject from '../game-object';
+import manager from '../gamemanager';
+import Physics from '../physics';
 import { getRandomDir, getRandomInt } from './math';
-import { Vector3 } from "three";
+import { Vector3 } from 'three';
 import { UFO_DIA, X_LOW, X_HIGH, Y_LOW, Y_HIGH, Z_LOW, Z_HIGH } from './constants';
-
 
 class Ast0 extends GameObject {
   constructor() {

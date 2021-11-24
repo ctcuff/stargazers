@@ -1,6 +1,5 @@
 import Model from './model';
 
-
 class GameManager {
   constructor() {
     this.modelList = [];
@@ -33,9 +32,8 @@ class GameManager {
   addObjects(gameobjects) {
     gameobjects.forEach(gameobject => this.addObject(gameobject));
   }
-  
 }
 
 const manager = new GameManager();
 
-export {manager as default, GameManager};
+export { manager as default, GameManager };

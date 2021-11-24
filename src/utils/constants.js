@@ -1,4 +1,3 @@
-
 const UFO_START_SPEED = -200;
 const UFO_START_ROT = -200;
 const UFO_DIA = 99.7135610685365;
@@ -11,17 +10,4 @@ const Z_HIGH = -2000;
 const SHIP_SPEED_X = 5;
 const SHIP_SPEED_Y = 3;
 const BOUNDING_BOX_SCALAR = 1.5;
-export { 
-    UFO_DIA, 
-    X_LOW, 
-    X_HIGH, 
-    Y_LOW, 
-    Y_HIGH, 
-    Z_LOW, 
-    Z_HIGH,
-    UFO_START_SPEED,
-    UFO_START_ROT,
-    SHIP_SPEED_X,
-    SHIP_SPEED_Y,
-    BOUNDING_BOX_SCALAR,
-};
+export { UFO_DIA, X_LOW, X_HIGH, Y_LOW, Y_HIGH, Z_LOW, Z_HIGH, UFO_START_SPEED, UFO_START_ROT, SHIP_SPEED_X, SHIP_SPEED_Y, BOUNDING_BOX_SCALAR };

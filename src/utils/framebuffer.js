@@ -34,7 +34,7 @@ function createColorTexture(width, height) {
  */
 function createMultiSampleColorBuffer(width, height) {
   const buf = gl.createRenderbuffer();
-  gl.bindRenderbuffer(gl.RENDERBUFFER,  buf);
+  gl.bindRenderbuffer(gl.RENDERBUFFER, buf);
   gl.renderbufferStorageMultisample(gl.RENDERBUFFER, samples, gl.RGBA8, width, height);
   return buf;
 }
