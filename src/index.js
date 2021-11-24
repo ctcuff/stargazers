@@ -9,6 +9,9 @@ import manager from './gamemanager';
 import Input from './input';
 import Camera from './camera';
 import { Vector3 } from 'three';
+import { spawnArr } from './utils/objects';
+import { UFO_START_SPEED, UFO_START_ROT } from './utils/constants';
+
 
 const m4 = twgl.m4;
 
@@ -17,7 +20,7 @@ const main = async () => {
 
   // init gl stuff here, like back face culling and the depth test
   gl.enable(gl.DEPTH_TEST);
-  gl.clearColor(0.5, 0.2, 0.7, 1.0);
+  gl.clearColor(0, 0, 0, 1.0);
 
   // the handle to the current requested animation frame, set later
   let rafHandle = undefined;
@@ -38,36 +41,49 @@ const main = async () => {
 
   // Create physics objects
   // Physics(Velocity, angularVelocity, colliderRadius)
-  let asteroidPhysics = new Physics(new Vector3(0, 0, -30), new Vector3(0, 0, 0), 0);
-  let ufoPhysics = new Physics(new Vector3(0, 0, -30), new Vector3(0, -200, 0), 0);
-  
+  let asteroidPhysics = new Physics(new Vector3(0, 0, 0), new Vector3(0, 0, 0), 0);
+  let ufoPhysics = new Physics(new Vector3(0, 0, UFO_START_SPEED), new Vector3(0, UFO_START_ROT, 0), 0);
+
   // Declare models to be used
   const ufo = new GameObject(manager.modelList.ufo, ufoPhysics);
-  const myAsteroid1 = new GameObject(manager.modelList.asteroid0, asteroidPhysics);
+  const myAsteroid1 = new GameObject(manager.modelList.asteroid1, asteroidPhysics);
+  
+  // Half the ship to fit the size of the asteroids
+  ufo.scale = ufo.scale / 2;
+  
+  // this is a hack, this allows me to have access to the ufo in all the cows
+  manager.ufo = ufo;
+  
+  // Spawn the first set of asteroids
+  let arrOfObjects = spawnArr(200);
+  manager.addObjects(arrOfObjects);                 
   
   // Add testing models to canvas
-  manager.addObject(ufo);
   manager.addObject(myAsteroid1);
-
+  manager.addObject(ufo);
+  
+  // Ship constants
   const SHIP_SPEED = 10;
   const UFO_REF = manager.sceneObjects[0];
   
-  // mainModel should be the 'main' model of the scene
+  // mainModel should be the 'main' model of the scene 
   const mainModel = manager.modelList.ufo.getModelExtent();
 
   // create and init camera
-  const camera = new Camera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  const camera = new Camera(75, window.innerWidth / window.innerHeight, 1, 2000);
+  
   camera.lookAt({
     x: 0,
     y: 0,
     z: 0
   });
+  
   camera.setPosition({
     x: mainModel.dia * 0,
     y: mainModel.dia * 0.7,
     z: mainModel.dia
   });
-
+  
   // create looper function
   function frame(curentMilis) {
     // calculate the change in time in seconds since the last frame
@@ -120,6 +136,9 @@ const main = async () => {
     if (Input.keysDown.p) {
       manager.sceneObjects[0].physics.velocity.add(new Vector3(0, 0, 10));
     }
+    let offset = new Vector3(0, mainModel.dia * 0.5, mainModel.dia);
+    camera.setPosition(ufo.position.clone().add(offset));
+    camera.lookAt(ufo.position);
   }
 
   // render function, responsible for alloh true rendering, including shadows (TODO), model rendering, and post processing (TODO)

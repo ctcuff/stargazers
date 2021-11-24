@@ -33,6 +33,7 @@ class GameManager {
   addObjects(gameobjects) {
     gameobjects.forEach(gameobject => this.addObject(gameobject));
   }
+  
 }
 
 const manager = new GameManager();
