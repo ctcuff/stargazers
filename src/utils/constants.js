@@ -8,7 +8,8 @@ const Y_LOW = -400;
 const Y_HIGH = 200;
 const Z_LOW = -100;
 const Z_HIGH = -2000;
-const SHIP_SPEED = 5;
+const SHIP_SPEED_X = 5;
+const SHIP_SPEED_Y = 3;
 export { 
     UFO_DIA, 
     X_LOW, 
@@ -19,5 +20,6 @@ export {
     Z_HIGH,
     UFO_START_SPEED,
     UFO_START_ROT,
-    SHIP_SPEED,
+    SHIP_SPEED_X,
+    SHIP_SPEED_Y,
 };

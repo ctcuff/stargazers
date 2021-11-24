@@ -10,7 +10,7 @@ import Input from './input';
 import Camera from './camera';
 import { Vector3 } from 'three';
 import { spawnArr } from './utils/objects';
-import { UFO_START_SPEED, UFO_START_ROT, SHIP_SPEED } from './utils/constants';
+import { UFO_START_SPEED, UFO_START_ROT, SHIP_SPEED_X, SHIP_SPEED_Y, X_HIGH, X_LOW, Y_HIGH, Y_LOW } from './utils/constants';
 
 
 const m4 = twgl.m4;
@@ -55,7 +55,7 @@ const main = async () => {
   manager.ufo = ufo;
   
   // Spawn the first set of asteroids
-  let arrOfObjects = spawnArr(200);
+  let arrOfObjects = spawnArr(300);
   manager.addObjects(arrOfObjects);                 
   
   // Add testing models to canvas
@@ -111,17 +111,17 @@ const main = async () => {
     
     const modifier = Input.keysDown.Shift ? 5 : 1;
     
-    if (Input.keysDown.ArrowRight || Input.keysDown.d || Input.keysDown.e) {
-      ufo.position.add(new Vector3(SHIP_SPEED * modifier, 0, 0)) ;
+    if ((ufo.position.x < X_HIGH / 2) && (Input.keysDown.ArrowRight || Input.keysDown.d || Input.keysDown.e)) {
+      ufo.position.add(new Vector3(SHIP_SPEED_X * modifier, 0, 0)) ;
     }
-    if (Input.keysDown.ArrowLeft || Input.keysDown.a || Input.keysDown.q) {
-      ufo.position.add(new Vector3(-SHIP_SPEED * modifier, 0, 0));
+    if ((ufo.position.x > X_LOW / 2) && (Input.keysDown.ArrowLeft || Input.keysDown.a || Input.keysDown.q)) {
+      ufo.position.add(new Vector3(-SHIP_SPEED_X * modifier, 0, 0));
     }
-    if (Input.keysDown.ArrowUp || Input.keysDown.w || Input.keysDown.e || Input.keysDown.q) {
-      ufo.position.add(new Vector3(0, SHIP_SPEED * modifier, 0));
+    if ((ufo.position.y < Y_HIGH / 2) && (Input.keysDown.ArrowUp || Input.keysDown.w || Input.keysDown.e || Input.keysDown.q)) {
+      ufo.position.add(new Vector3(0, SHIP_SPEED_Y * modifier, 0));
     }
-    if (Input.keysDown.ArrowDown || Input.keysDown.s) {
-      ufo.position.add(new Vector3(0, -SHIP_SPEED * modifier, 0));
+    if ((ufo.position.y > Y_LOW / 2) && (Input.keysDown.ArrowDown || Input.keysDown.s)) {
+      ufo.position.add(new Vector3(0, -SHIP_SPEED_Y * modifier, 0));
     }
     
     // Added o and p for debugging purposes, not needed for actual gameplay
