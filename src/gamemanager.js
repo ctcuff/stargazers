@@ -1,9 +1,13 @@
 import Model from './model';
+import GameBox from './utils/game-box';
 
 class GameManager {
   constructor() {
     this.modelList = [];
     this.sceneObjects = [];
+    this.box = new GameBox();
+    this.time = 0;
+    this.difficulty = 1; // Set difficulty range [1, 10]
   }
 
   async addModels(models) {

@@ -9,8 +9,8 @@ import manager from './gamemanager';
 import Input from './input';
 import Camera from './camera';
 import { Vector3 } from 'three';
-import { spawnArr } from './utils/objects';
-import { UFO_START_SPEED, UFO_START_ROT, SHIP_SPEED_X, SHIP_SPEED_Y, X_LOW, X_HIGH, Y_LOW, Y_HIGH, BOUNDING_BOX_SCALAR } from './utils/constants';
+import { spawnArr } from './utils/object-spawner';
+import UFO from './utils/object-ufo';
 
 const m4 = twgl.m4;
 
@@ -38,28 +38,14 @@ const main = async () => {
 
   await manager.addModels(modelRefs);
 
-  // Create physics objects
-  // Physics(Velocity, angularVelocity, colliderRadius)
-  let asteroidPhysics = new Physics(new Vector3(0, 0, 0), new Vector3(0, 0, 0), 0);
-  let ufoPhysics = new Physics(new Vector3(0, 0, UFO_START_SPEED), new Vector3(0, UFO_START_ROT, 0), 0);
-
-  // Declare models to be used
-  const ufo = new GameObject(manager.modelList.ufo, ufoPhysics);
-  const myAsteroid1 = new GameObject(manager.modelList.asteroid1, asteroidPhysics);
-
-  // Half the ship to fit the size of the asteroids
-  ufo.scale = ufo.scale / 2;
-
-  // this is a hack, this allows me to have access to the ufo in all the cows
-  manager.ufo = ufo;
+  // Setup the ufo model
+  const ufo = new UFO(); // Declare ufo model
+  manager.ufo = ufo; // This is a hack, this allows me to have access to the ufo in all the cows
+  manager.addObject(ufo); // Add the ufo model to canvas
 
   // Spawn the first set of asteroids
   let arrOfObjects = spawnArr(200);
   manager.addObjects(arrOfObjects);
-
-  // Add testing models to canvas
-  manager.addObject(myAsteroid1);
-  manager.addObject(ufo);
 
   // mainModel should be the 'main' model of the scene
   const mainModel = manager.modelList.ufo.getModelExtent();
@@ -109,20 +95,20 @@ const main = async () => {
   function update(deltaTime) {
     // Key mapping:
     // Right movement
-    if ((Input.keysDown.ArrowRight || Input.keysDown.d || Input.keysDown.D || Input.keysDown.e) && ufo.position.x < X_HIGH / BOUNDING_BOX_SCALAR) {
-      ufo.position.add(new Vector3(SHIP_SPEED_X, 0, 0));
+    if ((Input.keysDown.ArrowRight || Input.keysDown.d || Input.keysDown.D || Input.keysDown.e) && ufo.position.x < manager.box.xMax / manager.box.shipBoxScalar) {
+      ufo.position.add(new Vector3(ufo.turningSpeedX, 0, 0));
     }
     // Left movement
-    if ((Input.keysDown.ArrowLeft || Input.keysDown.a || Input.keysDown.q) && ufo.position.x > X_LOW / BOUNDING_BOX_SCALAR) {
-      ufo.position.add(new Vector3(-SHIP_SPEED_X, 0, 0));
+    if ((Input.keysDown.ArrowLeft || Input.keysDown.a || Input.keysDown.q) && ufo.position.x > manager.box.xMin / manager.box.shipBoxScalar) {
+      ufo.position.add(new Vector3(-ufo.turningSpeedX, 0, 0));
     }
     // Up movement
-    if ((Input.keysDown.ArrowUp || Input.keysDown.w || Input.keysDown.e || Input.keysDown.q) && ufo.position.y < Y_HIGH / BOUNDING_BOX_SCALAR) {
-      ufo.position.add(new Vector3(0, SHIP_SPEED_Y, 0));
+    if ((Input.keysDown.ArrowUp || Input.keysDown.w || Input.keysDown.e || Input.keysDown.q) && ufo.position.y < manager.box.yMax / manager.box.shipBoxScalar) {
+      ufo.position.add(new Vector3(0, ufo.turningSpeedY, 0));
     }
     // Down movement
-    if ((Input.keysDown.ArrowDown || Input.keysDown.s) && ufo.position.y > Y_LOW / BOUNDING_BOX_SCALAR) {
-      ufo.position.add(new Vector3(0, -SHIP_SPEED_Y, 0));
+    if ((Input.keysDown.ArrowDown || Input.keysDown.s) && ufo.position.y > manager.box.yMin / manager.box.shipBoxScalar) {
+      ufo.position.add(new Vector3(0, -ufo.turningSpeedY, 0));
     }
     // Added o, p and r for debugging purposes, not needed for actual gameplay
     // Speed up the ship and it's rotation
@@ -137,8 +123,8 @@ const main = async () => {
     }
     // Reset the ship to it's starting speed
     if (Input.keysDown.r) {
-      ufo.physics.velocity = new Vector3(0, 0, UFO_START_SPEED);
-      ufo.physics.angularVelocity = new Vector3(0, UFO_START_ROT, 0);
+      ufo.physics.velocity = new Vector3(0, 0, ufo.startSpeed);
+      ufo.physics.angularVelocity = new Vector3(0, ufo.startRot, 0);
     }
 
     // Update the position of each object
@@ -148,6 +134,14 @@ const main = async () => {
     let offset = new Vector3(0, mainModel.dia * 0.5, mainModel.dia);
     camera.setPosition(ufo.position.clone().add(offset));
     camera.lookAt(ufo.position);
+
+    // Add new objects with time
+    manager.time = manager.time + Math.ceil(deltaTime * 60);
+    if (manager.time % 1000 == 0) {
+      manager.addObjects(spawnArr(10 * manager.difficulty));
+      ufo.physics.velocity.add(new Vector3(0, 0, -ufo.speedIncrement * manager.difficulty));
+      ufo.physics.angularVelocity.add(new Vector3(0, -ufo.speedIncrement * manager.difficulty, 0));
+    }
   }
 
   // render function, responsible for alloh true rendering, including shadows (TODO), model rendering, and post processing (TODO)
