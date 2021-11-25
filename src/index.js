@@ -44,14 +44,14 @@ const main = async () => {
   manager.addObject(ufo); // Add the ufo model to canvas
 
   // Spawn the first set of asteroids
-  let arrOfObjects = spawnArr(200);
+  let arrOfObjects = spawnArr(150 * manager.difficulty);
   manager.addObjects(arrOfObjects);
 
   // mainModel should be the 'main' model of the scene
   const mainModel = manager.modelList.ufo.getModelExtent();
 
   // create and init camera
-  const camera = new Camera(75, window.innerWidth / window.innerHeight, 1, 2000);
+  const camera = new Camera(75, window.innerWidth / window.innerHeight, 1, 3000);
 
   camera.lookAt({
     x: 0,
@@ -95,19 +95,19 @@ const main = async () => {
   function update(deltaTime) {
     // Key mapping:
     // Right movement
-    if ((Input.keysDown.ArrowRight || Input.keysDown.d || Input.keysDown.D || Input.keysDown.e) && ufo.position.x < manager.box.xMax / manager.box.shipBoxScalar) {
+    if ((Input.keysDown.ArrowRight || Input.keysDown.d || Input.keysDown.D || Input.keysDown.e) /*&& ufo.position.x < manager.box.xMax / manager.box.shipBoxScalar*/) {
       ufo.position.add(new Vector3(ufo.turningSpeedX, 0, 0));
     }
     // Left movement
-    if ((Input.keysDown.ArrowLeft || Input.keysDown.a || Input.keysDown.q) && ufo.position.x > manager.box.xMin / manager.box.shipBoxScalar) {
+    if ((Input.keysDown.ArrowLeft || Input.keysDown.a || Input.keysDown.q) /*&& ufo.position.x > manager.box.xMin / manager.box.shipBoxScalar*/) {
       ufo.position.add(new Vector3(-ufo.turningSpeedX, 0, 0));
     }
     // Up movement
-    if ((Input.keysDown.ArrowUp || Input.keysDown.w || Input.keysDown.e || Input.keysDown.q) && ufo.position.y < manager.box.yMax / manager.box.shipBoxScalar) {
+    if ((Input.keysDown.ArrowUp || Input.keysDown.w || Input.keysDown.e || Input.keysDown.q) /*&& ufo.position.y < manager.box.yMax / manager.box.shipBoxScalar*/) {
       ufo.position.add(new Vector3(0, ufo.turningSpeedY, 0));
     }
     // Down movement
-    if ((Input.keysDown.ArrowDown || Input.keysDown.s) && ufo.position.y > manager.box.yMin / manager.box.shipBoxScalar) {
+    if ((Input.keysDown.ArrowDown || Input.keysDown.s) /*&& ufo.position.y > manager.box.yMin / manager.box.shipBoxScalar*/) {
       ufo.position.add(new Vector3(0, -ufo.turningSpeedY, 0));
     }
     // Added o, p and r for debugging purposes, not needed for actual gameplay
@@ -131,7 +131,7 @@ const main = async () => {
     manager.sceneObjects.forEach(sceneObject => sceneObject.update(deltaTime));
 
     // Fix the camera so it's positioned behind the ship each frame
-    let offset = new Vector3(0, mainModel.dia * 0.5, mainModel.dia);
+    let offset = new Vector3(0, mainModel.dia * 0.35, mainModel.dia * 0.9);
     camera.setPosition(ufo.position.clone().add(offset));
     camera.lookAt(ufo.position);
 
@@ -141,6 +141,8 @@ const main = async () => {
       manager.addObjects(spawnArr(10 * manager.difficulty));
       ufo.physics.velocity.add(new Vector3(0, 0, -ufo.speedIncrement * manager.difficulty));
       ufo.physics.angularVelocity.add(new Vector3(0, -ufo.speedIncrement * manager.difficulty, 0));
+      ufo.turningSpeedX += 0.01;
+      ufo.turningSpeedY += 0.005;
     }
   }
 

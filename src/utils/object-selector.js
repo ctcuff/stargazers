@@ -45,8 +45,8 @@ class ObjectSelector extends GameObject {
         super.update(deltaTime);
     }
     initWithRandom(flag) {
-        let x = getRandomInt(manager.box.xMin, manager.box.xMax);
-        let y = getRandomInt(manager.box.yMin, manager.box.yMax);
+        let x = getRandomInt(manager.ufo.position.x + manager.box.xMin, manager.ufo.position.x + manager.box.xMax);
+        let y = getRandomInt(manager.ufo.position.y + manager.box.yMin, manager.ufo.position.y + manager.box.yMax);
         let z;
         if (flag) 
             z = getRandomInt(manager.ufo.position.z + manager.box.zMin, manager.ufo.position.z + manager.box.zMax);
@@ -69,7 +69,7 @@ class ObjectSelector extends GameObject {
             this.physics.angularVelocity = rot;
         }
         
-        this.scale = Math.random() * this.scaleAmount;
+        this.scale = (Math.random() + 1) * this.scaleAmount;
     }
 }
 
