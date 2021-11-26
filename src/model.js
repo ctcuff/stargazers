@@ -7,8 +7,7 @@ const loader = new OBJLoader();
 const vec3 = twgl.v3;
 const m4 = {
   ...twgl.m4,
-  create: () =>
-    new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]),
+  create: () => new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]),
   fromQuat: q => {
     let x = q[0],
       y = q[1],
@@ -124,9 +123,7 @@ class Model {
       uv: { numComponents: 2, data: d.sc.uvs }
     }));
 
-    this.vertexAttributes = va.map(attribute =>
-      twgl.createBufferInfoFromArrays(gl, attribute)
-    );
+    this.vertexAttributes = va.map(attribute => twgl.createBufferInfoFromArrays(gl, attribute));
   }
 
   render(programInfo, uniforms) {
@@ -151,37 +148,16 @@ class Model {
       const sc = {};
       sc.name = node.name;
 
-      const translation = node.position
-        ? [node.position.x, node.position.y, node.position.z]
-        : [0, 0, 0];
-      const quaternion = node.quaternion
-        ? [
-            node.quaternion.x,
-            node.quaternion.y,
-            node.quaternion.z,
-            node.quaternion.w
-          ]
-        : [0, 0, 0, 1];
+      const translation = node.position ? [node.position.x, node.position.y, node.position.z] : [0, 0, 0];
+      const quaternion = node.quaternion ? [node.quaternion.x, node.quaternion.y, node.quaternion.z, node.quaternion.w] : [0, 0, 0, 1];
       //const rotation = node.rotation?[node.rotation.x,node.rotation.y,node.rotation.z]:[0,0,0];// XYZ order
-      const scale =
-        node.scale && node.scale.x
-          ? [node.scale.x, node.scale.y, node.scale.z]
-          : [1, 1, 1];
+      const scale = node.scale && node.scale.x ? [node.scale.x, node.scale.y, node.scale.z] : [1, 1, 1];
 
-      sc.modelMatrix = m4.multiply(
-        M,
-        m4.fromRotationTranslationScale(quaternion, translation, scale)
-      );
+      sc.modelMatrix = m4.multiply(M, m4.fromRotationTranslationScale(quaternion, translation, scale));
 
       if (node.geometry || node.attributes) {
-        const attributes = node.geometry
-          ? node.geometry.attributes
-          : node.attributes;
-        if (
-          node.geometry &&
-          node.geometry.groups &&
-          node.geometry.groups.length > 0
-        ) {
+        const attributes = node.geometry ? node.geometry.attributes : node.attributes;
+        if (node.geometry && node.geometry.groups && node.geometry.groups.length > 0) {
           const groups = node.geometry.groups;
           const localScs = d3.range(0, groups.length, 1).map(i => {
             return this.createSC(attributes, {
@@ -207,21 +183,11 @@ class Model {
   }
 
   createSC(attributes, offset) {
-    let positions = offset
-      ? attributes.position.array.slice(
-          offset.start * 3,
-          (offset.start + offset.count) * 3
-        )
-      : attributes.position.array.slice();
+    let positions = offset ? attributes.position.array.slice(offset.start * 3, (offset.start + offset.count) * 3) : attributes.position.array.slice();
     let normals = undefined,
       uvs = undefined;
     if (attributes.normal)
-      normals = offset
-        ? attributes.normal.array.slice(
-            offset.start * 3,
-            (offset.start + offset.count) * 3
-          )
-        : attributes.normal.array.slice();
+      normals = offset ? attributes.normal.array.slice(offset.start * 3, (offset.start + offset.count) * 3) : attributes.normal.array.slice();
     else {
       let count = positions.length / 3;
       let Ns = [];
@@ -230,22 +196,12 @@ class Model {
         const v0 = positions.slice(k * 9, k * 9 + 3),
           v1 = positions.slice(k * 9 + 3, k * 9 + 6),
           v2 = positions.slice(k * 9 + 6, k * 9 + 9);
-        const N = Array.from(
-          vec3.normalize(
-            vec3.cross(vec3.subtract(v1, v0), vec3.subtract(v2, v0))
-          )
-        );
+        const N = Array.from(vec3.normalize(vec3.cross(vec3.subtract(v1, v0), vec3.subtract(v2, v0))));
         Ns.push(N, N, N);
       }
       normals = Ns.flat();
     }
-    if (attributes.uv)
-      uvs = offset
-        ? attributes.uv.array.slice(
-            offset.start * 2,
-            (offset.start + offset.count) * 2
-          )
-        : attributes.uv.array.slice();
+    if (attributes.uv) uvs = offset ? attributes.uv.array.slice(offset.start * 2, (offset.start + offset.count) * 2) : attributes.uv.array.slice();
     return {
       positions,
       normals,
