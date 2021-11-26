@@ -95,6 +95,7 @@ class Model {
      * Same as sceneBufferInfoArray from the professor's observable
      */
     this.vertexAttributes = [];
+    this.extents = {};
   }
 
   load(modelURL) {
@@ -124,6 +125,7 @@ class Model {
     }));
 
     this.vertexAttributes = va.map(attribute => twgl.createBufferInfoFromArrays(gl, attribute));
+    this.extents = this.getModelExtent();
   }
 
   render(programInfo, uniforms) {

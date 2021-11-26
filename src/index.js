@@ -95,7 +95,10 @@ const main = async () => {
   function update(deltaTime) {
     // Key mapping:
     // Right movement
-    if ((Input.keysDown.ArrowRight || Input.keysDown.d || Input.keysDown.D || Input.keysDown.e) && ufo.position.x < manager.box.xMax / manager.box.shipBoxScalar) {
+    if (
+      (Input.keysDown.ArrowRight || Input.keysDown.d || Input.keysDown.D || Input.keysDown.e) &&
+      ufo.position.x < manager.box.xMax / manager.box.shipBoxScalar
+    ) {
       ufo.position.add(new Vector3(ufo.turningSpeedX, 0, 0));
     }
     // Left movement
@@ -129,6 +132,13 @@ const main = async () => {
 
     // Update the position of each object
     manager.sceneObjects.forEach(sceneObject => sceneObject.update(deltaTime));
+
+    // check for UFO colliding with anything
+    for (const gameobject of manager.sceneObjects) {
+      // avoid colliding with self
+      if (gameobject == ufo) continue;
+      if (ufo.doesCollide(gameobject)) console.log('UFO collided with asteroid!');
+    }
 
     // Fix the camera so it's positioned behind the ship each frame
     let offset = new Vector3(0, mainModel.dia * 0.5, mainModel.dia);
