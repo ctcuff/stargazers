@@ -133,6 +133,13 @@ const main = async () => {
     // Update the position of each object
     manager.sceneObjects.forEach(sceneObject => sceneObject.update(deltaTime));
 
+    // check for UFO colliding with anything
+    for (const gameobject of manager.sceneObjects) {
+      // avoid colliding with self
+      if (gameobject == ufo) continue;
+      if (ufo.doesCollide(gameobject)) console.log('UFO collided with asteroid!');
+    }
+
     // Fix the camera so it's positioned behind the ship each frame
     let offset = new Vector3(0, mainModel.dia * 0.5, mainModel.dia);
     camera.setPosition(ufo.position.clone().add(offset));
