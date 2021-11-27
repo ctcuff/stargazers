@@ -146,9 +146,14 @@ const main = async () => {
         const secondObj = manager.sceneObjects[j];
         if (firstObj.doesCollide(secondObj)) {
           console.log('Collided!');
+          firstObj.onCollisionEnter(secondObj);
+          secondObj.onCollisionEnter(firstObj);
         }
       }
     }
+
+    // remove all gameobjects that are now not "alive"
+    for (const gameobject of manager.sceneObjects) if (!gameobject.alive) manager.sceneObjects.splice(gameobject, 1);
 
     // Fix the camera so it's positioned behind the ship each frame
     let offset = new Vector3(0, mainModel.dia * 0.35, mainModel.dia * 0.9);
