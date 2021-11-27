@@ -148,7 +148,7 @@ const main = async () => {
 
     // Add new objects with time
     manager.time = manager.time + Math.ceil(deltaTime * 60);
-    if (manager.time % 100 == 0) {
+    if (manager.time % 1000 == 0) {
       manager.addObjects(spawnArr(5 * manager.difficulty));
       ufo.physics.velocity.add(new Vector3(0, 0, -ufo.velcIncr * manager.difficulty));
       ufo.physics.angularVelocity.add(new Vector3(0, -ufo.angularVelIncr * manager.difficulty, 0));
