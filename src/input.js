@@ -1,6 +1,6 @@
 const Input = {
   /**
-   * @type {Array<{ keyCode: string, func: (event: KeyboardEvent) => void}>}
+   * @type {Array<{ code: string, func: (event: KeyboardEvent) => void}>}
    */
   _keyListeners: [],
   /**
@@ -12,12 +12,12 @@ const Input = {
    */
   keysDown: {},
   /**
-   * @param {string} keyCode The name of the keyboard key to register (case insensitive)
-   * @param {(event: KeyboardEvent) => void} func The function to invoke with `keyCode` is pressed
+   * @param {string} code The name of the keyboard key to register (case insensitive)
+   * @param {(event: KeyboardEvent) => void} func The function to invoke with `code` is pressed
    */
-  addKeyPressListener(keyCode, func) {
+  addKeyPressListener(code, func) {
     this._keyListeners.push({
-      keyCode,
+      code,
       func
     });
   },
@@ -43,6 +43,12 @@ const Input = {
 
 document.body.addEventListener('keydown', event => {
   Input.keysDown[event.key] = true;
+
+  Input._keyListeners.forEach(listener => {
+    if (listener.code.toLowerCase() === event.code.toLowerCase()) {
+      listener.func(event);
+    }
+  });
 });
 
 document.body.addEventListener('keyup', event => {
@@ -51,18 +57,6 @@ document.body.addEventListener('keyup', event => {
 
 document.addEventListener('mousedown', event => {
   Input._mouseListeners.forEach(func => func(event));
-});
-
-document.addEventListener('keypress', event => {
-  if (event.repeat) {
-    return;
-  }
-
-  Input._keyListeners.forEach(listener => {
-    if (listener.keyCode.toLowerCase() === event.code.toLowerCase()) {
-      listener.func(event);
-    }
-  });
 });
 
 export default Input;

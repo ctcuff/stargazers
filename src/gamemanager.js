@@ -7,6 +7,9 @@ class GameManager {
      * @type {{ [key: string]: Model }}
      */
     this.modelList = {};
+    /**
+     * @type {GameObject[]}
+     */
     this.sceneObjects = [];
     this.box = new GameBox();
     this.time = 0;
