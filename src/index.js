@@ -93,25 +93,24 @@ const main = async () => {
 
   // update function, responsible for updating all objects and things that need to be updated since last frame
   function update(deltaTime) {
-
     // Add a shift key mapping to act like a "crouch" that cuts the ships speed in half while you are pressing it down
     // Or make it toggle so every time you press shift you crouch or uncrouch depending on the state (holding is prefered over toggle but toggle might be easier)
-    
+
     // Key mapping:
     // Right movement
-    if ((Input.keysDown.ArrowRight || Input.keysDown.d || Input.keysDown.D || Input.keysDown.e)) {
+    if (Input.keysDown.ArrowRight || Input.keysDown.d || Input.keysDown.D || Input.keysDown.e) {
       ufo.position.add(new Vector3(ufo.strafeSpeedX, 0, 0));
     }
     // Left movement
-    if ((Input.keysDown.ArrowLeft || Input.keysDown.a || Input.keysDown.q)) {
+    if (Input.keysDown.ArrowLeft || Input.keysDown.a || Input.keysDown.q) {
       ufo.position.add(new Vector3(-ufo.strafeSpeedX, 0, 0));
     }
     // Up movement
-    if ((Input.keysDown.ArrowUp || Input.keysDown.w || Input.keysDown.e || Input.keysDown.q)) {
+    if (Input.keysDown.ArrowUp || Input.keysDown.w || Input.keysDown.e || Input.keysDown.q) {
       ufo.position.add(new Vector3(0, ufo.strafeSpeedY, 0));
     }
     // Down movement
-    if ((Input.keysDown.ArrowDown || Input.keysDown.s)) {
+    if (Input.keysDown.ArrowDown || Input.keysDown.s) {
       ufo.position.add(new Vector3(0, -ufo.strafeSpeedY, 0));
     }
     // Added o, p and r for debugging purposes, not needed for actual gameplay
@@ -134,12 +133,21 @@ const main = async () => {
     // Update the position of each object
     manager.sceneObjects.forEach(sceneObject => sceneObject.update(deltaTime));
 
-    // check for UFO colliding with anything
-    for (const gameobject of manager.sceneObjects) {
-      // avoid colliding with self
-      if (gameobject == ufo) continue;
-      if (ufo.doesCollide(gameobject)) console.log('UFO collided with asteroid!');
+    // collision pass
+    for (let i = 0; i < manager.sceneObjects.length; i++) {
+      const firstObj = manager.sceneObjects[i];
+      for (let j = i + 1; j < manager.sceneObjects.length; j++) {
+        const secondObj = manager.sceneObjects[j];
+        if (firstObj.doesCollide(secondObj)) {
+          console.log('Collided!');
+          firstObj.onCollisionEnter(secondObj);
+          secondObj.onCollisionEnter(firstObj);
+        }
+      }
     }
+
+    // remove all gameobjects that are now not "alive"
+    manager.sceneObjects = manager.sceneObjects.filter(gameobject => gameobject.alive);
 
     // Fix the camera so it's positioned behind the ship each frame
     let offset = new Vector3(0, mainModel.dia * 0.35, mainModel.dia * 0.9);
