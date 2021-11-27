@@ -31,27 +31,27 @@ class ObjectSelector extends GameObject {
         }
 
         // Member variables
-        this.initWithRandom(true);
+        this.initWithRandom();
         this.ufoDia = manager.ufo.initalDia;
     }
 
     update(deltaTime) {
         // check here for out of bounds, update position
-        if (manager.ufo.position.z < this.position.z - this.ufoDia) {
-            this.initWithRandom(false);
+        if (manager.ufo.position.z < this.position.z - this.ufoDia
+            || manager.ufo.position.x > this.position.x + manager.box.xMax
+            || manager.ufo.position.x < this.position.x - manager.box.xMax
+            || manager.ufo.position.y > this.position.y + manager.box.yMax
+            || manager.ufo.position.y < this.position.y - manager.box.yMax) {
+            this.initWithRandom();
         }
 
         // you want to call this btw
         super.update(deltaTime);
     }
-    initWithRandom(flag) {
+    initWithRandom() { 
         let x = getRandomInt(manager.ufo.position.x + manager.box.xMin, manager.ufo.position.x + manager.box.xMax);
         let y = getRandomInt(manager.ufo.position.y + manager.box.yMin, manager.ufo.position.y + manager.box.yMax);
-        let z;
-        if (flag) 
-            z = getRandomInt(manager.ufo.position.z + manager.box.zMin, manager.ufo.position.z + manager.box.zMax);
-        else 
-            z = getRandomInt(manager.ufo.position.z + manager.box.zMin - 1000, manager.ufo.position.z + manager.box.zMax);
+        let z = getRandomInt(manager.ufo.position.z + manager.box.zMin - 200, manager.ufo.position.z + manager.box.zMax);
 
         this.position = new Vector3(x, y, z);
 

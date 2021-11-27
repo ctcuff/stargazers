@@ -4,10 +4,9 @@ class GameBox {
         this.xMin = -1500;
         this.xMax = 1500;
         this.yMin = -1400;
-        this.yMax = 1000;
+        this.yMax = 1400;
         this.zMin = -100;
         this.zMax = -3000;
-        this.shipBoxScalar = 1.75;
     }
 }
 

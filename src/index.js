@@ -44,7 +44,7 @@ const main = async () => {
   manager.addObject(ufo); // Add the ufo model to canvas
 
   // Spawn the first set of asteroids
-  let arrOfObjects = spawnArr(150 * manager.difficulty);
+  let arrOfObjects = spawnArr(50 * manager.difficulty);
   manager.addObjects(arrOfObjects);
 
   // mainModel should be the 'main' model of the scene
@@ -93,22 +93,26 @@ const main = async () => {
 
   // update function, responsible for updating all objects and things that need to be updated since last frame
   function update(deltaTime) {
+
+    // Add a shift key mapping to act like a "crouch" that cuts the ships speed in half while you are pressing it down
+    // Or make it toggle so every time you press shift you crouch or uncrouch depending on the state (holding is prefered over toggle but toggle might be easier)
+    
     // Key mapping:
     // Right movement
-    if ((Input.keysDown.ArrowRight || Input.keysDown.d || Input.keysDown.D || Input.keysDown.e) /*&& ufo.position.x < manager.box.xMax / manager.box.shipBoxScalar*/) {
-      ufo.position.add(new Vector3(ufo.turningSpeedX, 0, 0));
+    if ((Input.keysDown.ArrowRight || Input.keysDown.d || Input.keysDown.D || Input.keysDown.e)) {
+      ufo.position.add(new Vector3(ufo.strafeSpeedX, 0, 0));
     }
     // Left movement
-    if ((Input.keysDown.ArrowLeft || Input.keysDown.a || Input.keysDown.q) /*&& ufo.position.x > manager.box.xMin / manager.box.shipBoxScalar*/) {
-      ufo.position.add(new Vector3(-ufo.turningSpeedX, 0, 0));
+    if ((Input.keysDown.ArrowLeft || Input.keysDown.a || Input.keysDown.q)) {
+      ufo.position.add(new Vector3(-ufo.strafeSpeedX, 0, 0));
     }
     // Up movement
-    if ((Input.keysDown.ArrowUp || Input.keysDown.w || Input.keysDown.e || Input.keysDown.q) /*&& ufo.position.y < manager.box.yMax / manager.box.shipBoxScalar*/) {
-      ufo.position.add(new Vector3(0, ufo.turningSpeedY, 0));
+    if ((Input.keysDown.ArrowUp || Input.keysDown.w || Input.keysDown.e || Input.keysDown.q)) {
+      ufo.position.add(new Vector3(0, ufo.strafeSpeedY, 0));
     }
     // Down movement
-    if ((Input.keysDown.ArrowDown || Input.keysDown.s) /*&& ufo.position.y > manager.box.yMin / manager.box.shipBoxScalar*/) {
-      ufo.position.add(new Vector3(0, -ufo.turningSpeedY, 0));
+    if ((Input.keysDown.ArrowDown || Input.keysDown.s)) {
+      ufo.position.add(new Vector3(0, -ufo.strafeSpeedY, 0));
     }
     // Added o, p and r for debugging purposes, not needed for actual gameplay
     // Speed up the ship and it's rotation
@@ -137,12 +141,12 @@ const main = async () => {
 
     // Add new objects with time
     manager.time = manager.time + Math.ceil(deltaTime * 60);
-    if (manager.time % 1000 == 0) {
-      manager.addObjects(spawnArr(10 * manager.difficulty));
-      ufo.physics.velocity.add(new Vector3(0, 0, -ufo.speedIncrement * manager.difficulty));
-      ufo.physics.angularVelocity.add(new Vector3(0, -ufo.speedIncrement * manager.difficulty, 0));
-      ufo.turningSpeedX += 0.01;
-      ufo.turningSpeedY += 0.005;
+    if (manager.time % 100 == 0) {
+      manager.addObjects(spawnArr(5 * manager.difficulty));
+      ufo.physics.velocity.add(new Vector3(0, 0, -ufo.velcIncr * manager.difficulty));
+      ufo.physics.angularVelocity.add(new Vector3(0, -ufo.angularVelIncr * manager.difficulty, 0));
+      ufo.strafeSpeedX += 0.5;
+      ufo.strafeSpeedY += 0.25;
     }
   }
 

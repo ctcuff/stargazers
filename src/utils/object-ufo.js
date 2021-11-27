@@ -12,9 +12,10 @@ class UFO extends GameObject {
         this.scale = 0.5;
         this.initalDia = 99.7135610685365;
 
-        this.turningSpeedX = 5;
-        this.turningSpeedY = 3;
-        this.speedIncrement = 10;
+        this.strafeSpeedX = 5;
+        this.strafeSpeedY = 3;
+        this.velcIncr = 10;
+        this.angularVelIncr = 30;
     }
 
     update(deltaTime) {
