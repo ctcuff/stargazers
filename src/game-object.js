@@ -24,12 +24,16 @@ class GameObject {
     this.scale = 1;
     this.rotation = new Vector3();
     this.position = new Vector3();
+
+    this.physics.colliderRadius = (this.model.extents.dia / 2) * this.scale;
   }
 
   update(deltaTime) {
     // Physics update
     this.position.add(this.physics.velocity.clone().multiplyScalar(deltaTime));
     this.rotation.add(this.physics.angularVelocity.clone().multiplyScalar(deltaTime));
+    this.physics.colliderRadius = (this.model.extents.dia / 2) * this.scale;
+
     this.computeModelMatrix();
   }
 
@@ -95,6 +99,17 @@ class GameObject {
       y: this.position.y + (y ?? 0),
       z: this.position.z + (z ?? 0)
     };
+  }
+
+  /**
+   * @typedef {import('./game-object').default} GameObject
+   * @param {GameObject} gameobject
+   * gameobject to check collision with
+   */
+  doesCollide(gameobject) {
+    const dist = this.position.distanceTo(gameobject.position);
+    const sumRadi = this.physics.colliderRadius + gameobject.physics.colliderRadius;
+    return dist <= sumRadi;
   }
 }
 
