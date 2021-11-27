@@ -6,6 +6,7 @@ import GameObject from './game-object';
 import Physics from './physics';
 import { gl } from './constants';
 import manager from './gamemanager';
+import TextManager2D from './textmanager2d';
 import Input from './input';
 import Camera from './camera';
 import { Vector3 } from 'three';
@@ -65,6 +66,9 @@ const main = async () => {
     z: mainModel.dia
   });
 
+  const textManager = new TextManager2D();
+  textManager.updateCenterText('Select any key to start!');
+
   // create looper function
   function frame(curentMilis) {
     // calculate the change in time in seconds since the last frame
@@ -89,6 +93,7 @@ const main = async () => {
 
     // update the last frame milis
     lastFrameMilis = curentMilis;
+    textManager.updateScore(Math.round(lastFrameMilis / 1000));
   }
 
   // update function, responsible for updating all objects and things that need to be updated since last frame

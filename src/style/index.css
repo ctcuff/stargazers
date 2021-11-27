@@ -13,6 +13,31 @@ canvas {
   left: 0;
 }
 
+#overlay {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.3);
+  color: red;
+  left: 10px;
+  top: 10px;
+  font-size: 24px;
+}
+
+#center-overlay {
+  /* background color can be used to dim entire screen! */
+  /* background-color: rgba(0, 0, 0, 0.3); */
+  color: green;
+  position: fixed;
+  display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+
+  min-height: 100vh;
+  min-width: 100vw;
+}
+
 canvas:focus {
   outline: none
 }
