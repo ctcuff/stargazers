@@ -133,13 +133,7 @@ const main = async () => {
     // Update the position of each object
     manager.sceneObjects.forEach(sceneObject => sceneObject.update(deltaTime));
 
-    // check for UFO colliding with anything
-    // for (const gameobject of manager.sceneObjects) {
-    //   // avoid colliding with self
-    //   if (gameobject == ufo) continue;
-    //   if (ufo.doesCollide(gameobject)) console.log('UFO collided with asteroid!');
-    // }
-
+    // collision pass
     for (let i = 0; i < manager.sceneObjects.length; i++) {
       const firstObj = manager.sceneObjects[i];
       for (let j = i + 1; j < manager.sceneObjects.length; j++) {
@@ -153,7 +147,7 @@ const main = async () => {
     }
 
     // remove all gameobjects that are now not "alive"
-    for (const gameobject of manager.sceneObjects) if (!gameobject.alive) manager.sceneObjects.splice(gameobject, 1);
+    manager.sceneObjects = manager.sceneObjects.filter(gameobject => gameobject.alive);
 
     // Fix the camera so it's positioned behind the ship each frame
     let offset = new Vector3(0, mainModel.dia * 0.35, mainModel.dia * 0.9);
