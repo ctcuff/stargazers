@@ -2,7 +2,7 @@ import GameObject from '../game-object';
 import manager from '../gamemanager';
 import Physics from '../physics';
 import { Vector3 } from 'three';
-import ObjectSelector from './object-selector';
+import Asteroid from './asteroid';
 
 class UFO extends GameObject {
   constructor() {
@@ -27,7 +27,7 @@ class UFO extends GameObject {
   }
 
   onCollisionEnter(gameobject) {
-    if (gameobject instanceof ObjectSelector) this.takeDamage();
+    if (gameobject instanceof Asteroid) this.takeDamage();
   }
 
   takeDamage() {

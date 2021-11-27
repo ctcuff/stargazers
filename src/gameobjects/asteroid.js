@@ -1,43 +1,40 @@
 import GameObject from '../game-object';
 import manager from '../gamemanager';
 import Physics from '../physics';
-import { getRandomDir, getRandomInt } from './math';
+import { getRandomDir, getRandomInt } from '../utils/math';
 import { Vector3 } from 'three';
 
-class ObjectSelector extends GameObject {
-  constructor(objectNumber = 0) {
-    // Object selector
-    switch (objectNumber) {
-      case 0:
+class Asteroid extends GameObject {
+  // types of asteroids
+  static ROD = 0;
+  static CHUNKY = 1;
+
+  constructor(variant = Asteroid.ROD) {
+    switch (variant) {
+      case Asteroid.ROD:
         super(manager.modelList.asteroid0, new Physics());
         this.scaleAmount = 20.0;
-        this.shouldRotate = true;
-        this.shouldMove = true;
-        this.velScalar = 20;
         break;
-      case 1:
+      case Asteroid.CHUNKY:
         super(manager.modelList.asteroid1, new Physics());
         this.scaleAmount = 0.5;
-        this.shouldRotate = true;
-        this.shouldMove = true;
-        this.velScalar = 20;
         break;
-      // case 2:
-      // Add a power up object that increases speed?
       default:
-        console.error('Object number passed into the ObjectSelector is invalid.');
+        console.error('Invalid variant selected');
         break;
     }
 
-    // Member variables
+    this.shouldRotate = true;
+    this.shouldMove = true;
+    this.velocityScalar = 20;
+
     this.initWithRandom();
-    this.ufoDia = manager.ufo.initalDia;
   }
 
   update(deltaTime) {
     // check here for out of bounds, update position
     if (
-      manager.ufo.position.z < this.position.z - this.ufoDia ||
+      manager.ufo.position.z < this.position.z - manager.ufo.initalDia ||
       manager.ufo.position.x > this.position.x + manager.box.xMax ||
       manager.ufo.position.x < this.position.x - manager.box.xMax ||
       manager.ufo.position.y > this.position.y + manager.box.yMax ||
@@ -56,13 +53,13 @@ class ObjectSelector extends GameObject {
 
     this.position = new Vector3(x, y, z);
 
-    let vel;
+    let randVelocity;
     if (this.shouldMove) {
-      vel = new Vector3(getRandomDir() * this.velScalar, getRandomDir() * this.velScalar, getRandomDir() * this.velScalar);
+      randVelocity = new Vector3(getRandomDir() * this.velocityScalar, getRandomDir() * this.velocityScalar, getRandomDir() * this.velocityScalar);
     } else {
-      vel = new Vector3(0, 0, 0);
+      randVelocity = new Vector3(0, 0, 0);
     }
-    this.physics.velocity = vel;
+    this.physics.velocity = randVelocity;
 
     if (this.shouldRotate) {
       const rot = new Vector3(getRandomDir(), getRandomDir(), getRandomDir());
@@ -75,8 +72,16 @@ class ObjectSelector extends GameObject {
 
   onCollisionEnter(gameobject) {
     // let asteroids pass through eachother
-    if (!(gameobject instanceof ObjectSelector)) this.alive = false;
+    if (!(gameobject instanceof Asteroid)) this.alive = false;
   }
+
+  static spawnAsteroids = (asteroidCount = 100) => {
+    let asteroids = [];
+    for (let i = 0; i < asteroidCount; i++) {
+      asteroids.push(new Asteroid(getRandomInt(0, 2)));
+    }
+    return asteroids;
+  };
 }
 
-export default ObjectSelector;
+export default Asteroid;

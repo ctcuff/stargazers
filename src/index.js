@@ -2,15 +2,13 @@ import './style/index.css';
 import * as twgl from 'twgl.js';
 import vs from './shaders/shader.vert';
 import fs from './shaders/shader.frag';
-import GameObject from './game-object';
-import Physics from './physics';
 import { gl } from './constants';
 import manager from './gamemanager';
 import Input from './input';
 import Camera from './camera';
 import { Vector3 } from 'three';
-import { spawnArr } from './utils/object-spawner';
-import UFO from './utils/object-ufo';
+import UFO from './gameobjects/ufo';
+import Asteroid from './gameobjects/asteroid';
 
 const m4 = twgl.m4;
 
@@ -44,7 +42,7 @@ const main = async () => {
   manager.addObject(ufo); // Add the ufo model to canvas
 
   // Spawn the first set of asteroids
-  let arrOfObjects = spawnArr(50 * manager.difficulty);
+  let arrOfObjects = Asteroid.spawnAsteroids(100 * manager.difficulty);
   manager.addObjects(arrOfObjects);
 
   // mainModel should be the 'main' model of the scene
@@ -157,7 +155,7 @@ const main = async () => {
     // Add new objects with time
     manager.time = manager.time + Math.ceil(deltaTime * 60);
     if (manager.time % 1000 == 0) {
-      manager.addObjects(spawnArr(5 * manager.difficulty));
+      manager.addObjects(Asteroid.spawnAsteroids(5 * manager.difficulty));
       ufo.physics.velocity.add(new Vector3(0, 0, -ufo.velcIncr * manager.difficulty));
       ufo.physics.angularVelocity.add(new Vector3(0, -ufo.angularVelIncr * manager.difficulty, 0));
       ufo.strafeSpeedX += 0.5;
