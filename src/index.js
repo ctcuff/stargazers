@@ -7,15 +7,20 @@ import Physics from './physics';
 import { gl } from './constants';
 import manager from './gamemanager';
 import TextManager2D from './textmanager2d';
+import Input from './input';
 import Camera from './camera';
 import { Vector3 } from 'three';
+import { spawnArr } from './utils/object-spawner';
+import UFO from './utils/object-ufo';
+
+const m4 = twgl.m4;
 
 const main = async () => {
   const programInfo = twgl.createProgramInfo(gl, [vs, fs], error => console.log(error));
 
-  // // init gl stuff here, like back face culling and the depth test
+  // init gl stuff here, like back face culling and the depth test
   gl.enable(gl.DEPTH_TEST);
-  gl.clearColor(0.5, 0.2, 0.7, 1.0);
+  gl.clearColor(0, 0, 0, 1.0);
 
   // the handle to the current requested animation frame, set later
   let rafHandle = undefined;
@@ -34,24 +39,20 @@ const main = async () => {
 
   await manager.addModels(modelRefs);
 
-  // Create physics objects
-  // Physics(Velocity, angularVelocity, colliderRadius)
-  let asteroidPhysics = new Physics(new Vector3(0, 0, -30), new Vector3(0, 0, 0), 0);
-  let ufoPhysics = new Physics(new Vector3(0, 0, 0), new Vector3(0, -200, 0), 0);
+  // Setup the ufo model
+  const ufo = new UFO(); // Declare ufo model
+  manager.ufo = ufo; // This is a hack, this allows me to have access to the ufo in all the cows
+  manager.addObject(ufo); // Add the ufo model to canvas
 
-  // Declare models to be used
-  const ufo = new GameObject(manager.modelList.ufo, ufoPhysics);
-  const myAsteroid1 = new GameObject(manager.modelList.asteroid0, asteroidPhysics);
+  // Spawn the first set of asteroids
+  let arrOfObjects = spawnArr(200);
+  manager.addObjects(arrOfObjects);
 
-  const raymanModelExtents = manager.modelList.rayman.getModelExtent();
-
-  const camera = new Camera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-  // Add models to canvas
-  manager.addObject(myAsteroid1);
-  manager.addObject(ufo);
-
-  /** mainModel should be the main model of the scene */
+  // mainModel should be the 'main' model of the scene
   const mainModel = manager.modelList.ufo.getModelExtent();
+
+  // create and init camera
+  const camera = new Camera(75, window.innerWidth / window.innerHeight, 1, 2000);
 
   camera.lookAt({
     x: 0,
@@ -60,7 +61,7 @@ const main = async () => {
   });
 
   camera.setPosition({
-    x: mainModel.dia * 0, 
+    x: mainModel.dia * 0,
     y: mainModel.dia * 0.7,
     z: mainModel.dia
   });
@@ -72,6 +73,11 @@ const main = async () => {
   function frame(curentMilis) {
     // calculate the change in time in seconds since the last frame
     let deltaTime = (curentMilis - lastFrameMilis) / 1000;
+
+    // check if the canvas needs to be resized, if so, things need to be recreated here
+    if (wasResized) {
+      // re create frame buffers (TODO) here so that they have the proper settings
+    }
 
     // update things here
     update(deltaTime);
@@ -90,18 +96,88 @@ const main = async () => {
     textManager.updateScore(Math.round(lastFrameMilis / 1000));
   }
 
+  // update function, responsible for updating all objects and things that need to be updated since last frame
   function update(deltaTime) {
+    // Key mapping:
+    // Right movement
+    if (
+      (Input.keysDown.ArrowRight || Input.keysDown.d || Input.keysDown.D || Input.keysDown.e) &&
+      ufo.position.x < manager.box.xMax / manager.box.shipBoxScalar
+    ) {
+      ufo.position.add(new Vector3(ufo.turningSpeedX, 0, 0));
+    }
+    // Left movement
+    if ((Input.keysDown.ArrowLeft || Input.keysDown.a || Input.keysDown.q) && ufo.position.x > manager.box.xMin / manager.box.shipBoxScalar) {
+      ufo.position.add(new Vector3(-ufo.turningSpeedX, 0, 0));
+    }
+    // Up movement
+    if ((Input.keysDown.ArrowUp || Input.keysDown.w || Input.keysDown.e || Input.keysDown.q) && ufo.position.y < manager.box.yMax / manager.box.shipBoxScalar) {
+      ufo.position.add(new Vector3(0, ufo.turningSpeedY, 0));
+    }
+    // Down movement
+    if ((Input.keysDown.ArrowDown || Input.keysDown.s) && ufo.position.y > manager.box.yMin / manager.box.shipBoxScalar) {
+      ufo.position.add(new Vector3(0, -ufo.turningSpeedY, 0));
+    }
+    // Added o, p and r for debugging purposes, not needed for actual gameplay
+    // Speed up the ship and it's rotation
+    if (Input.keysDown.o) {
+      ufo.physics.velocity.add(new Vector3(0, 0, -10));
+      ufo.physics.angularVelocity.add(new Vector3(0, -10, 0));
+    }
+    // Slow down the ship and it's rotation
+    if (Input.keysDown.p) {
+      ufo.physics.velocity.add(new Vector3(0, 0, 10));
+      ufo.physics.angularVelocity.add(new Vector3(0, 10, 0));
+    }
+    // Reset the ship to it's starting speed
+    if (Input.keysDown.r) {
+      ufo.physics.velocity = new Vector3(0, 0, ufo.startSpeed);
+      ufo.physics.angularVelocity = new Vector3(0, ufo.startRot, 0);
+    }
+
+    // Update the position of each object
     manager.sceneObjects.forEach(sceneObject => sceneObject.update(deltaTime));
+
+    // check for UFO colliding with anything
+    for (const gameobject of manager.sceneObjects) {
+      // avoid colliding with self
+      if (gameobject == ufo) continue;
+      if (ufo.doesCollide(gameobject)) console.log('UFO collided with asteroid!');
+    }
+
+    // Fix the camera so it's positioned behind the ship each frame
+    let offset = new Vector3(0, mainModel.dia * 0.5, mainModel.dia);
+    camera.setPosition(ufo.position.clone().add(offset));
+    camera.lookAt(ufo.position);
+
+    // Add new objects with time
+    manager.time = manager.time + Math.ceil(deltaTime * 60);
+    if (manager.time % 1000 == 0) {
+      manager.addObjects(spawnArr(10 * manager.difficulty));
+      ufo.physics.velocity.add(new Vector3(0, 0, -ufo.speedIncrement * manager.difficulty));
+      ufo.physics.angularVelocity.add(new Vector3(0, -ufo.speedIncrement * manager.difficulty, 0));
+    }
   }
 
+  // render function, responsible for alloh true rendering, including shadows (TODO), model rendering, and post processing (TODO)
   function render(deltaTime) {
-    manager.sceneObjects.forEach(sceneObject =>
-      sceneObject.render(programInfo, camera.getUniforms())
-    );
+    manager.sceneObjects.forEach(sceneObject => sceneObject.render(programInfo, camera.getUniforms()));
   }
 
-  gl.viewport(0, 0, window.innerWidth, window.innerHeight);
+  // track if the window was resized and adjust the canvas and viewport to match
+  let wasResized = false;
+  window.addEventListener('resize', () => {
+    // even though this is an event listener, due to the nature of the javascript event loop,
+    // this will not cause weird timing issues with our rendering because we cant be rendering and processing this at the same time
+    // it just inst possible
+    twgl.resizeCanvasToDisplaySize(gl.canvas);
+    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+    wasResized = true;
+  });
+
+  // this will make init the canvas width and height and the viewport
   twgl.resizeCanvasToDisplaySize(gl.canvas);
+  gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
   // start the render loop by requesting an animation frame for the frame function
   rafHandle = requestAnimationFrame(frame);

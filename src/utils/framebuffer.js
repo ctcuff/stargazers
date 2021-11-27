@@ -18,7 +18,7 @@ import { gl, multiSampleSamples as samples } from '../constants';
 function createColorTexture(width, height) {
   const tex = gl.createTexture();
   gl.bindTexture(gl.TEXTURE_2D, tex);
-  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8I, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8UI, width, height, 0, gl.RGBA_INTEGER, gl.UNSIGNED_BYTE, null);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
@@ -33,8 +33,8 @@ function createColorTexture(width, height) {
  * @returns the WebGL buffer id of the color buffer
  */
 function createMultiSampleColorBuffer(width, height) {
-  const buf = gl.createBuffer();
-  gl.bindRenderbuffer(gl.RENDERBUFFER,  buf);
+  const buf = gl.createRenderbuffer();
+  gl.bindRenderbuffer(gl.RENDERBUFFER, buf);
   gl.renderbufferStorageMultisample(gl.RENDERBUFFER, samples, gl.RGBA8, width, height);
   return buf;
 }
@@ -110,13 +110,13 @@ class FrameBuffer {
         for (let i = 0; i < opts.targets.length; i++) {
           let buf = createMultiSampleColorBuffer(width, height);
           // attach result to frame buffer
-          gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.RENDERBUFFER, color, 0);
+          gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + i, gl.RENDERBUFFER, buf);
 
           // save it
           this.colorAttachments.push(buf);
         }
       } else {
-        let color = createColorTexture();
+        let color = createColorTexture(width, height);
         // attach result to frame buffer
         gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, color, 0);
         // save color
@@ -143,13 +143,18 @@ class FrameBuffer {
     } else {
       this.depthBuf = createDepthBuffer(width, height, opts.multiSample);
       // attach result to frame buffer
-      gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, )
+      gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, this.depthBuf);
+    }
+
+    // do a quick error check
+    if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) != gl.FRAMEBUFFER_COMPLETE) {
+      console.error(`Incomplete frame buffer w=${width}, h=${height}, & o=${JSON.stringify(opts)}`);
     }
 
     // unbind anything that may have been bound during the process of creating the frame buffer
-    gl.bindTexture(gl.TEXTURE_2D, 0);
-    gl.bindRenderbuffer(gl.RENDERBUFFER, 0);
-    gl.bindFramebuffer(gl.FRAMEBUFFER, 0);
+    gl.bindTexture(gl.TEXTURE_2D, null);
+    gl.bindRenderbuffer(gl.RENDERBUFFER, null);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
   }
 
   /**
@@ -172,7 +177,7 @@ class FrameBuffer {
    */
   unbind() {
     // unbind this frame buffer and reset the view port to the canvas size
-    gl.bindFramebuffer(gl.FRAMEBUFFER, 0);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
   }
 }
