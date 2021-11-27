@@ -23,51 +23,53 @@ class ObjectSelector extends GameObject {
         this.velScalar = 20;
         break;
       // case 2:
-      // Add a power up object that increases speed?
+        // Add a power up object that increases speed?
       default:
-        console.error('Object number passed into the ObjectSelector is invalid.');
+        console.error("Object number passed into the ObjectSelector is invalid.")
         break;
     }
 
     // Member variables
-    this.initWithRandom(true);
+    this.initWithRandom();
     this.ufoDia = manager.ufo.initalDia;
   }
 
   update(deltaTime) {
     // check here for out of bounds, update position
-    if (manager.ufo.position.z < this.position.z - this.ufoDia) {
-      this.initWithRandom(false);
+    if (manager.ufo.position.z < this.position.z - this.ufoDia
+      || manager.ufo.position.x > this.position.x + manager.box.xMax
+      || manager.ufo.position.x < this.position.x - manager.box.xMax
+      || manager.ufo.position.y > this.position.y + manager.box.yMax
+      || manager.ufo.position.y < this.position.y - manager.box.yMax) {
+      this.initWithRandom();
     }
-
+    
     // you want to call this btw
     super.update(deltaTime);
   }
-  initWithRandom(flag) {
-    let x = getRandomInt(manager.box.xMin, manager.box.xMax);
-    let y = getRandomInt(manager.box.yMin, manager.box.yMax);
-    let z;
-    if (flag) z = getRandomInt(manager.ufo.position.z + manager.box.zMin, manager.ufo.position.z + manager.box.zMax);
-    else z = getRandomInt(manager.ufo.position.z + manager.box.zMin - 1000, manager.ufo.position.z + manager.box.zMax);
+  initWithRandom() { 
+      let x = getRandomInt(manager.ufo.position.x + manager.box.xMin, manager.ufo.position.x + manager.box.xMax);
+      let y = getRandomInt(manager.ufo.position.y + manager.box.yMin, manager.ufo.position.y + manager.box.yMax);
+      let z = getRandomInt(manager.ufo.position.z + manager.box.zMin - 200, manager.ufo.position.z + manager.box.zMax);
 
-    this.position = new Vector3(x, y, z);
+      this.position = new Vector3(x, y, z);
 
-    let vel;
-    if (this.shouldMove) {
-      vel = new Vector3(getRandomDir() * this.velScalar, getRandomDir() * this.velScalar, getRandomDir() * this.velScalar);
-    } else {
-      vel = new Vector3(0, 0, 0);
+      let vel;
+      if (this.shouldMove) {
+        vel = new Vector3(getRandomDir() * this.velScalar, getRandomDir() * this.velScalar, getRandomDir() * this.velScalar);
+      } else {
+        vel = new Vector3(0, 0, 0);
+      }
+      this.physics.velocity = vel;
+
+      if (this.shouldRotate) {
+        const rot = new Vector3(getRandomDir(), getRandomDir(), getRandomDir());
+        rot.multiplyScalar(Math.random() * 80);
+        this.physics.angularVelocity = rot;
+      }
+
+      this.scale = (Math.random() + 1) * this.scaleAmount;
     }
-    this.physics.velocity = vel;
-
-    if (this.shouldRotate) {
-      const rot = new Vector3(getRandomDir(), getRandomDir(), getRandomDir());
-      rot.multiplyScalar(Math.random() * 80);
-      this.physics.angularVelocity = rot;
-    }
-
-    this.scale = (Math.random() + 0.5) * this.scaleAmount;
-  }
 }
 
 export default ObjectSelector;
