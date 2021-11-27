@@ -3,7 +3,10 @@ import GameBox from './utils/game-box';
 
 class GameManager {
   constructor() {
-    this.modelList = [];
+    /**
+     * @type {{ [key: string]: Model }}
+     */
+    this.modelList = {};
     this.sceneObjects = [];
     this.box = new GameBox();
     this.time = 0;

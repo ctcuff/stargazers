@@ -2,8 +2,6 @@ import './style/index.css';
 import * as twgl from 'twgl.js';
 import vs from './shaders/shader.vert';
 import fs from './shaders/shader.frag';
-import GameObject from './game-object';
-import Physics from './physics';
 import { gl } from './constants';
 import manager from './gamemanager';
 import Input from './input';
@@ -11,8 +9,7 @@ import Camera from './camera';
 import { Vector3 } from 'three';
 import { spawnArr } from './utils/object-spawner';
 import UFO from './utils/object-ufo';
-
-const m4 = twgl.m4;
+import Projectile from './utils/projectile';
 
 const main = async () => {
   const programInfo = twgl.createProgramInfo(gl, [vs, fs], error => console.log(error));
@@ -64,6 +61,9 @@ const main = async () => {
     y: mainModel.dia * 0.7,
     z: mainModel.dia
   });
+
+  Input.addKeyPressListener('space', () => manager.addObject(new Projectile(ufo.position)));
+  Input.addClickListener(() => manager.addObject(new Projectile(ufo.position)));
 
   // create looper function
   function frame(curentMilis) {
