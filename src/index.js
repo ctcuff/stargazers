@@ -7,9 +7,10 @@ import manager from './gamemanager';
 import Input from './input';
 import Camera from './camera';
 import { Vector3 } from 'three';
-import { spawnArr } from './utils/object-spawner';
 import UFO from './utils/object-ufo';
 import Projectile from './utils/projectile';
+import Asteroid from './gameobjects/asteroid';
+
 
 const main = async () => {
   const programInfo = twgl.createProgramInfo(gl, [vs, fs], error => console.log(error));
@@ -41,7 +42,7 @@ const main = async () => {
   manager.addObject(ufo); // Add the ufo model to canvas
 
   // Spawn the first set of asteroids
-  let arrOfObjects = spawnArr(50 * manager.difficulty);
+  let arrOfObjects = Asteroid.spawnAsteroids(100 * manager.difficulty);
   manager.addObjects(arrOfObjects);
 
   // mainModel should be the 'main' model of the scene
@@ -131,15 +132,21 @@ const main = async () => {
     // Update the position of each object
     manager.sceneObjects.forEach(sceneObject => sceneObject.update(deltaTime));
 
-    // check for UFO colliding with anything
-    for (const gameobject of manager.sceneObjects) {
-      // avoid colliding with self
-      if (gameobject === ufo) continue;
-
-      if (ufo.doesCollide(gameobject) && !(gameobject instanceof Projectile)) {
-        console.log('UFO collided with asteroid!');
+    // collision pass
+    for (let i = 0; i < manager.sceneObjects.length; i++) {
+      const firstObj = manager.sceneObjects[i];
+      for (let j = i + 1; j < manager.sceneObjects.length; j++) {
+        const secondObj = manager.sceneObjects[j];
+        if (firstObj.doesCollide(secondObj)) {
+          console.log('Collided!');
+          firstObj.onCollisionEnter(secondObj);
+          secondObj.onCollisionEnter(firstObj);
+        }
       }
     }
+
+    // remove all gameobjects that are now not "alive"
+    manager.sceneObjects = manager.sceneObjects.filter(gameobject => gameobject.alive);
 
     // Fix the camera so it's positioned behind the ship each frame
     let offset = new Vector3(0, mainModel.dia * 0.35, mainModel.dia * 0.9);
@@ -149,7 +156,7 @@ const main = async () => {
     // Add new objects with time
     manager.time = manager.time + Math.ceil(deltaTime * 60);
     if (manager.time % 1000 == 0) {
-      manager.addObjects(spawnArr(5 * manager.difficulty));
+      manager.addObjects(Asteroid.spawnAsteroids(5 * manager.difficulty));
       ufo.physics.velocity.add(new Vector3(0, 0, -ufo.velcIncr * manager.difficulty));
       ufo.physics.angularVelocity.add(new Vector3(0, -ufo.angularVelIncr * manager.difficulty, 0));
       ufo.strafeSpeedX += 0.5;
