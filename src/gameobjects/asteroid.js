@@ -28,6 +28,8 @@ class Asteroid extends GameObject {
     this.shouldMove = true;
     this.velocityScalar = 20;
 
+    this.material = new Material((0, 0, 0), 1);
+
     this.initWithRandom();
   }
 

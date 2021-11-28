@@ -50,6 +50,7 @@ const main = async () => {
 
   // create and init camera
   const camera = new Camera(75, window.innerWidth / window.innerHeight, 1, 3000);
+  const lighting = new Lighitng((0, 0, 0), 1);
 
   camera.lookAt({
     x: 0,
@@ -165,7 +166,7 @@ const main = async () => {
 
   // render function, responsible for alloh true rendering, including shadows (TODO), model rendering, and post processing (TODO)
   function render(deltaTime) {
-    manager.sceneObjects.forEach(sceneObject => sceneObject.render(programInfo, camera.getUniforms()));
+    manager.sceneObjects.forEach(sceneObject => sceneObject.render(programInfo, camera.getUniforms(), lighting.getUniforms()));
   }
 
   // track if the window was resized and adjust the canvas and viewport to match

@@ -12,8 +12,9 @@ class GameObject {
    * @typedef {import('./physics').default} Physics
    * @param {Physics} physics
    */
-  constructor(model, physics) {
+  constructor(model, material, physics) {
     this.model = model;
+    this.material = material;
     this.physics = physics;
 
     this.uniforms = {
