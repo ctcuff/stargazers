@@ -7,8 +7,7 @@ import manager from './gamemanager';
 import Input from './input';
 import Camera from './camera';
 import { Vector3 } from 'three';
-import UFO from './utils/object-ufo';
-import Projectile from './utils/projectile';
+import UFO from './gameobjects/ufo';
 import Asteroid from './gameobjects/asteroid';
 
 
@@ -31,7 +30,8 @@ const main = async () => {
     { model: require('./models/asteroid0.obj'), name: 'asteroid0' },
     { model: require('./models/asteroid1.obj'), name: 'asteroid1' },
     { model: require('./models/raymanModel.obj'), name: 'rayman' },
-    { model: require('./models/cow.obj'), name: 'cow' }
+    { model: require('./models/cow.obj'), name: 'cow' },
+    { model: require('./models/shield.obj'), name: 'shield' },
   ];
 
   await manager.addModels(modelRefs);
