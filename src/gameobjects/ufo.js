@@ -3,6 +3,8 @@ import manager from '../gamemanager';
 import Physics from '../physics';
 import { Vector3 } from 'three';
 import Asteroid from './asteroid';
+import Input from '../input';
+import ShieldProjectile from './shield-projectile';
 
 class UFO extends GameObject {
   constructor() {
@@ -20,6 +22,15 @@ class UFO extends GameObject {
 
     this.maxLives = 3;
     this.currLives = this.maxLives;
+
+    /**
+     * The time (in milliseconds) before the UFO can shoot another projectile
+     */
+    this.projectileTimeLimit = 15_000;
+    this.lastProjectileTimestamp = 0;
+
+    Input.addKeyPressListener('space', this.fireProjectile.bind(this));
+    Input.addClickListener(this.fireProjectile.bind(this));
   }
 
   update(deltaTime) {
@@ -36,6 +47,21 @@ class UFO extends GameObject {
 
     if (this.currLives <= 0) {
       this.alive = false;
+    }
+  }
+
+  fireProjectile() {
+    if (!this.alive) {
+      return;
+    }
+
+    const now = Date.now();
+    // Changing the z to make sure the projectile is always faster than the UFO when it's shot
+    const projectileSpeed = this.physics.velocity.clone().setZ(this.physics.velocity.z - 500);
+
+    if (now - this.lastProjectileTimestamp >= this.projectileTimeLimit) {
+      manager.addObject(new ShieldProjectile(this.position.clone(), projectileSpeed));
+      this.lastProjectileTimestamp = now;
     }
   }
 }

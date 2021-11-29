@@ -10,7 +10,6 @@ import { Vector3 } from 'three';
 import UFO from './gameobjects/ufo';
 import Asteroid from './gameobjects/asteroid';
 
-const m4 = twgl.m4;
 
 const main = async () => {
   const programInfo = twgl.createProgramInfo(gl, [vs, fs], error => console.log(error));
@@ -31,7 +30,8 @@ const main = async () => {
     { model: require('./models/asteroid0.obj'), name: 'asteroid0' },
     { model: require('./models/asteroid1.obj'), name: 'asteroid1' },
     { model: require('./models/raymanModel.obj'), name: 'rayman' },
-    { model: require('./models/cow.obj'), name: 'cow' }
+    { model: require('./models/cow.obj'), name: 'cow' },
+    { model: require('./models/shield.obj'), name: 'shield' },
   ];
 
   await manager.addModels(modelRefs);
@@ -62,6 +62,7 @@ const main = async () => {
     y: mainModel.dia * 0.7,
     z: mainModel.dia
   });
+
 
   // create looper function
   function frame(curentMilis) {
