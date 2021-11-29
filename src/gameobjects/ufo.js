@@ -6,7 +6,7 @@ import Asteroid from './asteroid';
 
 class UFO extends GameObject {
   constructor() {
-    super(manager.modelList.ufo, new Physics(), new Material((0, 0, 0), 1));
+    super(manager.modelList.ufo, new Physics());
     this.startSpeed = -300;
     this.startRot = -300;
     this.physics = new Physics(new Vector3(0, 0, this.startSpeed), new Vector3(0, this.startRot, 0), 0);

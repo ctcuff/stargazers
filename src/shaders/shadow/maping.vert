@@ -2,7 +2,6 @@
 
 // NOTE (Joseph): these names are TODOs, as these depend on how the model is loaded
 in vec3 position;
-in ve
 in vec2 texCoords;
 
 out vec2 passTexCoords;

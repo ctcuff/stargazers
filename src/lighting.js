@@ -3,39 +3,17 @@ import { Vector3 } from 'three';
 import { deg2rad } from './utils/math';
 
 class Lighting {
-  /**
-   * @param {any} lightDirection
-   * @param {any} ambient;
-   */
-  constructor(lightDirection, ambient) {
+  constructor(lightPosition, lightDirection) {
     this.lightDirection = lightDirection;
-    this.ambient = ambient;
-  }
-
-  getUniforms() {
-    return {
-      light: this.lightDirection,
-      ambient: this.ambient
-    };
-  }
-
-  setDirection(x, y, z) {
-    this.lightDirection = (x, y, z);
-  }
-
-  setAmbience(ambience) {
-    this.ambient = ambience;
+    this.lightPosition = lightPosition;
   }
 }
 
-export default Lighting;
-
-/*
 const uniforms = {
   light,
-  ambientIntensity = 1,
-  shininess = 1,
-  diffuse = 1
+  ambientIntensity,
+  shininess,
+  diffuse
 };
 
 // create a new buffer, bind it to the buffer, and send along the array of vertex normals
@@ -62,4 +40,18 @@ mat4.invert(normalMatrix, modelViewMatrix);
 mat4.transpose(normalMatrix, normalMatrix);
 
 gl.uniformMatrix(programInfo.uniformLocations.normalMatrix, false, normalMatrix);
-*/
+
+const programInfo = {
+  program: shaderProgram,
+  attribLocations: {
+    vertexPosition: gl.getAttribLocation(shaderProgram, 'aVertexPosition'),
+    vertexNormal: gl.getAttribLocation(shaderProgram, 'aVertexNormal'),
+    textureCoord: gl.getAttribLocation(shaderProgram, 'aTextureCoord')
+  },
+  uniformLocations: {
+    projectionMatrix: gl.getUniformLocation(shaderProgram, 'uProjectionMatrix'),
+    modelViewMatrix: gl.getUniformLocation(shaderProgram, 'uModelViewMatrix'),
+    normalMatrix: gl.getUniformLocation(shaderProgram, 'uNormalMatrix'),
+    uSampler: gl.getUniformLocaiton(shaderProgram, 'uSampler')
+  }
+};
