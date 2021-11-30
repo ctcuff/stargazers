@@ -4,8 +4,8 @@ import { deg2rad } from './utils/math';
 
 class Material {
     /**
-     * @param {any} materialColor
-     * @param {any} diffuse
+     * @param {Vector3} materialColor
+     * @param {Number} diffuse
      */
     constructor(materialColor, diffuse) {
       this.materialColor = materialColor;

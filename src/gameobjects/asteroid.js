@@ -3,6 +3,7 @@ import manager from '../gamemanager';
 import Physics from '../physics';
 import { getRandomDir, getRandomInt } from '../utils/math';
 import { Vector3 } from 'three';
+import BasicMat from '../materials/basic-mat';
 
 class Asteroid extends GameObject {
   // types of asteroids
@@ -28,7 +29,7 @@ class Asteroid extends GameObject {
     this.shouldMove = true;
     this.velocityScalar = 20;
 
-    this.material = new Material((0, 0, 0), 1);
+    this.material = new BasicMat();
 
     this.initWithRandom();
   }
