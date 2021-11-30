@@ -14,9 +14,9 @@ out vec2 fragUV;
 
 void main () {
     fragUV = uv;
-    vec4 newPosition = modelMatrix*vec4(position,1);
+    vec4 newPosition = modelMatrix * vec4(position, 1);
     fragPosition = newPosition.xyz;
-    gl_Position = projectionMatrix*viewMatrix*newPosition;
+    gl_Position = projectionMatrix * viewMatrix * newPosition;
     mat4 normalMatrix = transpose(inverse(modelMatrix));
-    fragNormal = normalize((normalMatrix*vec4(normal,0)).xyz);
+    fragNormal = normalize((normalMatrix * vec4(normal, 0)).xyz);
 }
