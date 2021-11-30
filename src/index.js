@@ -25,13 +25,20 @@ const main = async () => {
   // track when the last frame rendered
   let lastFrameMilis = 0;
 
+  const textures = twgl.createTextures(gl, {
+    asteroid1: { src: require('./models/asteroid1_extras/textures/rock_Base_Color.png'), flipY: true, wrap: gl.REPEAT, mag: gl.LINEAR, min: gl.MIPMAP},
+    ufo: { src: require('./models/ufo_extras/ufo_diffuse.png'), flipY: true, wrap: gl.REPEAT, mag: gl.LINEAR, min: gl.MIPMAP},
+    rayman: { src: require('./models/rayman.png'), flipY: true, wrap: gl.REPEAT, mag: gl.LINEAR, min: gl.MIPMAP}
+  })
+
+  // Other models are currently commented out as they dont have a texture
   const modelRefs = [
-    { model: require('./models/ufo.obj'), name: 'ufo' },
-    { model: require('./models/starwars.obj'), name: 'starwars' },
-    { model: require('./models/asteroid0.obj'), name: 'asteroid0' },
-    { model: require('./models/asteroid1.obj'), name: 'asteroid1' },
-    { model: require('./models/raymanModel.obj'), name: 'rayman' },
-    { model: require('./models/cow.obj'), name: 'cow' }
+    { model: require('./models/ufo.obj'), name: 'ufo', texture: textures.ufo},
+    //{ model: require('./models/starwars.obj'), name: 'starwars' },
+    { model: require('./models/asteroid0.obj'), name: 'asteroid0', texture: textures.asteroid1 },
+    { model: require('./models/asteroid1.obj'), name: 'asteroid1', texture: textures.asteroid1 },
+    { model: require('./models/raymanModel.obj'), name: 'rayman', texture: textures.rayman },
+    //{ model: require('./models/cow.obj'), name: 'cow' }
   ];
 
   await manager.addModels(modelRefs);
