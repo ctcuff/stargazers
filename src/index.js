@@ -2,21 +2,22 @@ import './style/index.css';
 import * as twgl from 'twgl.js';
 import vs from './shaders/shader.vert';
 import fs from './shaders/shader.frag';
-import GameObject from './game-object';
-import Physics from './physics';
 import { gl } from './constants';
 import manager from './gamemanager';
+import Input from './input';
 import Camera from './camera';
 import { Vector3 } from 'three';
 import FrameBuffer from './utils/framebuffer';
 import PostProcess from './postprocessing/postProcess';
+import UFO from './gameobjects/ufo';
+import Asteroid from './gameobjects/asteroid';
 
 const main = async () => {
   const programInfo = twgl.createProgramInfo(gl, [vs, fs], error => console.log(error));
 
   // init gl stuff here, like back face culling and the depth test
   gl.enable(gl.DEPTH_TEST);
-  gl.clearColor(0.5, 0.2, 0.7, 1.0);
+  gl.clearColor(0, 0, 0, 1.0);
 
   // track if the window was resized and adjust the canvas and viewport to match
   let wasResized = false;
@@ -45,36 +46,35 @@ const main = async () => {
     { model: require('./models/asteroid0.obj'), name: 'asteroid0' },
     { model: require('./models/asteroid1.obj'), name: 'asteroid1' },
     { model: require('./models/raymanModel.obj'), name: 'rayman' },
-    { model: require('./models/cow.obj'), name: 'cow' }
+    { model: require('./models/cow.obj'), name: 'cow' },
+    { model: require('./models/shield.obj'), name: 'shield' },
   ];
 
   await manager.addModels(modelRefs);
 
-  // Create physics objects
-  // Physics(Velocity, angularVelocity, colliderRadius)
-  let asteroidPhysics = new Physics(new Vector3(0, 0, -30), new Vector3(0, 0, 0), 0);
-  let ufoPhysics = new Physics(new Vector3(0, 0, 0), new Vector3(0, -200, 0), 0);
+  // Setup the ufo model
+  const ufo = new UFO(); // Declare ufo model
+  manager.ufo = ufo; // This is a hack, this allows me to have access to the ufo in all the cows
+  manager.addObject(ufo); // Add the ufo model to canvas
 
-  // Declare models to be used
-  const ufo = new GameObject(manager.modelList.ufo, ufoPhysics);
-  const myAsteroid1 = new GameObject(manager.modelList.asteroid0, asteroidPhysics);
+  // Spawn the first set of asteroids
+  let arrOfObjects = Asteroid.spawnAsteroids(100 * manager.difficulty);
+  manager.addObjects(arrOfObjects);
 
-  // Add testing models to canvas
-  manager.addObject(myAsteroid1);
-  manager.addObject(ufo);
-  
   // mainModel should be the 'main' model of the scene
   const mainModel = manager.modelList.ufo.getModelExtent();
 
   // create and init camera
-  const camera = new Camera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  const camera = new Camera(75, window.innerWidth / window.innerHeight, 1, 3000);
+
   camera.lookAt({
     x: 0,
     y: 0,
     z: 0
   });
+
   camera.setPosition({
-    x: mainModel.dia * 0, 
+    x: mainModel.dia * 0,
     y: mainModel.dia * 0.7,
     z: mainModel.dia
   });
@@ -115,10 +115,79 @@ const main = async () => {
 
   // update function, responsible for updating all objects and things that need to be updated since last frame
   function update(deltaTime) {
+    // Add a shift key mapping to act like a "crouch" that cuts the ships speed in half while you are pressing it down
+    // Or make it toggle so every time you press shift you crouch or uncrouch depending on the state (holding is prefered over toggle but toggle might be easier)
+
+    // Key mapping:
+    // Right movement
+    if (Input.keysDown.ArrowRight || Input.keysDown.d || Input.keysDown.D || Input.keysDown.e) {
+      ufo.position.add(new Vector3(ufo.strafeSpeedX, 0, 0));
+    }
+    // Left movement
+    if (Input.keysDown.ArrowLeft || Input.keysDown.a || Input.keysDown.q) {
+      ufo.position.add(new Vector3(-ufo.strafeSpeedX, 0, 0));
+    }
+    // Up movement
+    if (Input.keysDown.ArrowUp || Input.keysDown.w || Input.keysDown.e || Input.keysDown.q) {
+      ufo.position.add(new Vector3(0, ufo.strafeSpeedY, 0));
+    }
+    // Down movement
+    if (Input.keysDown.ArrowDown || Input.keysDown.s) {
+      ufo.position.add(new Vector3(0, -ufo.strafeSpeedY, 0));
+    }
+    // Added o, p and r for debugging purposes, not needed for actual gameplay
+    // Speed up the ship and it's rotation
+    if (Input.keysDown.o) {
+      ufo.physics.velocity.add(new Vector3(0, 0, -10));
+      ufo.physics.angularVelocity.add(new Vector3(0, -10, 0));
+    }
+    // Slow down the ship and it's rotation
+    if (Input.keysDown.p) {
+      ufo.physics.velocity.add(new Vector3(0, 0, 10));
+      ufo.physics.angularVelocity.add(new Vector3(0, 10, 0));
+    }
+    // Reset the ship to it's starting speed
+    if (Input.keysDown.r) {
+      ufo.physics.velocity = new Vector3(0, 0, ufo.startSpeed);
+      ufo.physics.angularVelocity = new Vector3(0, ufo.startRot, 0);
+    }
+
+    // Update the position of each object
     manager.sceneObjects.forEach(sceneObject => sceneObject.update(deltaTime));
+
+    // collision pass
+    for (let i = 0; i < manager.sceneObjects.length; i++) {
+      const firstObj = manager.sceneObjects[i];
+      for (let j = i + 1; j < manager.sceneObjects.length; j++) {
+        const secondObj = manager.sceneObjects[j];
+        if (firstObj.doesCollide(secondObj)) {
+          console.log('Collided!');
+          firstObj.onCollisionEnter(secondObj);
+          secondObj.onCollisionEnter(firstObj);
+        }
+      }
+    }
+
+    // remove all gameobjects that are now not "alive"
+    manager.sceneObjects = manager.sceneObjects.filter(gameobject => gameobject.alive);
+
+    // Fix the camera so it's positioned behind the ship each frame
+    let offset = new Vector3(0, mainModel.dia * 0.35, mainModel.dia * 0.9);
+    camera.setPosition(ufo.position.clone().add(offset));
+    camera.lookAt(ufo.position);
+
+    // Add new objects with time
+    manager.time = manager.time + Math.ceil(deltaTime * 60);
+    if (manager.time % 1000 == 0) {
+      manager.addObjects(Asteroid.spawnAsteroids(5 * manager.difficulty));
+      ufo.physics.velocity.add(new Vector3(0, 0, -ufo.velcIncr * manager.difficulty));
+      ufo.physics.angularVelocity.add(new Vector3(0, -ufo.angularVelIncr * manager.difficulty, 0));
+      ufo.strafeSpeedX += 0.5;
+      ufo.strafeSpeedY += 0.25;
+    }
   }
 
-  // render function, responsible for all rendering, including shadows (TODO), model rendering, and post processing (TODO)
+  // render function, responsible for alloh true rendering, including shadows (TODO), model rendering, and post processing (TODO)
   function render(deltaTime) {
     // bind the multi sample frame buffer
     multiSampleFrame.bind();
