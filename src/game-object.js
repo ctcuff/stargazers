@@ -1,6 +1,7 @@
 import { m4 } from 'twgl.js';
 import { Vector3 } from 'three';
 import { deg2rad } from './utils/math';
+import Material from './material';
 
 /**
  * Base for all object
@@ -9,6 +10,7 @@ class GameObject {
   /**
    * @typedef {import('./model').default} Model
    * @param {Model} model
+   * @param {Material} material
    * @typedef {import('./physics').default} Physics
    * @param {Physics} physics
    */
