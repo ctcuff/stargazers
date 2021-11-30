@@ -65,14 +65,14 @@ class ShadowBox {
     let first = true;
     for (const point of points) {
       if (first) {
-				minX = point.x;
-				maxX = point.x;
-				minY = point.y;
-				maxY = point.y;
-				minZ = point.z;
-				maxZ = point.z;
-				first = false;
-				continue;
+        this.minX = point.x;
+        this.maxX = point.x;
+        this.minY = point.y;
+        this.maxY = point.y;
+        this.minZ = point.z;
+        this.maxZ = point.z;
+        first = false;
+        continue;
       }
 
       if (point.x > this.maxX) {
@@ -153,14 +153,14 @@ class ShadowBox {
    * @returns {Matrix4} a matrix representing only the rotation of the camera
    */
   calculateCameraRotationMatrix() {
-    const camMat = new Matrix4().set(...this.cameraMatrix);
+    const camMat = new Matrix4().set(...this.camera.cameraMatrix);
     const camRot = new Quaternion().setFromRotationMatrix(camMat);
     return new Matrix4().makeRotationFromQuaternion(camRot);
   }
 
   calculateWidthsAndHeights() {
     this.farWidth = SHADOW_DISTANCE * Math.tan(deg2rad(fov()));
-    this.nearWidth = NEAR_PLANE * Math.tan(deg2rad(fov()));
+    this.nearWidth = nearPlane() * Math.tan(deg2rad(fov()));
     this.farHeight = this.farWidth / aspectRatio();
     this.nearHeight = this.nearWidth / aspectRatio();
   }
