@@ -9,6 +9,7 @@ import Camera from './camera';
 import { Vector3 } from 'three';
 import UFO from './gameobjects/ufo';
 import Asteroid from './gameobjects/asteroid';
+import ShadowRenderer from './shadow';
 
 
 const main = async () => {
@@ -63,6 +64,8 @@ const main = async () => {
     z: mainModel.dia
   });
 
+  // make an instance of the shadow renderer
+  const shadowRenderer = new ShadowRenderer(camera);
 
   // create looper function
   function frame(curentMilis) {
@@ -72,6 +75,7 @@ const main = async () => {
     // check if the canvas needs to be resized, if so, things need to be recreated here
     if (wasResized) {
       // re create frame buffers (TODO) here so that they have the proper settings
+      shadowRenderer.onWindowResize();
     }
 
     // update things here
@@ -166,6 +170,10 @@ const main = async () => {
 
   // render function, responsible for alloh true rendering, including shadows (TODO), model rendering, and post processing (TODO)
   function render(deltaTime) {
+    // render the scene from the light dir
+    // TODO proper light dir
+    shadowRenderer.renderShadowMap(new Vector3(-1, -1, 0));
+
     manager.sceneObjects.forEach(sceneObject => sceneObject.render(programInfo, camera.getUniforms()));
   }
 
