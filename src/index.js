@@ -211,6 +211,9 @@ const main = async () => {
     // render all objects in the scene
     manager.sceneObjects.forEach(sceneObject => sceneObject.render(programInfo, camera.getUniforms()));
     
+    // TODO remove this debug:
+    shadowRenderer.DEBUGrenderDepthTex(-0.75, 0.75, .25);
+    
     // = = = = = = = = = = POST-RENDER = = = = = = = = = = 
 
     // unbind the multi sample frame buffer

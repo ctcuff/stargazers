@@ -7,6 +7,9 @@ import FrameBuffer from './utils/framebuffer';
 import ShadowBox from './utils/shadowBox';
 import { Euler, Matrix4, Vector2, Vector3 } from 'three';
 import manager from './gamemanager';
+import DEBUGvs from './shaders/postprocessing/simple.vert';
+import DEBUGfs from './shaders/postprocessing/simple.frag';
+import ImageRenderer from './postprocessing/imageRenderer';
 
 const m4 = twgl.m4;
 
@@ -22,6 +25,15 @@ function createOffset() {
   m4.scale(mat, [0.5, 0.5, 0.5], mat);
   return mat;
 }
+
+// create quad from -1 to 1 on the xy plane
+const screenQuad = twgl.primitives.createXYQuadBufferInfo(gl);
+
+// create a shader to debug with
+const DEBUGshader = twgl.createProgramInfo(gl, [DEBUGvs, DEBUGfs], error => console.log(error));
+
+// an image render that will render to the screen the shadow map;
+const DEBUGrenderer = new ImageRenderer();
 
 class ShadowRenderer {
   /**
@@ -150,6 +162,21 @@ class ShadowRenderer {
 
   onWindowResize() {
     this.shadowBox = new ShadowBox(this.lightViewMatrix, this.camera);
+  }
+
+  DEBUGrenderDepthTex(x = 0, y = 0, scale = 1) {
+    gl.useProgram(DEBUGshader.program);
+
+    const transform = m4.identity();
+    m4.translate(transform, [x, y, 0], transform);
+    m4.scale(transform, [scale, scale, 1], transform);
+
+    twgl.setUniforms(DEBUGshader, {
+      colorTex: this.getShadowMap(),
+      transform
+    });
+
+    DEBUGrenderer.render(screenQuad, DEBUGshader);
   }
 }
 
