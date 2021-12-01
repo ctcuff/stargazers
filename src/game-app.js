@@ -7,6 +7,8 @@ import FrameBuffer from './utils/framebuffer';
 import PostProcess from './postprocessing/postProcess';
 import UFO from './gameobjects/ufo';
 import Asteroid from './gameobjects/asteroid';
+import ShadowRenderer from './shadow';
+import { Vector3 } from 'three';
 
 /**
  * A class that handles setting up WebGL, initializing the scene, and
@@ -34,6 +36,9 @@ class GameApp {
     // This will init the canvas width and height and the viewport
     twgl.resizeCanvasToDisplaySize(gl.canvas);
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+    // make an instance of the shadow renderer
+    this.shadowRenderer = new ShadowRenderer(manager.camera);
 
     // Create multisample (and TODO multitarget) frame buffer
     this.multiSampleFrame = new FrameBuffer(gl.canvas.width, gl.canvas.height, { multiSample: true, targets: [true] });
@@ -169,14 +174,27 @@ class GameApp {
    * @param {number} deltaTime
    */
   render(deltaTime) {
+    // = = = = = = = = = = PRE-RENDER = = = = = = = = = = 
+
+    // render the scene from the light dir
+    // TODO proper light dir
+    this.shadowRenderer.renderShadowMap(new Vector3(-1, -1, 0));
+
     // bind the multi sample frame buffer
     this.multiSampleFrame.bind();
 
     // clear the previous frame
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
+    // = = = = = = = = = = MAIN-RENDER = = = = = = = = = = 
+
     // render all objects in the scene
     manager.sceneObjects.forEach(sceneObject => sceneObject.render(this.programInfo, manager.camera.getUniforms()));
+    
+    // TODO remove this debug:
+    this.shadowRenderer.DEBUGrenderDepthTex(-0.75, 0.75, .25);
+
+    // = = = = = = = = = = POST-RENDER = = = = = = = = = = 
 
     // unbind the multi sample frame buffer
     this.multiSampleFrame.unbind();
