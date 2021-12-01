@@ -184,7 +184,7 @@ class FrameBuffer {
   }
 
   /**
-   * 
+   *
    * @param {Number} readBuffer - the buffer attachment to read from
    * @param {FrameBuffer} output - the frame buffer to blit this frame buffer to
    */
@@ -211,7 +211,7 @@ class FrameBuffer {
     gl.drawBuffers([gl.BACK]);
     // blit the pixels
     gl.blitFramebuffer(0, 0, this.width, this.height, 0, 0, gl.canvas.width, gl.canvas.height, gl.COLOR_BUFFER_BIT, gl.NEAREST);
-    
+
     // unbind
     this.unbind();
   }

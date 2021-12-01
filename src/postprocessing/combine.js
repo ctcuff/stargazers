@@ -1,6 +1,6 @@
 import * as twgl from 'twgl.js';
 import { gl } from '../constants';
-import ImageRenderer from "./imageRenderer";
+import ImageRenderer from './imageRenderer';
 import vs from '../shaders/postprocessing/simple.vert';
 import fs from '../shaders/postprocessing/combine.frag';
 

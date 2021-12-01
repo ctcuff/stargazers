@@ -22,7 +22,7 @@ const main = async () => {
   // track if the window was resized and adjust the canvas and viewport to match
   let wasResized = false;
   window.addEventListener('resize', () => {
-    // even though this is an event listener, due to the nature of the javascript event loop, 
+    // even though this is an event listener, due to the nature of the javascript event loop,
     // this will not cause weird timing issues with our rendering because we cant be rendering and processing this at the same time
     // it just inst possible
     twgl.resizeCanvasToDisplaySize(gl.canvas);
@@ -47,7 +47,7 @@ const main = async () => {
     { model: require('./models/asteroid1.obj'), name: 'asteroid1' },
     { model: require('./models/raymanModel.obj'), name: 'rayman' },
     { model: require('./models/cow.obj'), name: 'cow' },
-    { model: require('./models/shield.obj'), name: 'shield' },
+    { model: require('./models/shield.obj'), name: 'shield' }
   ];
 
   await manager.addModels(modelRefs);
@@ -80,9 +80,9 @@ const main = async () => {
   });
 
   // create multisample (and TODO multitarget) frame buffer
-  let multiSampleFrame = new FrameBuffer(gl.canvas.width, gl.canvas.height, {multiSample: true, targets: [true]});
-  let colorFrame = new FrameBuffer(gl.canvas.width, gl.canvas.height, {targets: [true]});
-  let brightFrame = new FrameBuffer(gl.canvas.width, gl.canvas.height, {targets: [true]})
+  let multiSampleFrame = new FrameBuffer(gl.canvas.width, gl.canvas.height, { multiSample: true, targets: [true] });
+  let colorFrame = new FrameBuffer(gl.canvas.width, gl.canvas.height, { targets: [true] });
+  let brightFrame = new FrameBuffer(gl.canvas.width, gl.canvas.height, { targets: [true] });
   let postProcessor = new PostProcess(gl.canvas.width, gl.canvas.height);
 
   // create looper function
@@ -94,9 +94,9 @@ const main = async () => {
     if (wasResized) {
       // re create frame buffers here so that they have the proper settings
       wasResized = false;
-      multiSampleFrame = new FrameBuffer(gl.canvas.width, gl.canvas.height, {multiSample: true, targets: [true]});
-      colorFrame = new FrameBuffer(gl.canvas.width, gl.canvas.height, {targets: [true]});
-      brightFrame = new FrameBuffer(gl.canvas.width, gl.canvas.height, {targets: [true]})
+      multiSampleFrame = new FrameBuffer(gl.canvas.width, gl.canvas.height, { multiSample: true, targets: [true] });
+      colorFrame = new FrameBuffer(gl.canvas.width, gl.canvas.height, { targets: [true] });
+      brightFrame = new FrameBuffer(gl.canvas.width, gl.canvas.height, { targets: [true] });
       postProcessor = new PostProcess(gl.canvas.width, gl.canvas.height);
     }
 
@@ -196,13 +196,11 @@ const main = async () => {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     // render all objects in the scene
-    manager.sceneObjects.forEach(sceneObject =>
-      sceneObject.render(programInfo, camera.getUniforms())
-    );
+    manager.sceneObjects.forEach(sceneObject => sceneObject.render(programInfo, camera.getUniforms()));
 
     // unbind the multi sample frame buffer
     multiSampleFrame.unbind();
-    
+
     // resolve the 0th color attachment (the main one) to the color fbo
     multiSampleFrame.resolveToFrameBuffer(gl.COLOR_ATTACHMENT0, colorFrame);
     // resolve the 1st color attachment (the bright one) to the bright fbo

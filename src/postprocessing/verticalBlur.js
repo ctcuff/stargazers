@@ -1,6 +1,6 @@
 import * as twgl from 'twgl.js';
 import { gl } from '../constants';
-import ImageRenderer from "./imageRenderer";
+import ImageRenderer from './imageRenderer';
 import vs from '../shaders/postprocessing/gaussianblur/vblur.vert';
 import fs from '../shaders/postprocessing/gaussianblur/blur.frag';
 
@@ -19,7 +19,7 @@ class VerticalBlur {
    */
   render(quad, texture) {
     gl.useProgram(this.shader.program);
-    
+
     twgl.setUniforms(this.shader, {
       height: this.height,
       tex: texture
