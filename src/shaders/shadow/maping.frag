@@ -5,12 +5,11 @@ in vec2 passTexCoords;
 
 out vec4 color;
 
-// NOTE (Joseph): this name is a TODO, and will need to be changed when actual textures are implemented
-uniform sampler2D modelTexture;
+uniform sampler2D tex;
 
 void main(void) {
     // sample the alpha channel of the texture and discard this fragment if it is near 0
-    float alpha = texture(modelTexture, passTexCoords).a;
+    float alpha = texture(tex, passTexCoords).a;
     if (alpha < 0.1) {
         discard;
     }

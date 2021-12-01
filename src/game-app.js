@@ -59,11 +59,17 @@ class GameApp {
   }
 
   async loadModels() {
+    const textures = twgl.createTextures(gl, {
+      asteroid1: { src: require('./models/asteroid1_extras/textures/rock_Base_Color.png'), flipY: true, wrap: gl.REPEAT, mag: gl.LINEAR, min: gl.MIPMAP },
+      ufo: { src: require('./models/ufo_extras/ufo_diffuse.png'), flipY: true, wrap: gl.REPEAT, mag: gl.LINEAR, min: gl.MIPMAP },
+      shield: { src: require('./models/shieldBlue.jpeg'), flipY: true, wrap: gl.REPEAT, mag: gl.LINEAR, min: gl.MIPMAP }
+    });
+
     const modelRefs = [
-      { model: require('./models/ufo.obj'), name: 'ufo' },
-      { model: require('./models/asteroid0.obj'), name: 'asteroid0' },
-      { model: require('./models/asteroid1.obj'), name: 'asteroid1' },
-      { model: require('./models/shield.obj'), name: 'shield' }
+      { model: require('./models/ufo.obj'), name: 'ufo', texture: textures.ufo },
+      { model: require('./models/asteroid0.obj'), name: 'asteroid0', texture: textures.asteroid1 },
+      { model: require('./models/asteroid1.obj'), name: 'asteroid1', texture: textures.asteroid1 },
+      { model: require('./models/shield.obj'), name: 'shield', texture: textures.shield }
     ];
 
     await manager.addModels(modelRefs);
