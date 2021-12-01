@@ -154,7 +154,6 @@ const main = async () => {
     }
     else
     {
-      textManager.updateScore("0");
       score_timer = lastFrameMilis;
     }
 
@@ -168,7 +167,7 @@ const main = async () => {
       if (ufo.doesCollide(gameobject))
       {
         console.log('UFO collided with asteroid!');
-        textManager.gameOver(Math.round((lastFrameMilis - score_timer) / 1000));
+        textManager.gameOver();
         gameStarted = false;
       }
     }

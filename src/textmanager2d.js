@@ -6,6 +6,7 @@ class TextManager2D
     constructor()
     {
         this.highScore = 0;
+        this.score = 0;
 
         this.scoreField = document.querySelector("#score");
         this.scoreNode = document.createTextNode("0");
@@ -30,16 +31,17 @@ class TextManager2D
         document.querySelector("#center-overlay").style.opacity = 0.0;
     }
 
-    gameOver(score)
+    gameOver()
     {
-        this.highScore = Math.max(score, this.highScore);
+        this.highScore = Math.max(this.score, this.highScore);
         this.hs_node.nodeValue = this.highScore;
-        this.updateCenterText("Game over! Your score was " + score + ". Press any key to start again!");
+        this.updateCenterText("Game over! Your score was " + this.score + ". Press any key to start again!");
         this.dimScreen()
     }
 
     updateScore(text)
     {
+        this.score = parseInt(text);
         this.scoreNode.nodeValue = text;
     }
 
