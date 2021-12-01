@@ -37,7 +37,7 @@ class Asteroid extends GameObject {
   update(deltaTime) {
     // check here for out of bounds, update position
     if (
-      manager.ufo.position.z < this.position.z - manager.ufo.initalDia ||
+      manager.ufo.position.z < this.position.z - manager.ufo.extents.dia ||
       manager.ufo.position.x > this.position.x + manager.box.xMax ||
       manager.ufo.position.x < this.position.x - manager.box.xMax ||
       manager.ufo.position.y > this.position.y + manager.box.yMax ||

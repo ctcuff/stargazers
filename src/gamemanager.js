@@ -1,5 +1,8 @@
+import Camera from './camera';
 import Model from './model';
+import Lighting from './lighting';
 import GameBox from './utils/game-box';
+import { Vector3 } from 'three';
 
 class GameManager {
   constructor() {
@@ -13,7 +16,12 @@ class GameManager {
     this.sceneObjects = [];
     this.box = new GameBox();
     this.time = 0;
-    this.difficulty = 1; // Set difficulty range [1, 10]
+    /**
+     * Set difficulty range [1, 10]
+     */
+    this.difficulty = 1;
+    this.camera = new Camera(75, window.innerWidth / window.innerHeight, 1, 3000);
+    this.lighting = new Lighting(new Vector3(-1, 1, 0), 0.1);
   }
 
   async addModels(models) {

@@ -51,7 +51,7 @@ module.exports = {
         type: 'asset/source'
       },
       {
-        test: /\.(png|jpg)$/i,
+        test: /\.(png|jpg|jpeg)$/i,
         type: 'asset/resource'
       }
     ]
