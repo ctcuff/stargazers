@@ -98,6 +98,10 @@ class UFO extends GameObject {
   }
 
   takeDamage() {
+    if (!this.alive) {
+      return;
+    }
+
     this.currLives--;
     console.log('UFO took damage! Now has ' + this.currLives + ' lives');
 
