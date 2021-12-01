@@ -6,6 +6,7 @@ in vec2 fragUV;
 
 //uniform mat4 samplerCube cubemap;
 uniform sampler2D tex;
+uniform vec3 eyePosition;
 
 out vec4 outColor; 
 in vec3 fragNormal;
