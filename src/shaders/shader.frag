@@ -17,6 +17,6 @@ void main () {
     vec3 N = normalize(fragNormal);
     vec3 L = normalize(light);
     vec3 textureColor = texture(tex, fragUV).rgb;
-    vec3 color = textureColor * clamp(dot(L,N), 0., 1.) + ambient;
+    vec3 color = textureColor * clamp(dot(L,N), 0.0, 1.0) + ambient;
     outColor = vec4(color, 1);
 }

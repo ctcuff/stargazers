@@ -4,23 +4,23 @@ import { deg2rad } from './utils/math';
 
 class Lighting {
   /**
-   * @param {Vector3} lightDirection
+   * @param {Vector3} light;
    * @param {number} ambient;
    */
-  constructor(lightDirection, ambient) {
-    this.lightDirection = lightDirection;
+  constructor(light, ambient) {
+    this.light = light;
     this.ambient = ambient;
   }
 
   getUniforms() {
     return {
-      light: this.lightDirection,
+      light: this.light,
       ambient: this.ambient
     };
   }
 
   setDirection(x, y, z) {
-    this.lightDirection = (x, y, z);
+    this.light = (x, y, z);
   }
 
   setAmbience(ambience) {

@@ -72,9 +72,7 @@ const main = async () => {
 
   // create and init camera
   const camera = new Camera(75, window.innerWidth / window.innerHeight, 1, 3000);
-  const lighting = new Lighting(new Vector3(0.7, 0.7, 0), 0.5);
-  console.log(lighting.lightDirection);
-  console.log(lighting.ambient);
+  const lighting = new Lighting(new Vector3(-1, 1, 0), 0.1);
 
   camera.lookAt({
     x: 0,
@@ -204,8 +202,13 @@ const main = async () => {
     // clear the previous frame
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
+    const uniforms = {
+      ...camera.getUniforms(),
+      ...lighting.getUniforms()
+    }
+
     // render all objects in the scene
-    manager.sceneObjects.forEach(sceneObject => sceneObject.render(programInfo, camera.getUniforms(), lighting.getUniforms()));
+    manager.sceneObjects.forEach(sceneObject => sceneObject.render(programInfo, uniforms));
 
     // unbind the multi sample frame buffer
     multiSampleFrame.unbind();
