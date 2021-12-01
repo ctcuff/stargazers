@@ -1,6 +1,4 @@
-import { m4 } from 'twgl.js';
 import { Vector3 } from 'three';
-import { deg2rad } from './utils/math';
 
 class Lighting {
   /**
@@ -20,7 +18,7 @@ class Lighting {
   }
 
   setDirection(x, y, z) {
-    this.light = (x, y, z);
+    this.light = new Vector3(x, y, z);
   }
 
   setAmbience(ambience) {
