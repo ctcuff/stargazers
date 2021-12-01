@@ -12,9 +12,9 @@ class PostProcess {
     // create quad from -1 to 1 on the xy plane
     this.quad = twgl.primitives.createXYQuadBufferInfo(gl);
 
-		// represents how much to down sample the output by, makes it more blury but will introduce flikering
-		// solution to flickering would be to down sample by less and have more blur passes
-		let downSample = 5;
+    // represents how much to down sample the output by, makes it more blury but will introduce flikering
+    // solution to flickering would be to down sample by less and have more blur passes
+    let downSample = 5;
 
     this.hblur = new HorizontalBlur(width / downSample, height / downSample);
     this.vblur = new VerticalBlur(width / downSample, height / downSample);
