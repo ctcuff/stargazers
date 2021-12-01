@@ -16,7 +16,6 @@ class UFO extends GameObject {
     this.physics = new Physics(new Vector3(0, 0, this.startSpeed), new Vector3(0, this.startRot, 0), 0);
     this.scale = 0.5;
     this.extents = manager.modelList.ufo.extents;
-    this.initalDia = this.extents.dia;
 
     this.strafeSpeedX = 5;
     this.strafeSpeedY = 3;
