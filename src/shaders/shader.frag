@@ -8,11 +8,15 @@ in vec2 fragUV;
 uniform sampler2D tex;
 uniform vec3 eyePosition;
 
-out vec4 outColor; 
-in vec3 fragNormal;
+uniform vec3 light;
+uniform float ambient;
+
+out vec4 outColor;
 
 void main () {
     vec3 N = normalize(fragNormal);
-    vec3 color = texture(tex, fragUV).rgb;
+    vec3 L = normalize(light);
+    vec3 textureColor = texture(tex, fragUV).rgb;
+    vec3 color = textureColor * clamp(dot(L,N), 0., 1.) + ambient;
     outColor = vec4(color, 1);
 }

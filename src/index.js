@@ -5,6 +5,7 @@ import fs from './shaders/shader.frag';
 import { gl } from './constants';
 import manager from './gamemanager';
 import Input from './input';
+import Lighting from './lighting';
 import Camera from './camera';
 import { Vector3 } from 'three';
 import FrameBuffer from './utils/framebuffer';
@@ -71,7 +72,7 @@ const main = async () => {
 
   // create and init camera
   const camera = new Camera(75, window.innerWidth / window.innerHeight, 1, 3000);
-  const lighting = new Lighting((0, 0, 0), 1);
+  const lighting = new Lighting(new Vector3(0.7, 0.7, 0), 0.5);
   console.log(lighting.lightDirection);
   console.log(lighting.ambient);
 
@@ -204,7 +205,7 @@ const main = async () => {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     // render all objects in the scene
-    manager.sceneObjects.forEach(sceneObject => sceneObject.render(programInfo, camera.getUniforms()));
+    manager.sceneObjects.forEach(sceneObject => sceneObject.render(programInfo, camera.getUniforms(), lighting.getUniforms()));
 
     // unbind the multi sample frame buffer
     multiSampleFrame.unbind();
