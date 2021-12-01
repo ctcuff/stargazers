@@ -60,16 +60,18 @@ class GameApp {
 
   async loadModels() {
     const textures = twgl.createTextures(gl, {
-      asteroid1: { src: require('./models/asteroid1_extras/textures/rock_Base_Color.png'), flipY: true, wrap: gl.REPEAT, mag: gl.LINEAR, min: gl.MIPMAP },
-      ufo: { src: require('./models/ufo_extras/ufo_diffuse.png'), flipY: true, wrap: gl.REPEAT, mag: gl.LINEAR, min: gl.MIPMAP },
-      shield: { src: require('./models/shieldBlue.jpeg'), flipY: true, wrap: gl.REPEAT, mag: gl.LINEAR, min: gl.MIPMAP }
+      asteroid0: { src: require('./assets/asteroid0/asteroid0.png'), flipY: true, wrap: gl.REPEAT, mag: gl.LINEAR, min: gl.MIPMAP },
+      asteroid1: { src: require('./assets/asteroid1/asteroid1.png'), flipY: true, wrap: gl.REPEAT, mag: gl.LINEAR, min: gl.MIPMAP },
+      ufo: { src: require('./assets/ufo/ufo_diffuse.png'), flipY: true, wrap: gl.REPEAT, mag: gl.LINEAR, min: gl.MIPMAP },
+      shield: { src: require('./assets/shield/shieldBlue.png'), flipY: true, wrap: gl.REPEAT, mag: gl.LINEAR, min: gl.MIPMAP }
     });
 
+    // Other models are currently commented out as they dont have a texture
     const modelRefs = [
-      { model: require('./models/ufo.obj'), name: 'ufo', texture: textures.ufo },
-      { model: require('./models/asteroid0.obj'), name: 'asteroid0', texture: textures.asteroid1 },
-      { model: require('./models/asteroid1.obj'), name: 'asteroid1', texture: textures.asteroid1 },
-      { model: require('./models/shield.obj'), name: 'shield', texture: textures.shield }
+      { model: require('./assets/ufo/ufo.obj'), name: 'ufo', texture: textures.ufo },
+      { model: require('./assets//asteroid0/asteroid0.obj'), name: 'asteroid0', texture: textures.asteroid1 },
+      { model: require('./assets/asteroid1/asteroid1.obj'), name: 'asteroid1', texture: textures.asteroid1 },
+      { model: require('./assets/shield/shield.obj'), name: 'shield', texture: textures.shield }
     ];
 
     await manager.addModels(modelRefs);

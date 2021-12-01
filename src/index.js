@@ -9,7 +9,7 @@ const main = async () => {
   await app.loadModels();
   app.start();
 
-  // Simulate a simple game restart
+  // Simulate a simple game restart (this is merely an example)
   gameEventEmitter.on(GameEvents.DEATH, () => {
     console.log('Game Over! Restarting in 5 seconds...');
     setTimeout(() => app.start(), 5000);
