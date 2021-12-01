@@ -49,6 +49,10 @@ module.exports = {
         // Using asset/source will allow these file types to be imported as text.
         test: /\.(fs|vs|frag|vert|glsl)/,
         type: 'asset/source'
+      },
+      {
+        test: /\.(png|jpg)$/i,
+        type: 'asset/resource'
       }
     ]
   },
