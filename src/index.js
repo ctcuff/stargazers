@@ -71,6 +71,7 @@ const main = async () => {
 
   // create and init camera
   const camera = new Camera(75, window.innerWidth / window.innerHeight, 1, 3000);
+  const lighting = new Lighting((0, 0, 0), 1);
 
   camera.lookAt({
     x: 0,
