@@ -1,3 +1,4 @@
+import Camera from './camera';
 import Model from './model';
 import GameBox from './utils/game-box';
 
@@ -13,13 +14,17 @@ class GameManager {
     this.sceneObjects = [];
     this.box = new GameBox();
     this.time = 0;
-    this.difficulty = 1; // Set difficulty range [1, 10]
+    /**
+     * Set difficulty range [1, 10]
+     */
+    this.difficulty = 1;
+    this.camera = new Camera(75, window.innerWidth / window.innerHeight, 1, 3000);
   }
 
   async addModels(models) {
     for (const model of models) {
       const url = model.model;
-      const m = new Model();
+      const m = new Model(model.texture);
       await m.load(url);
       this.modelList[model.name] = m;
     }
