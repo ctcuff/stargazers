@@ -97,6 +97,9 @@ class ShadowRenderer {
     // bind the frame buffer because we are about to render to it
     this.framebuf.bind();
 
+    // clear the frame buffer
+    gl.clear(gl.DEPTH_BUFFER_BIT);
+
     // loop over all objects
     for (const gobj of manager.sceneObjects) {
       // pre compute the pvm matrix for the object
