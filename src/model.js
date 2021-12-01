@@ -100,7 +100,7 @@ class Model {
 
     this.uniforms = {
       tex: this.texture
-    }
+    };
   }
 
   load(modelURL) {
