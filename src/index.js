@@ -7,9 +7,10 @@ import manager from './gamemanager';
 import Input from './input';
 import Camera from './camera';
 import { Vector3 } from 'three';
+import FrameBuffer from './utils/framebuffer';
+import PostProcess from './postprocessing/postProcess';
 import UFO from './gameobjects/ufo';
 import Asteroid from './gameobjects/asteroid';
-
 
 const main = async () => {
   const programInfo = twgl.createProgramInfo(gl, [vs, fs], error => console.log(error));
@@ -17,6 +18,21 @@ const main = async () => {
   // init gl stuff here, like back face culling and the depth test
   gl.enable(gl.DEPTH_TEST);
   gl.clearColor(0, 0, 0, 1.0);
+
+  // track if the window was resized and adjust the canvas and viewport to match
+  let wasResized = false;
+  window.addEventListener('resize', () => {
+    // even though this is an event listener, due to the nature of the javascript event loop,
+    // this will not cause weird timing issues with our rendering because we cant be rendering and processing this at the same time
+    // it just inst possible
+    twgl.resizeCanvasToDisplaySize(gl.canvas);
+    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+    wasResized = true;
+  });
+
+  // this will make init the canvas width and height and the viewport
+  twgl.resizeCanvasToDisplaySize(gl.canvas);
+  gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
   // the handle to the current requested animation frame, set later
   let rafHandle = undefined;
@@ -31,7 +47,7 @@ const main = async () => {
     { model: require('./models/asteroid1.obj'), name: 'asteroid1' },
     { model: require('./models/raymanModel.obj'), name: 'rayman' },
     { model: require('./models/cow.obj'), name: 'cow' },
-    { model: require('./models/shield.obj'), name: 'shield' },
+    { model: require('./models/shield.obj'), name: 'shield' }
   ];
 
   await manager.addModels(modelRefs);
@@ -63,6 +79,11 @@ const main = async () => {
     z: mainModel.dia
   });
 
+  // create multisample (and TODO multitarget) frame buffer
+  let multiSampleFrame = new FrameBuffer(gl.canvas.width, gl.canvas.height, { multiSample: true, targets: [true] });
+  let colorFrame = new FrameBuffer(gl.canvas.width, gl.canvas.height, { targets: [true] });
+  let brightFrame = new FrameBuffer(gl.canvas.width, gl.canvas.height, { targets: [true] });
+  let postProcessor = new PostProcess(gl.canvas.width, gl.canvas.height);
 
   // create looper function
   function frame(curentMilis) {
@@ -71,14 +92,16 @@ const main = async () => {
 
     // check if the canvas needs to be resized, if so, things need to be recreated here
     if (wasResized) {
-      // re create frame buffers (TODO) here so that they have the proper settings
+      // re create frame buffers here so that they have the proper settings
+      wasResized = false;
+      multiSampleFrame = new FrameBuffer(gl.canvas.width, gl.canvas.height, { multiSample: true, targets: [true] });
+      colorFrame = new FrameBuffer(gl.canvas.width, gl.canvas.height, { targets: [true] });
+      brightFrame = new FrameBuffer(gl.canvas.width, gl.canvas.height, { targets: [true] });
+      postProcessor = new PostProcess(gl.canvas.width, gl.canvas.height);
     }
 
     // update things here
     update(deltaTime);
-
-    // clear the previous frame
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     // do the render
     render(deltaTime);
@@ -166,23 +189,27 @@ const main = async () => {
 
   // render function, responsible for alloh true rendering, including shadows (TODO), model rendering, and post processing (TODO)
   function render(deltaTime) {
+    // bind the multi sample frame buffer
+    multiSampleFrame.bind();
+
+    // clear the previous frame
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    // render all objects in the scene
     manager.sceneObjects.forEach(sceneObject => sceneObject.render(programInfo, camera.getUniforms()));
+
+    // unbind the multi sample frame buffer
+    multiSampleFrame.unbind();
+
+    // resolve the 0th color attachment (the main one) to the color fbo
+    multiSampleFrame.resolveToFrameBuffer(gl.COLOR_ATTACHMENT0, colorFrame);
+    // resolve the 1st color attachment (the bright one) to the bright fbo
+    // TODO change the below to gl.COLOR_ATTACHMENT1 when proper bloom is implemented
+    multiSampleFrame.resolveToFrameBuffer(gl.COLOR_ATTACHMENT0, brightFrame);
+
+    // resolve the main output frame to the screen
+    postProcessor.run(colorFrame.colorAttachments[0], brightFrame.colorAttachments[0]);
   }
-
-  // track if the window was resized and adjust the canvas and viewport to match
-  let wasResized = false;
-  window.addEventListener('resize', () => {
-    // even though this is an event listener, due to the nature of the javascript event loop,
-    // this will not cause weird timing issues with our rendering because we cant be rendering and processing this at the same time
-    // it just inst possible
-    twgl.resizeCanvasToDisplaySize(gl.canvas);
-    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-    wasResized = true;
-  });
-
-  // this will make init the canvas width and height and the viewport
-  twgl.resizeCanvasToDisplaySize(gl.canvas);
-  gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
   // start the render loop by requesting an animation frame for the frame function
   rafHandle = requestAnimationFrame(frame);

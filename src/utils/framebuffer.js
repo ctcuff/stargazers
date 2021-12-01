@@ -1,4 +1,3 @@
-import * as twgl from 'twgl.js';
 import { gl, multiSampleSamples as samples } from '../constants';
 
 /**
@@ -6,7 +5,8 @@ import { gl, multiSampleSamples as samples } from '../constants';
  * @property {boolean} multiSample - defines if this framebuffer should be a multi sample frame buffer. Cant be true if depthAsTex is true
  * @property {boolean[]} targets - defines the color output targets this should frame buffer should have. Ignored if multiSample is false
  * @property {boolean} depthAsTex - defines if the depth buffer should be a texture or a buffer. Cant be true if multiSample is true
- * @property {boolean} noColor - prevents color buffers from being creatied. Overwrites multiSample and targets
+ * @property {boolean} noColor - prevents color buffers from being created. Overwrites multiSample and targets
+ * @property {boolean} noDepth - prevents depth buffers from being created. Overwrites depthAsTex
  */
 
 /**
@@ -18,7 +18,7 @@ import { gl, multiSampleSamples as samples } from '../constants';
 function createColorTexture(width, height) {
   const tex = gl.createTexture();
   gl.bindTexture(gl.TEXTURE_2D, tex);
-  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8UI, width, height, 0, gl.RGBA_INTEGER, gl.UNSIGNED_BYTE, null);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
@@ -136,14 +136,16 @@ class FrameBuffer {
     }
 
     // create depth attachment based on params
-    if (opts.depthAsTex) {
-      this.depthTex = createDepthTexture(width, height);
-      // attach result to frame buffer
-      gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, this.depthTex, 0);
-    } else {
-      this.depthBuf = createDepthBuffer(width, height, opts.multiSample);
-      // attach result to frame buffer
-      gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, this.depthBuf);
+    if (!opts.noDepth) {
+      if (opts.depthAsTex) {
+        this.depthTex = createDepthTexture(width, height);
+        // attach result to frame buffer
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, this.depthTex, 0);
+      } else {
+        this.depthBuf = createDepthBuffer(width, height, opts.multiSample);
+        // attach result to frame buffer
+        gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, this.depthBuf);
+      }
     }
 
     // do a quick error check
@@ -179,6 +181,39 @@ class FrameBuffer {
     // unbind this frame buffer and reset the view port to the canvas size
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+  }
+
+  /**
+   *
+   * @param {Number} readBuffer - the buffer attachment to read from
+   * @param {FrameBuffer} output - the frame buffer to blit this frame buffer to
+   */
+  resolveToFrameBuffer(readBuffer, output) {
+    // bind output frame buffer for drawing
+    gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, output.frameBuf);
+    // bind this for reading
+    gl.bindFramebuffer(gl.READ_FRAMEBUFFER, this.frameBuf);
+    // blit the specified read buffer attachment
+    gl.drawBuffers([readBuffer]);
+    // blit the pixels
+    gl.blitFramebuffer(0, 0, this.width, this.height, 0, 0, output.width, output.height, gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT, gl.NEAREST);
+
+    // unbind
+    this.unbind();
+  }
+
+  resolveToScreen() {
+    // bind default frame buffer for drawing
+    gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, null);
+    // bind this for reading
+    gl.bindFramebuffer(gl.READ_FRAMEBUFFER, this.frameBuf);
+    // blit to the back buffer
+    gl.drawBuffers([gl.BACK]);
+    // blit the pixels
+    gl.blitFramebuffer(0, 0, this.width, this.height, 0, 0, gl.canvas.width, gl.canvas.height, gl.COLOR_BUFFER_BIT, gl.NEAREST);
+
+    // unbind
+    this.unbind();
   }
 }
 
