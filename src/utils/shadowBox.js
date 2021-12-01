@@ -32,16 +32,16 @@ const OFFSET = 35;
 
 class ShadowBox {
   /**
-   * 
+   *
    * @typedef {import('../camera').default} Camera
    * @param {import('three').Matrix4} lightViewMat
-   * @param {Camera} camera 
+   * @param {Camera} camera
    */
   constructor(lightViewMat, camera) {
     this.lightViewMat = lightViewMat;
     this.camera = camera;
     this.calculateWidthsAndHeights();
-    
+
     // for the purposes of types and autocomplete
     this.maxX = 0;
     this.minX = 0;
@@ -81,14 +81,14 @@ class ShadowBox {
       if (point.x < this.minX) {
         this.minX = point.x;
       }
-      
+
       if (point.y > this.maxY) {
         this.maxY = point.y;
       }
       if (point.y < this.minY) {
         this.minY = point.y;
       }
-      
+
       if (point.z > this.maxZ) {
         this.maxZ = point.z;
       }
@@ -101,7 +101,7 @@ class ShadowBox {
   }
 
   /**
-   * 
+   *
    * @param {Matrix4} rotation - the rotation of the camera
    * @param {Vector3} forward - the vector representing the forward direction after rotation
    * @param {Vector3} centerNear - the center point of the near plane
@@ -136,7 +136,7 @@ class ShadowBox {
   }
 
   /**
-   * 
+   *
    * @param {Vector3} startPoint - the start point of this corner
    * @param {Vector3} dir - the direction of calc the corner from
    * @param {Number} width - distance along dir to travel
@@ -149,7 +149,7 @@ class ShadowBox {
   }
 
   /**
-   * 
+   *
    * @returns {Matrix4} a matrix representing only the rotation of the camera
    */
   calculateCameraRotationMatrix() {
@@ -166,7 +166,7 @@ class ShadowBox {
   }
 
   /**
-   * 
+   *
    * @returns {Vector3} the center of the shadow box
    */
   getCenter() {

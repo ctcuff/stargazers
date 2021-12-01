@@ -25,9 +25,9 @@ function createOffset() {
 
 class ShadowRenderer {
   /**
-   * 
+   *
    * @typedef {import('./camera').default} Camera
-   * @param {Camera} camera 
+   * @param {Camera} camera
    */
   constructor(camera) {
     this.camera = camera;
@@ -36,10 +36,10 @@ class ShadowRenderer {
     this.shader = twgl.createProgramInfo(gl, [vs, fs], error => {
       console.error(error);
     });
-    
+
     // create the frame buffer to render to
-    this.framebuf = new FrameBuffer(SHADOW_MAP_SIZE, SHADOW_MAP_SIZE, {noColor: true, depthAsTex: true});
-    
+    this.framebuf = new FrameBuffer(SHADOW_MAP_SIZE, SHADOW_MAP_SIZE, { noColor: true, depthAsTex: true });
+
     // this matrix represents the conversion from world space to the shadow map texture space
     this.shadowMapSpaceMatrix = m4.identity();
 
@@ -48,7 +48,7 @@ class ShadowRenderer {
 
     // the ortho projection matrix
     this.projMatrix = new Matrix4();
-    
+
     // the shadow box
     this.shadowBox = new ShadowBox(this.lightViewMatrix, this.camera);
 
@@ -74,29 +74,29 @@ class ShadowRenderer {
   }
 
   /**
-   * 
+   *
    * @param {import('three').Vector3} lightDir - the direction of the light casting the shadows
    */
   renderShadowMap(lightDir) {
     // convert light pos (if we use that) to light dir
     const posOffset = lightDir.clone().negate().multiplyScalar(500);
-  
+
     // update the shadow box
     this.shadowBox.update();
 
     // update ortho proj mat
     this.updateOrthoProjMat(this.shadowBox.getWidth(), this.shadowBox.getHeight(), this.shadowBox.getLength());
-    
+
     // update light view mat
     this.updateLightViewMatrix(lightDir, this.shadowBox.getCenter());
-  
+
     // TODO calculation
     // calculate the combined projection view matrix
     this.pvMatrix = m4.multiply(this.projMatrix.toArray(), this.lightViewMatrix.toArray());
 
     // bind the frame buffer because we are about to render to it
     this.framebuf.bind();
-  
+
     // loop over all objects
     for (const gobj of manager.sceneObjects) {
       // pre compute the pvm matrix for the object
@@ -104,29 +104,29 @@ class ShadowRenderer {
       const uniforms = {
         pvmMatrix
       };
-  
+
       // render the object's model directly
       gobj.model.render(this.shader, uniforms);
     }
-  
+
     // unbind the frame buffer casue we are done rendering to it
     this.framebuf.unbind();
   }
 
   /**
-   * 
+   *
    * @param {Vector3} direction - the direction of the light
    * @param {Vector3} center - the center of the view box in world space
    */
   updateLightViewMatrix(direction, center) {
     const dir = direction.clone().normalize();
     center.negate();
-    
+
     // calc pitch and and yaw of light dir
     let pitch = Math.acos(new Vector2(dir.x, dir.z).length());
     let yaw = rad2deg(Math.atan(dir.x, dir.z));
     yaw = dir.z > 0 ? yaw - 180 : 0;
-    
+
     // update the matrix
     this.lightViewMatrix.identity();
     this.lightViewMatrix.makeRotationFromEuler(new Euler(pitch, deg2rad(yaw), 0));
@@ -134,7 +134,7 @@ class ShadowRenderer {
   }
 
   /**
-   * 
+   *
    * @param {Number} width - the width of the ortho box
    * @param {Number} height - the height of the ortho box
    * @param {Number} length - the length of the ortho box

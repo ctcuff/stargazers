@@ -11,7 +11,6 @@ import UFO from './gameobjects/ufo';
 import Asteroid from './gameobjects/asteroid';
 import ShadowRenderer from './shadow';
 
-
 const main = async () => {
   const programInfo = twgl.createProgramInfo(gl, [vs, fs], error => console.log(error));
 
@@ -32,7 +31,7 @@ const main = async () => {
     { model: require('./models/asteroid1.obj'), name: 'asteroid1' },
     { model: require('./models/raymanModel.obj'), name: 'rayman' },
     { model: require('./models/cow.obj'), name: 'cow' },
-    { model: require('./models/shield.obj'), name: 'shield' },
+    { model: require('./models/shield.obj'), name: 'shield' }
   ];
 
   await manager.addModels(modelRefs);

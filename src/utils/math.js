@@ -3,7 +3,7 @@ function deg2rad(deg) {
 }
 
 function rad2deg(rad) {
-  return rad * 180 / Math.PI;
+  return (rad * 180) / Math.PI;
 }
 
 // helper for ints in range
