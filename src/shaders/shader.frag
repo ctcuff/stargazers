@@ -11,12 +11,11 @@ uniform float ambient;
 
 uniform float diffuse;
 
-uniform mat4 samplerCube cubemap;
+//uniform mat4 samplerCube cubemap;
 uniform sampler2D tex;
 uniform vec3 eyePosition;
 
 in vec3 fragNormal;
-in vec3 fragPosition;
 
 void main () {
     vec3 N = normalize(fragNormal);
