@@ -194,6 +194,8 @@ const main = async () => {
 
   // render function, responsible for alloh true rendering, including shadows (TODO), model rendering, and post processing (TODO)
   function render(deltaTime) {
+    // = = = = = = = = = = PRE-RENDER = = = = = = = = = = 
+
     // render the scene from the light dir
     // TODO proper light dir
     shadowRenderer.renderShadowMap(new Vector3(-1, -1, 0));
@@ -204,8 +206,12 @@ const main = async () => {
     // clear the previous frame
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
+    // = = = = = = = = = = MAIN-RENDER = = = = = = = = = = 
+
     // render all objects in the scene
     manager.sceneObjects.forEach(sceneObject => sceneObject.render(programInfo, camera.getUniforms()));
+    
+    // = = = = = = = = = = POST-RENDER = = = = = = = = = = 
 
     // unbind the multi sample frame buffer
     multiSampleFrame.unbind();
