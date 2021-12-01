@@ -12,7 +12,7 @@ uniform float ambient;
 uniform float diffuse;
 
 //uniform mat4 samplerCube cubemap;
-uniform sampler2D tex;
+//uniform sampler2D tex;
 uniform vec3 eyePosition;
 
 in vec3 fragNormal;
