@@ -66,7 +66,16 @@ const main = async () => {
     z: mainModel.dia
   });
 
+
+  // toggle this based off of user input and loss condition
+  let gameStarted = false;
+
+  // user score
+  let score = 0;
+  let score_timer = 0;
+
   const textManager = new TextManager2D();
+  textManager.dimScreen();
   textManager.updateCenterText('Select any key to start!');
 
   // create looper function
@@ -93,7 +102,6 @@ const main = async () => {
 
     // update the last frame milis
     lastFrameMilis = curentMilis;
-    textManager.updateScore(Math.round(lastFrameMilis / 1000));
   }
 
   // update function, responsible for updating all objects and things that need to be updated since last frame
@@ -105,18 +113,22 @@ const main = async () => {
       ufo.position.x < manager.box.xMax / manager.box.shipBoxScalar
     ) {
       ufo.position.add(new Vector3(ufo.turningSpeedX, 0, 0));
+      gameStarted = true;
     }
     // Left movement
     if ((Input.keysDown.ArrowLeft || Input.keysDown.a || Input.keysDown.q) && ufo.position.x > manager.box.xMin / manager.box.shipBoxScalar) {
       ufo.position.add(new Vector3(-ufo.turningSpeedX, 0, 0));
+      gameStarted = true;
     }
     // Up movement
     if ((Input.keysDown.ArrowUp || Input.keysDown.w || Input.keysDown.e || Input.keysDown.q) && ufo.position.y < manager.box.yMax / manager.box.shipBoxScalar) {
       ufo.position.add(new Vector3(0, ufo.turningSpeedY, 0));
+      gameStarted = true;
     }
     // Down movement
     if ((Input.keysDown.ArrowDown || Input.keysDown.s) && ufo.position.y > manager.box.yMin / manager.box.shipBoxScalar) {
       ufo.position.add(new Vector3(0, -ufo.turningSpeedY, 0));
+      gameStarted = true;
     }
     // Added o, p and r for debugging purposes, not needed for actual gameplay
     // Speed up the ship and it's rotation
@@ -135,6 +147,17 @@ const main = async () => {
       ufo.physics.angularVelocity = new Vector3(0, ufo.startRot, 0);
     }
 
+    if (gameStarted)
+    {
+      textManager.undimScreen();
+      textManager.updateScore(Math.round((lastFrameMilis - score_timer) / 1000));
+    }
+    else
+    {
+      textManager.updateScore("0");
+      score_timer = lastFrameMilis;
+    }
+
     // Update the position of each object
     manager.sceneObjects.forEach(sceneObject => sceneObject.update(deltaTime));
 
@@ -142,7 +165,12 @@ const main = async () => {
     for (const gameobject of manager.sceneObjects) {
       // avoid colliding with self
       if (gameobject == ufo) continue;
-      if (ufo.doesCollide(gameobject)) console.log('UFO collided with asteroid!');
+      if (ufo.doesCollide(gameobject))
+      {
+        console.log('UFO collided with asteroid!');
+        textManager.gameOver(Math.round((lastFrameMilis - score_timer) / 1000));
+        gameStarted = false;
+      }
     }
 
     // Fix the camera so it's positioned behind the ship each frame
