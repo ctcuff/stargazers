@@ -44,7 +44,6 @@ const main = async () => {
     asteroid0: { src: require('./assets/asteroid0/asteroid0.png'), flipY: true, wrap: gl.REPEAT, mag: gl.LINEAR, min: gl.MIPMAP },
     asteroid1: { src: require('./assets/asteroid1/asteroid1.png'), flipY: true, wrap: gl.REPEAT, mag: gl.LINEAR, min: gl.MIPMAP },
     ufo: { src: require('./assets/ufo/ufo_diffuse.png'), flipY: true, wrap: gl.REPEAT, mag: gl.LINEAR, min: gl.MIPMAP },
-    rayman: { src: require('./assets/rayman/rayman.png'), flipY: true, wrap: gl.REPEAT, mag: gl.LINEAR, min: gl.MIPMAP },
     shield: { src: require('./assets/shield/shieldBlue.png'), flipY: true, wrap: gl.REPEAT, mag: gl.LINEAR, min: gl.MIPMAP }
   });
 
@@ -53,7 +52,6 @@ const main = async () => {
     { model: require('./assets/ufo/ufo.obj'), name: 'ufo', texture: textures.ufo },
     { model: require('./assets//asteroid0/asteroid0.obj'), name: 'asteroid0', texture: textures.asteroid1 },
     { model: require('./assets/asteroid1/asteroid1.obj'), name: 'asteroid1', texture: textures.asteroid1 },
-    { model: require('./assets/rayman/raymanModel.obj'), name: 'rayman', texture: textures.rayman },
     { model: require('./assets/shield/shield.obj'), name: 'shield', texture: textures.shield }
   ];
 
