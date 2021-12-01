@@ -96,7 +96,12 @@ class Model {
      * Same as sceneBufferInfoArray from the professor's observable
      */
     this.vertexAttributes = [];
-    this.extents = {};
+    this.extents = {
+      min: 0,
+      max: 0,
+      center: [0, 0, 0],
+      dia: 0
+    };
 
     this.uniforms = {
       tex: this.texture
