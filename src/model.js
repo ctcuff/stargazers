@@ -94,7 +94,7 @@ class Model {
    */
   constructor(material) {
     this.modelSCs = [];
-    this.texture = material;
+    this.material = material;
 
     /**
      * Same as sceneBufferInfoArray from the professor's observable
