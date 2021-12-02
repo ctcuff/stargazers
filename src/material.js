@@ -4,17 +4,24 @@ import { deg2rad } from './utils/math';
 
 class Material {
   /**
-   * @param {Vector3} materialColor
+   * @param {WebGLTexture} texture
+   * @param {Number} specularity
+   * @param {Number} ambience
    * @param {Number} diffuse
    */
-  constructor(materialColor, diffuse) {
-    this.materialColor = materialColor;
+  constructor(texture, specularity, ambience, diffuse) {
+    this.texture = texture;
+    this.specularity = specularity;
+    this.ambience = ambience;
     this.diffuse = diffuse;
   }
 
   getUniforms() {
+    // Is named tex as texture is a keyword
     return {
-      materialColor: this.materialColor,
+      tex: this.texture,
+      specularity: this.specularity,
+      ambience: this.ambience,
       diffuse: this.diffuse
     };
   }
