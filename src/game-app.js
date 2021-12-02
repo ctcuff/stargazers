@@ -175,8 +175,13 @@ class GameApp {
     // clear the previous frame
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
+    const uniforms = {
+      ...manager.camera.getUniforms(),
+      ...manager.lighting.getUniforms()
+    };
+
     // render all objects in the scene
-    manager.sceneObjects.forEach(sceneObject => sceneObject.render(this.programInfo, manager.camera.getUniforms()));
+    manager.sceneObjects.forEach(sceneObject => sceneObject.render(this.programInfo, uniforms));
 
     // unbind the multi sample frame buffer
     this.multiSampleFrame.unbind();
