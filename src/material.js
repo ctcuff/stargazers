@@ -9,7 +9,7 @@ class Material {
    * @param {Number} ambience
    * @param {Number} diffuse
    */
-  constructor(texture, specularity = 1, ambience = 1, diffuse = 1) {
+  constructor(texture, specularity = 0.5, ambience = 0.1, diffuse = 0.5) {
     this.texture = texture;
     this.specularity = specularity;
     this.ambience = ambience;
