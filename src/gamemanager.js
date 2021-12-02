@@ -27,7 +27,7 @@ class GameManager {
   async addModels(models) {
     for (const model of models) {
       const url = model.model;
-      const m = new Model(model.texture);
+      const m = new Model(model.material);
       await m.load(url);
       this.modelList[model.name] = m;
     }
