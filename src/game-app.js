@@ -178,7 +178,7 @@ class GameApp {
     const uniforms = {
       ...manager.camera.getUniforms(),
       ...manager.lighting.getUniforms()
-    }
+    };
 
     // render all objects in the scene
     manager.sceneObjects.forEach(sceneObject => sceneObject.render(this.programInfo, uniforms));
