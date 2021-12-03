@@ -193,9 +193,9 @@ class GameApp {
 
     // render all objects in the scene
     manager.sceneObjects.forEach(sceneObject => sceneObject.render(this.programInfo, uniforms));
-
-    // TODO remove this debug:
-    this.shadowRenderer.DEBUGrenderDepthTex(-0.75, 0.75, 0.25);
+    
+    // TODO remove this debug when shadows are fully applied:
+    // this.shadowRenderer.DEBUGrenderDepthTex(-0.75, 0.75, .25);
 
     // = = = = = = = = = = POST-RENDER = = = = = = = = = =
 
