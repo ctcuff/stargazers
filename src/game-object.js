@@ -27,8 +27,7 @@ class GameObject {
 
     // set to false when you want the object to "die", aka eventually be removed from the sceneobject list
     this.alive = true;
-
-    this.physics.colliderRadius = (this.model.extents.dia / 2) * this.scale;
+    this.calculateColliderRadius();
     this.collidedWithLastFrame = new Set();
   }
 
@@ -36,9 +35,13 @@ class GameObject {
     // Physics update
     this.position.add(this.physics.velocity.clone().multiplyScalar(deltaTime));
     this.rotation.add(this.physics.angularVelocity.clone().multiplyScalar(deltaTime));
-    this.physics.colliderRadius = (this.model.extents.dia / 2) * this.scale;
+    this.calculateColliderRadius();
 
     this.computeModelMatrix();
+  }
+
+  calculateColliderRadius() {
+    this.physics.colliderRadius = (this.model.extents.dia / 2) * this.scale * 0.75;
   }
 
   render(programInfo, uniforms) {

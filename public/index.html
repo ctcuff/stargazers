@@ -6,7 +6,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CAP 4720 - Final Project</title>
   </head>
-  <body>
-    <canvas></canvas>
-  </body>
+  <div class="container">
+    <canvas id="canvas"></canvas>
+    <div id="overlay">
+      <div>Score: <span id="score"></span></div>
+      <div>High Score: <span id="high_score"></span></div>
+    </div>
+    <div id="status-overlay">
+      <div id="projectile-overlay">Projectile Cooldown: <span id="projectile-cooldown">0</span>s</div>
+      <div id="health">
+        Health: <progress id="hp1" value="1" max="1" class="hp-bar"></progress>
+        <progress id="hp2" value="1" max="1" class="hp-bar"></progress>
+        <progress id="hp3" value="1" max="1" class="hp-bar"></progress>
+      </div>
+    </div>
+    <div id="center-overlay">
+      <div><span id="center-text"></span></div>
+    </div>
+  </div>
 </html>
