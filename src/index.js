@@ -11,6 +11,7 @@ const main = async () => {
 
   // Simulate a simple game restart (this is merely an example)
   gameEventEmitter.on(GameEvents.DEATH, () => {
+    app.gameOver();
     console.log('Game Over! Restarting in 5 seconds...');
     setTimeout(() => app.start(), 5000);
   });

@@ -10,6 +10,7 @@ import Asteroid from './gameobjects/asteroid';
 import ShadowRenderer from './shadow';
 import { Vector3 } from 'three';
 import Material from './material';
+import uiManager from './textmanager2d';
 import { renderSkybox } from './skybox';
 
 /**
@@ -111,6 +112,11 @@ class GameApp {
       y: ufo.extents.dia * 0.7,
       z: ufo.extents.dia
     });
+
+    // Initialize the UI
+    uiManager.undimScreen();
+    uiManager.updateScore("0");
+    uiManager.restoreLives();
   }
 
   /**
@@ -165,6 +171,9 @@ class GameApp {
     // Add new objects with time
     manager.time = manager.time + Math.ceil(deltaTime * 60);
 
+    uiManager.score = (manager.ufo.position.length() / 50).toFixed(0);
+    uiManager.updateScore("" + uiManager.score);
+
     if (manager.time % 500 == 0) {
       manager.addObjects(Asteroid.spawnAsteroids(5 * manager.difficulty));
     }
@@ -216,6 +225,8 @@ class GameApp {
     // resolve the main output frame to the screen
     this.postProcessor.run(this.colorFrame.colorAttachments[0], this.brightFrame.colorAttachments[0]);
   }
+
+  gameOver() {  uiManager.gameOver(); }
 
   /**
    * Note that calling this method handles re-creating the scene,

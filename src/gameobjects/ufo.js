@@ -6,6 +6,7 @@ import { Vector3 } from 'three';
 import Asteroid from './asteroid';
 import ShieldProjectile from './shield-projectile';
 import gameEventEmitter from '../utils/game-event-emitter';
+import uiManager from '../textmanager2d';
 import { GameEvents } from '../constants';
 
 class UFO extends GameObject {
@@ -101,6 +102,7 @@ class UFO extends GameObject {
       return;
     }
 
+    uiManager.loseLife(this.currLives);
     this.currLives--;
     console.log('UFO took damage! Now has ' + this.currLives + ' lives');
 
@@ -124,6 +126,18 @@ class UFO extends GameObject {
     if (now - this.lastProjectileTimestamp >= this.projectileTimeLimit) {
       manager.addObject(new ShieldProjectile(this.position.clone(), projectileSpeed));
       this.lastProjectileTimestamp = now;
+
+      let cooldown = this.projectileTimeLimit / 1000;
+
+      uiManager.updateCooldown(cooldown--);
+
+      const textUpdateInterval = setInterval(() => {
+        if (cooldown === 0) {
+          clearInterval(textUpdateInterval);
+        }
+        
+        uiManager.updateCooldown(cooldown--);
+      }, 1000);
     }
   }
 }
