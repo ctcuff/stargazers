@@ -5,25 +5,25 @@ class Material {
    * @param {Number} ambience
    * @param {Number} diffuse
    */
-  constructor(texture, specularMap = null, specularity = 0.1, ambience = 0.1, diffuse = 1.0) {
+  constructor(texture, specularMap = null, useSpecularMap = false, specularity = 0.1, ambience = 0.1, diffuse = 1.0) {
     this.texture = texture;
     this.specularity = specularity;
     this.ambience = ambience;
     this.diffuse = diffuse;
-    if (specularMap != null) {
-      this.specularMap = specularMap;
-      this.hasSpecularMap = true;
-    }
+    this.specularMap = specularMap;
+    this.useSpecularMap = useSpecularMap;
   }
 
   getUniforms() {
     // Is named tex as texture is a keyword
-    let specularUniforms = {};
+    let specularUniforms = {
+      useSpecularMap: 0
+    };
 
-    if (this.hasSpecularMap) {
+    if (this.useSpecularMap) {
       specularUniforms = {
         specularMap: this.specularMap,
-        hasSpecularMap: this.hasSpecularMap
+        useSpecularMap: 1
       }
     }
 

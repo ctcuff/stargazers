@@ -43,7 +43,7 @@ class GameApp {
     this.shadowRenderer = new ShadowRenderer(manager.camera);
 
     // Create multisample (and TODO multitarget) frame buffer
-    this.multiSampleFrame = new FrameBuffer(gl.canvas.width, gl.canvas.height, { multiSample: true, targets: [true] });
+    this.multiSampleFrame = new FrameBuffer(gl.canvas.width, gl.canvas.height, { multiSample: true, targets: [true, true] });
     this.colorFrame = new FrameBuffer(gl.canvas.width, gl.canvas.height, { targets: [true] });
     this.brightFrame = new FrameBuffer(gl.canvas.width, gl.canvas.height, { targets: [true] });
     this.postProcessor = new PostProcess(gl.canvas.width, gl.canvas.height);
@@ -76,7 +76,7 @@ class GameApp {
     });
 
     const modelRefs = [
-      { model: require('./assets/ufo/ufo.obj'), name: 'ufo', material: new Material(textures.ufo, textures.ufoSpecular, 0.1, 0.1, 0.8) },
+      { model: require('./assets/ufo/ufo.obj'), name: 'ufo', material: new Material(textures.ufo, textures.ufoSpecular, true, 0.1, 0.1, 0.8) },
       { model: require('./assets//asteroid0/asteroid0.obj'), name: 'asteroid0', material: new Material(textures.asteroid1, textures.blankSpecular) },
       { model: require('./assets/asteroid1/asteroid1.obj'), name: 'asteroid1', material: new Material(textures.asteroid1, textures.blankSpecular) },
       { model: require('./assets/shield/shield.obj'), name: 'shield', material: new Material(textures.shield, textures.blankSpecular) }
@@ -124,7 +124,7 @@ class GameApp {
     if (this.wasResized) {
       // re create frame buffers here so that they have the proper settings
       this.wasResized = false;
-      this.multiSampleFrame = new FrameBuffer(gl.canvas.width, gl.canvas.height, { multiSample: true, targets: [true] });
+      this.multiSampleFrame = new FrameBuffer(gl.canvas.width, gl.canvas.height, { multiSample: true, targets: [true, true] });
       this.colorFrame = new FrameBuffer(gl.canvas.width, gl.canvas.height, { targets: [true] });
       this.brightFrame = new FrameBuffer(gl.canvas.width, gl.canvas.height, { targets: [true] });
       this.postProcessor = new PostProcess(gl.canvas.width, gl.canvas.height);
@@ -201,9 +201,6 @@ class GameApp {
     // render the skybox
     renderSkybox();
 
-    // TODO remove this debug when shadows are fully applied:
-    // this.shadowRenderer.DEBUGrenderDepthTex(-0.75, 0.75, .25);
-
     // = = = = = = = = = = POST-RENDER = = = = = = = = = =
 
     // unbind the multi sample frame buffer
@@ -214,7 +211,7 @@ class GameApp {
 
     // resolve the 1st color attachment (the bright one) to the bright fbo
     // TODO change the below to gl.COLOR_ATTACHMENT1 when proper bloom is implemented
-    this.multiSampleFrame.resolveToFrameBuffer(gl.COLOR_ATTACHMENT0, this.brightFrame);
+    this.multiSampleFrame.resolveToFrameBuffer(gl.COLOR_ATTACHMENT1, this.brightFrame);
 
     // resolve the main output frame to the screen
     this.postProcessor.run(this.colorFrame.colorAttachments[0], this.brightFrame.colorAttachments[0]);

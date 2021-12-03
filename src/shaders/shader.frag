@@ -18,10 +18,11 @@ const float shininess = 5.0;
 uniform sampler2D shadowMap;
 uniform float shadowMapSize;
 
-uniform bool hasSpecularMap;
+uniform int useSpecularMap;
 uniform sampler2D specularMap;
 
-out vec4 outColor;
+layout (location = 0) out vec4 outColor;
+layout (location = 1) out vec4 brightColor;
 
 // constants for percentage closer filtering
 const int pcfCount = 2;
@@ -50,17 +51,19 @@ void main () {
     vec3 L = normalize(light);
     vec3 V = normalize(camPosition - fragPosition);
     vec3 H = normalize(L + V);
-    vec3 textureColor = texture(tex, fragUV).rgb;
+    vec4 fullTextureColor = texture(tex, fragUV);
+    vec3 textureColor = fullTextureColor.rgb;
 
     vec3 ambientColor = textureColor * ambient;
     vec3 diffuseColor = textureColor * clamp(dot(L,N), 0.0, 1.0) * lightFactor * diffuse;
     vec3 specularColor = vec3(0.0);
 
-    if (hasSpecularMap) {
+    brightColor = vec4(vec3(0.0), 1.0);
+    if (useSpecularMap == 1) {
         vec4 mapInfo = texture(specularMap, fragUV);
         specularColor = vec3(1.0) * pow(clamp(dot(N, H), 0.0, 1.0), shininess) * mapInfo.r;
         if (mapInfo.g > 0.5) {
-            // brightColor = texColor + vec4(specularColor * lightFactor, 1.0);
+            brightColor = fullTextureColor + vec4(specularColor * lightFactor, 1.0);
             diffuseColor = textureColor;
         }
     }
