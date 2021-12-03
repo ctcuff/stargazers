@@ -29,7 +29,7 @@ class ShadowBlurPostProcess {
   }
 
   /**
-   * 
+   *
    * @returns {WebGLTexture} gets the texture this process generates
    */
   getOutputTexture() {

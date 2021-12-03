@@ -174,7 +174,7 @@ class GameApp {
    * @param {number} deltaTime
    */
   render(deltaTime) {
-    // = = = = = = = = = = PRE-RENDER = = = = = = = = = = 
+    // = = = = = = = = = = PRE-RENDER = = = = = = = = = =
 
     // render the scene from the light dir
     this.shadowRenderer.renderShadowMap(manager.lighting.light);
@@ -185,7 +185,7 @@ class GameApp {
     // clear the previous frame
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    // = = = = = = = = = = MAIN-RENDER = = = = = = = = = = 
+    // = = = = = = = = = = MAIN-RENDER = = = = = = = = = =
     const uniforms = {
       ...manager.camera.getUniforms(),
       ...manager.lighting.getUniforms()
@@ -193,11 +193,11 @@ class GameApp {
 
     // render all objects in the scene
     manager.sceneObjects.forEach(sceneObject => sceneObject.render(this.programInfo, uniforms));
-    
-    // TODO remove this debug:
-    this.shadowRenderer.DEBUGrenderDepthTex(-0.75, 0.75, .25);
 
-    // = = = = = = = = = = POST-RENDER = = = = = = = = = = 
+    // TODO remove this debug:
+    this.shadowRenderer.DEBUGrenderDepthTex(-0.75, 0.75, 0.25);
+
+    // = = = = = = = = = = POST-RENDER = = = = = = = = = =
 
     // unbind the multi sample frame buffer
     this.multiSampleFrame.unbind();
