@@ -178,7 +178,7 @@ class GameApp {
 
     // render the scene from the light dir
     // TODO proper light dir
-    this.shadowRenderer.renderShadowMap(new Vector3(-1, -1, 0));
+    this.shadowRenderer.renderShadowMap(manager.lighting.light);
 
     // bind the multi sample frame buffer
     this.multiSampleFrame.bind();
