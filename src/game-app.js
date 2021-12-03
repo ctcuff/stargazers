@@ -9,6 +9,7 @@ import UFO from './gameobjects/ufo';
 import Asteroid from './gameobjects/asteroid';
 import ShadowRenderer from './shadow';
 import { Vector3 } from 'three';
+import Material from './material';
 
 /**
  * A class that handles setting up WebGL, initializing the scene, and
@@ -71,12 +72,11 @@ class GameApp {
       shield: { src: require('./assets/shield/shieldBlue.png'), flipY: true, wrap: gl.REPEAT, mag: gl.LINEAR, min: gl.MIPMAP }
     });
 
-    // Other models are currently commented out as they dont have a texture
     const modelRefs = [
-      { model: require('./assets/ufo/ufo.obj'), name: 'ufo', texture: textures.ufo },
-      { model: require('./assets//asteroid0/asteroid0.obj'), name: 'asteroid0', texture: textures.asteroid1 },
-      { model: require('./assets/asteroid1/asteroid1.obj'), name: 'asteroid1', texture: textures.asteroid1 },
-      { model: require('./assets/shield/shield.obj'), name: 'shield', texture: textures.shield }
+      { model: require('./assets/ufo/ufo.obj'), name: 'ufo', material: new Material(textures.ufo) },
+      { model: require('./assets//asteroid0/asteroid0.obj'), name: 'asteroid0', material: new Material(textures.asteroid1) },
+      { model: require('./assets/asteroid1/asteroid1.obj'), name: 'asteroid1', material: new Material(textures.asteroid1) },
+      { model: require('./assets/shield/shield.obj'), name: 'shield', material: new Material(textures.shield) }
     ];
 
     await manager.addModels(modelRefs);
@@ -187,9 +187,13 @@ class GameApp {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     // = = = = = = = = = = MAIN-RENDER = = = = = = = = = = 
+    const uniforms = {
+      ...manager.camera.getUniforms(),
+      ...manager.lighting.getUniforms()
+    };
 
     // render all objects in the scene
-    manager.sceneObjects.forEach(sceneObject => sceneObject.render(this.programInfo, manager.camera.getUniforms()));
+    manager.sceneObjects.forEach(sceneObject => sceneObject.render(this.programInfo, uniforms));
     
     // TODO remove this debug:
     this.shadowRenderer.DEBUGrenderDepthTex(-0.75, 0.75, .25);
