@@ -13,10 +13,13 @@ canvas {
   left: 0;
 }
 
+* {
+  color: white;
+}
+
 #overlay {
   position: absolute;
   background-color: rgba(0, 0, 0, 0.3);
-  color: rgb(170, 0, 0);;
   left: 10px;
   top: 10px;
   font-size: 24px;
@@ -24,31 +27,26 @@ canvas {
 }
 
 /* firefox progress bar */
-progress::-moz-progress-bar
-{
+progress::-moz-progress-bar {
   width: 25%;
-  background: rgb(170, 0, 0);;
+  background: rgb(170, 0, 0);
 }
 
 /* chrome progress bar */
-progress::-webkit-progress-value
-{
+progress::-webkit-progress-value {
   width: 25%;
-  background: rgb(170, 0, 0);;
+  background: rgb(170, 0, 0);
 }
 
 /* internet explorer (or edge?) progress bar */
-progress
-{
+progress {
   width: 25%;
-  background: rgb(170, 0, 0);;
+  background: rgb(170, 0, 0);
 }
 
-#hp-overlay
-{
+#hp-overlay {
   position: absolute;
   background-color: rgba(0, 0, 0, 0.3);
-  color: rgb(170, 0, 0);;
   right: 10px;
   top: 10px;
   font-size: 24px;
@@ -59,7 +57,6 @@ progress
   /* background color can be used to dim entire screen */
   background-color: gray;
   opacity: 0;
-  color: rgb(170, 0, 0);
   position: fixed;
   display: flex;
   text-align: center;
@@ -67,11 +64,10 @@ progress
   justify-content: center;
   font-size: 36px;
   font-family: 'DM Mono', monospace;
-
   min-height: 100vh;
   min-width: 100vw;
 }
 
 canvas:focus {
-  outline: none
+  outline: none;
 }
