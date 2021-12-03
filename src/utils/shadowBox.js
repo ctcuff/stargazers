@@ -47,7 +47,7 @@ class ShadowBox {
     const forwardVec = FORWARD.clone().applyMatrix4(camRot);
 
     const toFar = forwardVec.clone().multiplyScalar(SHADOW_DISTANCE);
-    const toNear = forwardVec.clone().multiplyScalar(nearPlane());
+    const toNear = forwardVec.clone().multiplyScalar(this.camera.near);
     const centerFar = toFar.add(this.camera.position);
     const centerNear = toNear.add(this.camera.position);
 
