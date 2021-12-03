@@ -4,7 +4,6 @@ import Physics from '../physics';
 import Input from '../input';
 import { Vector3 } from 'three';
 import Asteroid from './asteroid';
-import Material from '../material';
 import ShieldProjectile from './shield-projectile';
 import gameEventEmitter from '../utils/game-event-emitter';
 import uiManager from '../textmanager2d';
@@ -12,7 +11,7 @@ import { GameEvents } from '../constants';
 
 class UFO extends GameObject {
   constructor() {
-    super(manager.modelList.ufo, new Physics(), new Material(new Vector3(0, 0, 0), 1));
+    super(manager.modelList.ufo, new Physics());
     this.startSpeed = -300;
     this.maxSpeed = -600;
     this.startRot = -150;

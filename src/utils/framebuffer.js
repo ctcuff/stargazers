@@ -194,7 +194,7 @@ class FrameBuffer {
     // bind this for reading
     gl.bindFramebuffer(gl.READ_FRAMEBUFFER, this.frameBuf);
     // blit the specified read buffer attachment
-    gl.drawBuffers([readBuffer]);
+    gl.readBuffer(readBuffer);
     // blit the pixels
     gl.blitFramebuffer(0, 0, this.width, this.height, 0, 0, output.width, output.height, gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT, gl.NEAREST);
 

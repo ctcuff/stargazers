@@ -29,7 +29,7 @@ class PostProcess {
   run(colorTex, brightTex) {
     this.hblur.render(this.quad, brightTex);
     this.vblur.render(this.quad, this.hblur.getOutputTexture());
-    this.combine.render(this.quad, colorTex, brightTex);
+    this.combine.render(this.quad, colorTex, this.vblur.getOutputTexture());
   }
 }
 
