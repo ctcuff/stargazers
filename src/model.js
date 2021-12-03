@@ -2,6 +2,7 @@ import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import * as twgl from 'twgl.js';
 import { gl } from './constants';
 import * as d3 from 'd3';
+import Material from './material';
 
 const loader = new OBJLoader();
 const vec3 = twgl.v3;
@@ -88,14 +89,27 @@ const m4 = {
 };
 
 class Model {
-  constructor() {
+  /**
+   * @param {Material} material
+   */
+  constructor(material) {
     this.modelSCs = [];
+    this.material = material;
 
     /**
      * Same as sceneBufferInfoArray from the professor's observable
      */
     this.vertexAttributes = [];
-    this.extents = {};
+    this.extents = {
+      min: 0,
+      max: 0,
+      center: [0, 0, 0],
+      dia: 0
+    };
+
+    this.uniforms = {
+      ...this.material.getUniforms()
+    };
   }
 
   load(modelURL) {

@@ -2,11 +2,21 @@
 precision mediump float;
 
 in vec3 fragNormal;
+in vec2 fragUV;
 
-out vec4 outColor; 
+//uniform mat4 samplerCube cubemap;
+uniform sampler2D tex;
+uniform vec3 eyePosition;
+
+uniform vec3 light;
+uniform float ambient;
+
+out vec4 outColor;
 
 void main () {
     vec3 N = normalize(fragNormal);
-    vec3 color = (N + 1.0) /2.0;
+    vec3 L = normalize(light);
+    vec3 textureColor = texture(tex, fragUV).rgb;
+    vec3 color = textureColor * clamp(dot(L,N), 0.0, 1.0) + ambient;
     outColor = vec4(color, 1);
 }

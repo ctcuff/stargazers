@@ -25,7 +25,11 @@ class GameObject {
     this.rotation = new Vector3();
     this.position = new Vector3();
 
+    // set to false when you want the object to "die", aka eventually be removed from the sceneobject list
+    this.alive = true;
+
     this.physics.colliderRadius = (this.model.extents.dia / 2) * this.scale;
+    this.collidedWithLastFrame = new Set();
   }
 
   update(deltaTime) {
@@ -107,10 +111,24 @@ class GameObject {
    * gameobject to check collision with
    */
   doesCollide(gameobject) {
+    if (!gameobject.alive) return false;
+    if (!this.colliderOverlap(gameobject)) {
+      this.collidedWithLastFrame.delete(gameobject);
+      return false;
+    }
+    if (this.collidedWithLastFrame.has(gameobject)) return false;
+    this.collidedWithLastFrame.add(gameobject);
+    return true;
+  }
+
+  colliderOverlap(gameobject) {
     const dist = this.position.distanceTo(gameobject.position);
     const sumRadi = this.physics.colliderRadius + gameobject.physics.colliderRadius;
     return dist <= sumRadi;
   }
+
+  // "abstract" method
+  onCollisionEnter(gameobject) {}
 }
 
 export default GameObject;
