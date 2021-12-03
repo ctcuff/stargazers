@@ -1,4 +1,3 @@
-import './style/index.css';
 import { GameEvents } from './constants';
 import GameApp from './game-app';
 import gameEventEmitter from './utils/game-event-emitter';

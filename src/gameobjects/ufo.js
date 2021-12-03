@@ -14,6 +14,7 @@ class UFO extends GameObject {
   constructor() {
     super(manager.modelList.ufo, new Physics(), new Material(new Vector3(0, 0, 0), 1));
     this.startSpeed = -300;
+    this.maxSpeed = -600;
     this.startRot = -150;
     this.physics = new Physics(new Vector3(0, 0, this.startSpeed), new Vector3(0, this.startRot, 0), 0);
     this.scale = 0.5;
@@ -69,14 +70,10 @@ class UFO extends GameObject {
 
     // Slow down the ship and it's rotation
     if (Input.keysDown.p) {
-      this.physics.velocity.add(new Vector3(0, 0, 10));
-      this.physics.angularVelocity.add(new Vector3(0, 10, 0));
-    }
-
-    // Reset the ship to it's starting speed
-    if (Input.keysDown.r) {
-      this.physics.velocity = new Vector3(0, 0, this.startSpeed);
-      this.physics.angularVelocity = new Vector3(0, this.startRot, 0);
+      if (!(this.physics.velocity.z > 0)) {
+        this.physics.velocity.add(new Vector3(0, 0, this.velcIncr));
+        this.physics.angularVelocity.add(new Vector3(0, this.angularVelIncr, 0));
+      }
     }
 
     if (manager.time % 100 == 0) {
@@ -136,7 +133,7 @@ class UFO extends GameObject {
         if (cooldown === 0) {
           clearInterval(textUpdateInterval);
         }
-        
+
         uiManager.updateCooldown(cooldown--);
       }, 1000);
     }
