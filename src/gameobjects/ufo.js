@@ -130,6 +130,8 @@ class UFO extends GameObject {
 
       let cooldown = this.projectileTimeLimit / 1000;
 
+      uiManager.updateCooldown(cooldown--);
+
       const textUpdateInterval = setInterval(() => {
         if (cooldown === 0) {
           clearInterval(textUpdateInterval);
