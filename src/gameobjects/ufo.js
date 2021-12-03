@@ -15,7 +15,7 @@ class UFO extends GameObject {
   constructor() {
     super(manager.modelList.ufo, new Physics(), new Material(new Vector3(0, 0, 0), 1));
     this.startSpeed = -300;
-    this.startRot = -300;
+    this.startRot = -150;
     this.physics = new Physics(new Vector3(0, 0, this.startSpeed), new Vector3(0, this.startRot, 0), 0);
     this.scale = 0.5;
     this.extents = manager.modelList.ufo.extents;
@@ -23,7 +23,7 @@ class UFO extends GameObject {
     this.strafeSpeedX = 5;
     this.strafeSpeedY = 3;
     this.velcIncr = 10;
-    this.angularVelIncr = 30;
+    this.angularVelIncr = 1;
 
     this.maxLives = 3;
     this.currLives = this.maxLives;
@@ -31,7 +31,7 @@ class UFO extends GameObject {
     /**
      * The time (in milliseconds) before the UFO can shoot another projectile
      */
-    this.projectileTimeLimit = 15_000;
+    this.projectileTimeLimit = 10_000;
     this.lastProjectileTimestamp = 0;
 
     Input.addKeyPressListener('space', this.fireProjectile.bind(this));
@@ -64,8 +64,8 @@ class UFO extends GameObject {
     // Added o, p and r for debugging purposes, not needed for actual gameplay
     // Speed up the ship and it's rotation
     if (Input.keysDown.o) {
-      this.physics.velocity.add(new Vector3(0, 0, -10));
-      this.physics.angularVelocity.add(new Vector3(0, -10, 0));
+      this.physics.velocity.add(new Vector3(0, 0, -this.velcIncr));
+      this.physics.angularVelocity.add(new Vector3(0, -this.angularVelIncr, 0));
     }
 
     // Slow down the ship and it's rotation
@@ -80,7 +80,7 @@ class UFO extends GameObject {
       this.physics.angularVelocity = new Vector3(0, this.startRot, 0);
     }
 
-    if (manager.time % 1000 == 0) {
+    if (manager.time % 100 == 0) {
       this.physics.velocity.add(new Vector3(0, 0, -this.velcIncr * manager.difficulty));
       this.physics.angularVelocity.add(new Vector3(0, -this.angularVelIncr * manager.difficulty, 0));
       this.strafeSpeedX += 0.5;

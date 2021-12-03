@@ -7,8 +7,11 @@ import FrameBuffer from './utils/framebuffer';
 import PostProcess from './postprocessing/postProcess';
 import UFO from './gameobjects/ufo';
 import Asteroid from './gameobjects/asteroid';
+import ShadowRenderer from './shadow';
+import { Vector3 } from 'three';
 import Material from './material';
 import uiManager from './textmanager2d';
+import { renderSkybox } from './skybox';
 
 /**
  * A class that handles setting up WebGL, initializing the scene, and
@@ -36,6 +39,9 @@ class GameApp {
     // This will init the canvas width and height and the viewport
     twgl.resizeCanvasToDisplaySize(gl.canvas);
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+    // make an instance of the shadow renderer
+    this.shadowRenderer = new ShadowRenderer(manager.camera);
 
     // Create multisample (and TODO multitarget) frame buffer
     this.multiSampleFrame = new FrameBuffer(gl.canvas.width, gl.canvas.height, { multiSample: true, targets: [true] });
@@ -65,7 +71,7 @@ class GameApp {
       asteroid0: { src: require('./assets/asteroid0/asteroid0.png'), flipY: true, wrap: gl.REPEAT, mag: gl.LINEAR, min: gl.MIPMAP },
       asteroid1: { src: require('./assets/asteroid1/asteroid1.png'), flipY: true, wrap: gl.REPEAT, mag: gl.LINEAR, min: gl.MIPMAP },
       ufo: { src: require('./assets/ufo/ufo_diffuse.png'), flipY: true, wrap: gl.REPEAT, mag: gl.LINEAR, min: gl.MIPMAP },
-      shield: { src: require('./assets/shield/shieldBlue.png'), flipY: true, wrap: gl.REPEAT, mag: gl.LINEAR, min: gl.MIPMAP }
+      shield: { src: require('./assets/shield/shieldTexture.png'), flipY: true, wrap: gl.REPEAT, mag: gl.LINEAR, min: gl.MIPMAP }
     });
 
     const modelRefs = [
@@ -165,25 +171,31 @@ class GameApp {
 
     uiManager.score = (manager.ufo.position.length() / 50).toFixed(0);
     uiManager.updateScore("" + uiManager.score);
-    
-    if (manager.time % 1000 == 0) {
+
+    if (manager.time % 500 == 0) {
       manager.addObjects(Asteroid.spawnAsteroids(5 * manager.difficulty));
     }
   }
 
   /**
    * Responsible for true rendering,
-   * including shadows (TODO), model rendering, and post processing (TODO)
+   * including shadows, model rendering, and post processing
    *
    * @param {number} deltaTime
    */
   render(deltaTime) {
+    // = = = = = = = = = = PRE-RENDER = = = = = = = = = =
+
+    // render the scene from the light dir
+    this.shadowRenderer.renderShadowMap(manager.lighting.light);
+
     // bind the multi sample frame buffer
     this.multiSampleFrame.bind();
 
     // clear the previous frame
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
+    // = = = = = = = = = = MAIN-RENDER = = = = = = = = = =
     const uniforms = {
       ...manager.camera.getUniforms(),
       ...manager.lighting.getUniforms()
@@ -191,6 +203,14 @@ class GameApp {
 
     // render all objects in the scene
     manager.sceneObjects.forEach(sceneObject => sceneObject.render(this.programInfo, uniforms));
+
+    // TODO remove this debug when shadows are fully applied:
+    // this.shadowRenderer.DEBUGrenderDepthTex(-0.75, 0.75, .25);
+
+    // = = = = = = = = = = POST-RENDER = = = = = = = = = =
+
+    // render the skybox
+    renderSkybox();
 
     // unbind the multi sample frame buffer
     this.multiSampleFrame.unbind();
