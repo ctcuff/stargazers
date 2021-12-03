@@ -169,7 +169,7 @@ class GameApp {
 
   /**
    * Responsible for true rendering,
-   * including shadows (TODO), model rendering, and post processing (TODO)
+   * including shadows, model rendering, and post processing
    *
    * @param {number} deltaTime
    */
@@ -177,7 +177,6 @@ class GameApp {
     // = = = = = = = = = = PRE-RENDER = = = = = = = = = = 
 
     // render the scene from the light dir
-    // TODO proper light dir
     this.shadowRenderer.renderShadowMap(manager.lighting.light);
 
     // bind the multi sample frame buffer

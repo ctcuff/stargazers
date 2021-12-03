@@ -103,7 +103,6 @@ class ShadowRenderer {
     // update light view mat
     this.updateLightViewMatrix(lightDir, this.shadowBox.getCenter());
 
-    // TODO calculation
     // calculate the combined projection view matrix
     this.pvMatrix = m4.multiply(this.projMatrix.toArray(), this.lightViewMatrix);
 

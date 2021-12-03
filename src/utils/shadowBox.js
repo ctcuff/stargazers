@@ -5,17 +5,6 @@ import { Matrix4, Quaternion, Vector3 } from 'three';
 
 const m4 = twgl.m4;
 
-// NOTE (Joseph): this only exists so that i dont have to type 75 then remember what it means
-function fov() {
-  return 75;
-}
-
-// TODO change the near plane to 0.1
-// NOTE (Joseph): this only exists so that i dont have to type 1 then remember what it means
-function nearPlane() {
-  return 1;
-}
-
 function aspectRatio() {
   return gl.canvas.width / gl.canvas.height;
 }
@@ -163,8 +152,8 @@ class ShadowBox {
   }
 
   calculateWidthsAndHeights() {
-    this.farWidth = SHADOW_DISTANCE * Math.tan(deg2rad(fov()));
-    this.nearWidth = nearPlane() * Math.tan(deg2rad(fov()));
+    this.farWidth = SHADOW_DISTANCE * Math.tan(deg2rad(this.camera.fov));
+    this.nearWidth = this.camera.near * Math.tan(deg2rad(this.camera.fov));
     this.farHeight = this.farWidth / aspectRatio();
     this.nearHeight = this.nearWidth / aspectRatio();
   }
