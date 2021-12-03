@@ -1,6 +1,3 @@
-import { max } from "d3-array";
-import { setSamplerParameters } from "twgl.js";
-
 class TextManager2D
 {
     constructor()
@@ -33,15 +30,19 @@ class TextManager2D
 
     gameOver()
     {
-        this.highScore = Math.max(this.score, this.highScore);
         this.hs_node.nodeValue = this.highScore;
         this.updateCenterText("Game over! Your score was " + this.score + ". Press any key to start again!");
-        this.dimScreen()
+        this.count = false;
+        this.dimScreen();
     }
 
     updateScore(text)
     {
         this.score = parseInt(text);
+
+        // Automatically update the high score if applicable
+        this.hs_node.nodeValue = (this.highScore = Math.max(this.score, this.highScore));
+        
         this.scoreNode.nodeValue = text;
     }
 
@@ -62,4 +63,6 @@ class TextManager2D
     }
 }
 
-export default TextManager2D;
+const uiManager = new TextManager2D();
+
+export {uiManager as default, TextManager2D};

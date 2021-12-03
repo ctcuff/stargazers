@@ -23,8 +23,7 @@ canvas {
 }
 
 #center-overlay {
-  /* background color can be used to dim entire screen! */
-  /* background-color: rgba(0, 0, 0, 0.3); */
+  /* background color can be used to dim entire screen */
   background-color: gray;
   opacity: 0;
   color: green;
