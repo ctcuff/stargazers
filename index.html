@@ -1,0 +1,80 @@
+<!doctype html><html lang="en"><head><style>body {
+        margin: 0;
+        overscroll-behavior: none;
+      }
+
+      canvas {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+      }
+
+      * {
+        color: white;
+      }
+
+      #overlay {
+        position: absolute;
+        background-color: rgba(0, 0, 0, 0.3);
+        left: 10px;
+        top: 10px;
+        font-size: 24px;
+        font-family: 'DM Mono', monospace;
+      }
+
+      /* firefox progress bar */
+      progress::-moz-progress-bar {
+        background: rgb(170, 0, 0);
+      }
+
+      /* chrome progress bar */
+      progress::-webkit-progress-value {
+        background: rgb(170, 0, 0);
+      }
+
+      /* internet explorer (or edge?) progress bar */
+      progress {
+        background: rgb(170, 0, 0);
+      }
+
+      .hp-bar {
+        width: 25%;
+        margin: 0 8px;
+      }
+
+      #status-overlay {
+        position: absolute;
+        background-color: rgba(0, 0, 0, 0.3);
+        right: 10px;
+        top: 10px;
+        font-size: 24px;
+        font-family: 'DM Mono', monospace;
+      }
+
+      #health {
+        margin-top: 12px;
+        display: flex;
+      }
+
+      #center-overlay {
+        /* background color can be used to dim entire screen */
+        background-color: gray;
+        opacity: 0;
+        position: fixed;
+        display: flex;
+        text-align: center;
+        align-items: center;
+        justify-content: center;
+        font-size: 36px;
+        font-family: 'DM Mono', monospace;
+        min-height: 100vh;
+        min-width: 100vw;
+      }
+
+      canvas:focus {
+        outline: none;
+      }</style><meta charset="UTF-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>CAP 4720 - Final Project</title><script defer="defer" src="index.js"></script></head><div class="container"><canvas id="canvas"></canvas><div id="overlay"><div>Score: <span id="score"></span></div><div>High Score: <span id="high_score"></span></div></div><div id="status-overlay"><div id="projectile-overlay">Projectile Cooldown: <span id="projectile-cooldown">0</span>s</div><div id="health">Health:<progress id="hp1" value="1" max="1" class="hp-bar"></progress><progress id="hp2" value="1" max="1" class="hp-bar"></progress><progress id="hp3" value="1" max="1" class="hp-bar"></progress></div></div><div id="center-overlay"><div><span id="center-text"></span></div></div></div></html>
