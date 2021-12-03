@@ -1,7 +1,3 @@
-import { m4 } from 'twgl.js';
-import { Vector3 } from 'three';
-import { deg2rad } from './utils/math';
-
 class Material {
   /**
    * @param {WebGLTexture} texture
