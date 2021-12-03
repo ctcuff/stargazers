@@ -56,7 +56,7 @@ class ShadowRenderer {
     this.shadowMapSpaceMatrix = m4.identity();
 
     // the view matrix from the perspective of the light matrix
-    this.lightViewMatrix = new Matrix4();
+    this.lightViewMatrix = m4.identity();
 
     // the ortho projection matrix
     this.projMatrix = new Matrix4();
@@ -90,9 +90,6 @@ class ShadowRenderer {
    * @param {import('three').Vector3} lightDir - the direction of the light casting the shadows
    */
   renderShadowMap(lightDir) {
-    // convert light pos (if we use that) to light dir
-    const posOffset = lightDir.clone().negate().multiplyScalar(500);
-
     // update the shadow box
     this.shadowBox.update();
 
@@ -104,7 +101,7 @@ class ShadowRenderer {
 
     // TODO calculation
     // calculate the combined projection view matrix
-    this.pvMatrix = m4.multiply(this.projMatrix.toArray(), this.lightViewMatrix.toArray());
+    this.pvMatrix = m4.multiply(this.projMatrix.toArray(), this.lightViewMatrix);
 
     // bind the frame buffer because we are about to render to it
     this.framebuf.bind();
@@ -143,9 +140,10 @@ class ShadowRenderer {
     yaw = dir.z > 0 ? yaw - 180 : 0;
 
     // update the matrix
-    this.lightViewMatrix.identity();
-    this.lightViewMatrix.makeRotationFromEuler(new Euler(pitch, deg2rad(yaw), 0));
-    this.lightViewMatrix.setPosition(center.x, center.y, center.z);
+    m4.identity(this.lightViewMatrix);
+    m4.rotateX(this.lightViewMatrix, pitch, this.lightViewMatrix);
+    m4.rotateY(this.lightViewMatrix, rad2deg(yaw), this.lightViewMatrix);
+    m4.translate(this.lightViewMatrix, [center.x, center.y, center.z], this.lightViewMatrix);
   }
 
   /**

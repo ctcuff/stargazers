@@ -3,6 +3,8 @@ import { gl } from '../constants';
 import { deg2rad } from './math';
 import { Matrix4, Quaternion, Vector3 } from 'three';
 
+const m4 = twgl.m4;
+
 // NOTE (Joseph): this only exists so that i dont have to type 75 then remember what it means
 function fov() {
   return 75;
@@ -25,16 +27,16 @@ const UP = new Vector3(0, 1, 0);
 const FORWARD = new Vector3(0, 0, -1);
 
 // value representing the maximum shadow distance
-const SHADOW_DISTANCE = 100;
+const SHADOW_DISTANCE = 2000;
 
 // helps prevent weird times where shadows dont show up properly
-const OFFSET = 35;
+const DEPTH_OFFSET = 35;
 
 class ShadowBox {
   /**
    *
    * @typedef {import('../camera').default} Camera
-   * @param {import('three').Matrix4} lightViewMat
+   * @param {import('twgl.js').m4} lightViewMat
    * @param {Camera} camera
    */
   constructor(lightViewMat, camera) {
@@ -75,6 +77,7 @@ class ShadowBox {
         continue;
       }
 
+      // find max and min of the box
       if (point.x > this.maxX) {
         this.maxX = point.x;
       }
@@ -96,7 +99,7 @@ class ShadowBox {
         this.minZ = point.z;
       }
 
-      this.maxZ += OFFSET;
+      this.maxZ += DEPTH_OFFSET;
     }
   }
 
@@ -116,10 +119,10 @@ class ShadowBox {
     const leftVector = rightVector.clone().negate();
 
     // plane top and bot
-    const farTop = upVector.clone().multiplyScalar(this.farHeight).add(centerFar);
-    const farBot = downVector.clone().multiplyScalar(this.farHeight).add(centerFar);
-    const nearTop = upVector.clone().multiplyScalar(this.farHeight).add(centerNear);
-    const nearBot = downVector.clone().multiplyScalar(this.farHeight).add(centerNear);
+    const farTop = new Vector3(upVector.x * this.farHeight, upVector.y * this.farHeight, upVector.z * this.farHeight).add(centerFar);
+    const farBot = new Vector3(downVector.x * this.farHeight, downVector.y * this.farHeight, downVector.z * this.farHeight).add(centerFar);
+    const nearTop = new Vector3(upVector.x * this.nearHeight, upVector.y * this.nearHeight, upVector.z * this.nearHeight).add(centerNear);
+    const nearBot = new Vector3(downVector.x * this.nearHeight, downVector.y * this.nearHeight, downVector.z * this.nearHeight).add(centerNear);
 
     // calculate the points
     const points = [];
@@ -143,8 +146,9 @@ class ShadowBox {
    * @returns {Vector3} the point calculated
    */
   calculateLightSpaceFrustrumCorner(startPoint, dir, width) {
-    let point = dir.clone().multiplyScalar(width).add(startPoint);
-    point.applyMatrix4(this.lightViewMat);
+    let point = new Vector3(dir.x * width, dir.y * width, dir.z * width).add(startPoint);
+    let result = m4.transformPoint(this.lightViewMat, [point.x, point.y, point.z]);
+    point.set(result[0], result[1], result[2]);
     return point;
   }
 
@@ -174,11 +178,9 @@ class ShadowBox {
     let y = (this.minY + this.maxY) / 2.0;
     let z = (this.minZ + this.maxZ) / 2.0;
 
-    let center = new Vector3(x, y, z);
-
-    const invertedLight = this.lightViewMat.clone().invert();
-    center.applyMatrix4(invertedLight);
-    return center;
+    const invertedLight = m4.inverse(this.lightViewMat);
+    const center = m4.transformPoint(invertedLight, [x, y, z]);
+    return new Vector3(center[0], center[1], center[2]);
   }
 
   getWidth() {
