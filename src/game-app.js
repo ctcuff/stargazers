@@ -189,19 +189,20 @@ class GameApp {
     // = = = = = = = = = = MAIN-RENDER = = = = = = = = = =
     const uniforms = {
       ...manager.camera.getUniforms(),
-      ...manager.lighting.getUniforms()
+      ...manager.lighting.getUniforms(),
+      ...this.shadowRenderer.getMainPassUniforms()
     };
 
     // render all objects in the scene
     manager.sceneObjects.forEach(sceneObject => sceneObject.render(this.programInfo, uniforms));
     
+    // render the skybox
+    renderSkybox();
+
     // TODO remove this debug when shadows are fully applied:
     // this.shadowRenderer.DEBUGrenderDepthTex(-0.75, 0.75, .25);
 
     // = = = = = = = = = = POST-RENDER = = = = = = = = = =
-
-    // render the skybox
-    renderSkybox();
 
     // unbind the multi sample frame buffer
     this.multiSampleFrame.unbind();

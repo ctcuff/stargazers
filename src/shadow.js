@@ -1,11 +1,11 @@
 import * as twgl from 'twgl.js';
 import { gl } from './constants';
-import { rad2deg, deg2rad } from './utils/math';
+import { rad2deg } from './utils/math';
 import vs from './shaders/shadow/mapping.vert';
 import fs from './shaders/shadow/mapping.frag';
 import FrameBuffer from './utils/framebuffer';
-import ShadowBox from './utils/shadowBox';
-import { Euler, Matrix4, Vector2, Vector3 } from 'three';
+import ShadowBox, { SHADOW_DISTANCE } from './utils/shadowBox';
+import { Matrix4, Vector2, Vector3 } from 'three';
 import manager from './gamemanager';
 import DEBUGvs from './shaders/postprocessing/simple.vert';
 import DEBUGfs from './shaders/postprocessing/simple.frag';
@@ -87,6 +87,15 @@ class ShadowRenderer {
    */
   getShadowMap() {
     return this.blurProces.getOutputTexture();
+  }
+
+  getMainPassUniforms() {
+    return {
+      shadowMapSpace: this.getToShadowmapSpaceMatrix(),
+      shadowDistance: SHADOW_DISTANCE,
+      shadowMap: this.getShadowMap(),
+      shadowMapSize: SHADOW_MAP_SIZE
+    };
   }
 
   /**

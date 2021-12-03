@@ -16,7 +16,7 @@ const UP = new Vector3(0, 1, 0);
 const FORWARD = new Vector3(0, 0, -1);
 
 // value representing the maximum shadow distance
-const SHADOW_DISTANCE = 2000;
+const SHADOW_DISTANCE = 1500;
 
 // helps prevent weird times where shadows dont show up properly
 const DEPTH_OFFSET = 35;
@@ -185,4 +185,4 @@ class ShadowBox {
   }
 }
 
-export default ShadowBox;
+export { ShadowBox as default, SHADOW_DISTANCE };
