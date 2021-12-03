@@ -8,6 +8,7 @@ import PostProcess from './postprocessing/postProcess';
 import UFO from './gameobjects/ufo';
 import Asteroid from './gameobjects/asteroid';
 import Material from './material';
+import { renderSkybox } from './skybox';
 
 /**
  * A class that handles setting up WebGL, initializing the scene, and
@@ -182,6 +183,9 @@ class GameApp {
 
     // render all objects in the scene
     manager.sceneObjects.forEach(sceneObject => sceneObject.render(this.programInfo, uniforms));
+
+    // render the skybox
+    renderSkybox();
 
     // unbind the multi sample frame buffer
     this.multiSampleFrame.unbind();
