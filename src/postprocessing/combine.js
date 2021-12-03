@@ -21,7 +21,8 @@ class CombineTwo {
 
     twgl.setUniforms(this.shader, {
       colorTex: texture1,
-      highlightTex: texture2
+      highlightTex: texture2,
+      transform: twgl.m4.identity()
     });
 
     this.renderer.render(quad, this.shader);
