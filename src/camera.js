@@ -68,7 +68,8 @@ class Camera {
   getUniforms() {
     return {
       viewMatrix: this.viewMatrix,
-      projectionMatrix: this.projectionMatrix
+      projectionMatrix: this.projectionMatrix,
+      camPosition: this.position.toArray()
     };
   }
 }

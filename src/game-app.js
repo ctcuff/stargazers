@@ -70,14 +70,16 @@ class GameApp {
       asteroid0: { src: require('./assets/asteroid0/asteroid0.png'), flipY: true, wrap: gl.REPEAT, mag: gl.LINEAR, min: gl.MIPMAP },
       asteroid1: { src: require('./assets/asteroid1/asteroid1.png'), flipY: true, wrap: gl.REPEAT, mag: gl.LINEAR, min: gl.MIPMAP },
       ufo: { src: require('./assets/ufo/ufo_diffuse.png'), flipY: true, wrap: gl.REPEAT, mag: gl.LINEAR, min: gl.MIPMAP },
-      shield: { src: require('./assets/shield/shieldTexture.png'), flipY: true, wrap: gl.REPEAT, mag: gl.LINEAR, min: gl.MIPMAP }
+      ufoSpecular: { src: require('./assets/ufo/ufo_specular.png'), flipY: true, wrap: gl.REPEAT, mag: gl.LINEAR, min: gl.MIPMAP },
+      shield: { src: require('./assets/shield/shieldTexture.png'), flipY: true, wrap: gl.REPEAT, mag: gl.LINEAR, min: gl.MIPMAP },
+      blankSpecular: { src: require('./assets/blankSpecular.png'), flipY: true, wrap: gl.REPEAT, mag: gl.LINEAR, min: gl.MIPMAP }
     });
 
     const modelRefs = [
-      { model: require('./assets/ufo/ufo.obj'), name: 'ufo', material: new Material(textures.ufo) },
-      { model: require('./assets//asteroid0/asteroid0.obj'), name: 'asteroid0', material: new Material(textures.asteroid1) },
-      { model: require('./assets/asteroid1/asteroid1.obj'), name: 'asteroid1', material: new Material(textures.asteroid1) },
-      { model: require('./assets/shield/shield.obj'), name: 'shield', material: new Material(textures.shield) }
+      { model: require('./assets/ufo/ufo.obj'), name: 'ufo', material: new Material(textures.ufo, textures.ufoSpecular, 0.1, 0.1, 0.8) },
+      { model: require('./assets//asteroid0/asteroid0.obj'), name: 'asteroid0', material: new Material(textures.asteroid1, textures.blankSpecular) },
+      { model: require('./assets/asteroid1/asteroid1.obj'), name: 'asteroid1', material: new Material(textures.asteroid1, textures.blankSpecular) },
+      { model: require('./assets/shield/shield.obj'), name: 'shield', material: new Material(textures.shield, textures.blankSpecular) }
     ];
 
     await manager.addModels(modelRefs);

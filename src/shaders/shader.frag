@@ -3,18 +3,23 @@ precision mediump float;
 
 in vec2 fragUV;
 in vec3 fragNormal;
+in vec3 fragPosition;
 in vec4 shadowCoords;
 
 uniform sampler2D tex;
-uniform vec3 eyePosition;
+uniform vec3 camPosition;
 
 uniform vec3 light;
 uniform float ambient; // ka
 uniform float diffuse; // kd
 uniform float specularity; // ks
+const float shininess = 5.0;
 
 uniform sampler2D shadowMap;
 uniform float shadowMapSize;
+
+uniform bool hasSpecularMap;
+uniform sampler2D specularMap;
 
 out vec4 outColor;
 
@@ -43,11 +48,23 @@ void main () {
 
     vec3 N = normalize(fragNormal);
     vec3 L = normalize(light);
+    vec3 V = normalize(camPosition - fragPosition);
+    vec3 H = normalize(L + V);
     vec3 textureColor = texture(tex, fragUV).rgb;
 
-    vec3 diffuseColor = textureColor * clamp(dot(L,N), 0.0, 1.0) * lightFactor;
     vec3 ambientColor = textureColor * ambient;
+    vec3 diffuseColor = textureColor * clamp(dot(L,N), 0.0, 1.0) * lightFactor * diffuse;
+    vec3 specularColor = vec3(0.0);
+
+    if (hasSpecularMap) {
+        vec4 mapInfo = texture(specularMap, fragUV);
+        specularColor = vec3(1.0) * pow(clamp(dot(N, H), 0.0, 1.0), shininess) * mapInfo.r;
+        if (mapInfo.g > 0.5) {
+            // brightColor = texColor + vec4(specularColor * lightFactor, 1.0);
+            diffuseColor = textureColor;
+        }
+    }
     
-    vec3 finalColor = diffuse * diffuseColor + ambientColor;
+    vec3 finalColor = specularity * specularColor + diffuseColor + ambientColor;
     outColor = vec4(finalColor, 1);
 }
