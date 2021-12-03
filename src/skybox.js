@@ -3,6 +3,9 @@ import vs from './shaders/skybox/sky.vert';
 import fs from './shaders/skybox/sky.frag';
 import { gl } from './constants';
 import manager from './gamemanager';
+import { deg2rad } from './utils/math';
+
+const m4 = twgl.m4;
 
 // create the shader to render this from
 const skyboxShader = twgl.createProgramInfo(gl, [vs, fs], error => console.log(error));
@@ -106,7 +109,9 @@ function renderSkybox() {
 
   // get the view matrix but remove the translation from it
   const viewMatCopy = [...manager.camera.viewMatrix];
-  twgl.m4.setTranslation(viewMatCopy, [0, 0, 0], viewMatCopy);
+  m4.setTranslation(viewMatCopy, [0, 0, 0], viewMatCopy);
+  m4.rotateX(viewMatCopy, deg2rad(0), viewMatCopy);
+  m4.rotateY(viewMatCopy, deg2rad(-90), viewMatCopy);
 
   // set the uniforms
   twgl.setUniforms(skyboxShader, {
