@@ -70,7 +70,7 @@ class GameApp {
       asteroid0: { src: require('./assets/asteroid0/asteroid0.png'), flipY: true, wrap: gl.REPEAT, mag: gl.LINEAR, min: gl.MIPMAP },
       asteroid1: { src: require('./assets/asteroid1/asteroid1.png'), flipY: true, wrap: gl.REPEAT, mag: gl.LINEAR, min: gl.MIPMAP },
       ufo: { src: require('./assets/ufo/ufo_diffuse.png'), flipY: true, wrap: gl.REPEAT, mag: gl.LINEAR, min: gl.MIPMAP },
-      shield: { src: require('./assets/shield/shieldBlue.png'), flipY: true, wrap: gl.REPEAT, mag: gl.LINEAR, min: gl.MIPMAP }
+      shield: { src: require('./assets/shield/shieldTexture.png'), flipY: true, wrap: gl.REPEAT, mag: gl.LINEAR, min: gl.MIPMAP }
     });
 
     const modelRefs = [
@@ -163,7 +163,7 @@ class GameApp {
     // Add new objects with time
     manager.time = manager.time + Math.ceil(deltaTime * 60);
 
-    if (manager.time % 1000 == 0) {
+    if (manager.time % 500 == 0) {
       manager.addObjects(Asteroid.spawnAsteroids(5 * manager.difficulty));
     }
   }
@@ -194,7 +194,7 @@ class GameApp {
 
     // render all objects in the scene
     manager.sceneObjects.forEach(sceneObject => sceneObject.render(this.programInfo, uniforms));
-    
+
     // TODO remove this debug when shadows are fully applied:
     // this.shadowRenderer.DEBUGrenderDepthTex(-0.75, 0.75, .25);
 
