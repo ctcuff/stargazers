@@ -10,6 +10,7 @@ import manager from './gamemanager';
 import DEBUGvs from './shaders/postprocessing/simple.vert';
 import DEBUGfs from './shaders/postprocessing/simple.frag';
 import ImageRenderer from './postprocessing/imageRenderer';
+import ShadowBlurPostProcess from './postprocessing/shadowBlur';
 
 const m4 = twgl.m4;
 
@@ -69,6 +70,9 @@ class ShadowRenderer {
 
     // offset matrix for use in the conversion process
     this.offset = createOffset();
+
+    // creates a new post process for bluring the shadow map
+    this.blurProces = new ShadowBlurPostProcess(SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
   }
 
   /**
@@ -82,7 +86,7 @@ class ShadowRenderer {
    * @returns {WebGLTexture} - the depth texture that contains the shadow information
    */
   getShadowMap() {
-    return this.framebuf.depthTex;
+    return this.blurProces.getOutputTexture();
   }
 
   /**
@@ -123,6 +127,9 @@ class ShadowRenderer {
 
     // unbind the frame buffer casue we are done rendering to it
     this.framebuf.unbind();
+
+    // blur the shadow map
+    this.blurProces.run(this.framebuf.depthTex);
   }
 
   /**
@@ -170,7 +177,7 @@ class ShadowRenderer {
     m4.scale(transform, [scale, scale, 1], transform);
 
     twgl.setUniforms(DEBUGshader, {
-      colorTex: this.getShadowMap(),
+      colorTex: this.blurProces.getOutputTexture(),
       transform
     });
 
