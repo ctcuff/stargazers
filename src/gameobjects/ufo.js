@@ -4,7 +4,6 @@ import Physics from '../physics';
 import Input from '../input';
 import { Vector3 } from 'three';
 import Asteroid from './asteroid';
-import BasicMat from '../materials/basic-mat';
 import Material from '../material';
 import ShieldProjectile from './shield-projectile';
 import gameEventEmitter from '../utils/game-event-emitter';
@@ -128,6 +127,16 @@ class UFO extends GameObject {
     if (now - this.lastProjectileTimestamp >= this.projectileTimeLimit) {
       manager.addObject(new ShieldProjectile(this.position.clone(), projectileSpeed));
       this.lastProjectileTimestamp = now;
+
+      let cooldown = this.projectileTimeLimit / 1000;
+
+      const textUpdateInterval = setInterval(() => {
+        if (cooldown === 0) {
+          clearInterval(textUpdateInterval);
+        }
+        
+        uiManager.updateCooldown(cooldown--);
+      }, 1000);
     }
   }
 }

@@ -28,29 +28,36 @@ canvas {
 
 /* firefox progress bar */
 progress::-moz-progress-bar {
-  width: 25%;
   background: rgb(170, 0, 0);
 }
 
 /* chrome progress bar */
 progress::-webkit-progress-value {
-  width: 25%;
   background: rgb(170, 0, 0);
 }
 
 /* internet explorer (or edge?) progress bar */
 progress {
-  width: 25%;
   background: rgb(170, 0, 0);
 }
 
-#hp-overlay {
+.hp-bar {
+  width: 25%;
+  margin: 0 8px;
+}
+
+#status-overlay {
   position: absolute;
   background-color: rgba(0, 0, 0, 0.3);
   right: 10px;
   top: 10px;
   font-size: 24px;
   font-family: 'DM Mono', monospace;
+}
+
+#health {
+  margin-top: 12px;
+  display: flex;
 }
 
 #center-overlay {
