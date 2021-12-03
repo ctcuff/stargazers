@@ -8,6 +8,7 @@ import BasicMat from '../materials/basic-mat';
 import Material from '../material';
 import ShieldProjectile from './shield-projectile';
 import gameEventEmitter from '../utils/game-event-emitter';
+import uiManager from '../textmanager2d';
 import { GameEvents } from '../constants';
 
 class UFO extends GameObject {
@@ -103,6 +104,7 @@ class UFO extends GameObject {
       return;
     }
 
+    uiManager.loseLife(this.currLives);
     this.currLives--;
     console.log('UFO took damage! Now has ' + this.currLives + ' lives');
 

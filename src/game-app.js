@@ -108,6 +108,7 @@ class GameApp {
     // Initialize the UI
     uiManager.undimScreen();
     uiManager.updateScore("0");
+    uiManager.restoreLives();
   }
 
   /**

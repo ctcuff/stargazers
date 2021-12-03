@@ -16,6 +16,19 @@ class TextManager2D
         this.hsField = document.querySelector("#high_score");
         this.hs_node = document.createTextNode("0");
         this.hsField.appendChild(this.hs_node);
+
+        this.hp_bars = [document.getElementById("hp1"), document.getElementById("hp2"), document.getElementById("hp3")]; 
+    }
+
+    loseLife(idx)
+    {
+        this.hp_bars[idx - 1].style.visibility = "hidden";
+    }
+
+    restoreLives()
+    {
+        for (let i = 0; i < 3; i++)
+            this.hp_bars[i].style.visibility = "visible";
     }
 
     dimScreen()
@@ -31,7 +44,7 @@ class TextManager2D
     gameOver()
     {
         this.hs_node.nodeValue = this.highScore;
-        this.updateCenterText("Game over! Your score was " + this.score + ". Press any key to start again!");
+        this.updateCenterText("Game over! Your score was " + this.score + ". Restarting in five seconds...");
         this.count = false;
         this.dimScreen();
     }
@@ -42,7 +55,7 @@ class TextManager2D
 
         // Automatically update the high score if applicable
         this.hs_node.nodeValue = (this.highScore = Math.max(this.score, this.highScore));
-        
+
         this.scoreNode.nodeValue = text;
     }
 
