@@ -13,11 +13,11 @@ class Asteroid extends GameObject {
     switch (variant) {
       case Asteroid.ROD:
         super(manager.modelList.asteroid0, new Physics());
-        this.scaleAmount = 20.0;
+        this.scale = 90;
         break;
       case Asteroid.CHUNKY:
         super(manager.modelList.asteroid1, new Physics());
-        this.scaleAmount = 0.5;
+        this.scale = 1.5;
         break;
       default:
         console.error('Invalid variant selected');
@@ -26,7 +26,7 @@ class Asteroid extends GameObject {
 
     this.shouldRotate = true;
     this.shouldMove = true;
-    this.velocityScalar = 20;
+    this.velocityScalar = 100;
 
     this.initWithRandom();
   }
@@ -67,7 +67,7 @@ class Asteroid extends GameObject {
       this.physics.angularVelocity = rot;
     }
 
-    this.scale = (Math.random() + 1) * this.scaleAmount;
+    this.scale *= getRandomInt(80, 120) / 100;
   }
 
   onCollisionEnter(gameobject) {
